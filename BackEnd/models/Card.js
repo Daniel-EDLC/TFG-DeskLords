@@ -4,15 +4,16 @@ const cardSchema = new mongoose.Schema({
     name: {type: String, required: true},
     type: {type: String, required: true},
     abilities: {type: [String], required: false},
-    description: {type: String, required: false},
+    description: {type: String, required: true},
+    element: {type: String, required: true},
     atk: {type: Number, required: false},
     def: {type: Number, required: false},
     effect: {type: String, required: false},
-    cost: {type: Number, required: false},
+    cost: {type: Number, required: true},
     set: {type: String, required: false},
     front_image: {type: String, required: false},
     back_image: {type: String, required: false},
-    secret_front_image: {type: String, required: false},
+    // secret_front_image: {type: String, required: false}  DEPENDEDIENO DE COMO VAYAMOS MIRAMOS SI LO HACEMOS O NO
 });
 
 const Card = mongoose.model('Card', cardSchema);
