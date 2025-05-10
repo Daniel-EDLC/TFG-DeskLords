@@ -6,7 +6,6 @@ const mapSchema = new mongoose.Schema({
     image: {type: String, required: false},
     deck: {type: String, required: false},
     element: {type: String, required: false},
-    deck: {type: [String], required: false},
 });
 
 const Map = mongoose.model('Map', mapSchema);
