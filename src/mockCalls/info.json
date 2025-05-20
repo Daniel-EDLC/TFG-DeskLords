@@ -1,0 +1,29 @@
+{
+  "playerAvatar": "https://i.pravatar.cc/100?img=5",
+  "playerName": "nacho",
+  "playerLevel": 12,
+  "playerExperience": 2450,
+  "rol": "user",
+  "mapas": [
+    {
+      "nombre": "Demonios",
+      "id": 1,
+      "available": true
+    },
+    {
+      "nombre": "Angeles",
+      "id": 2,
+      "available": true
+    },
+    {
+      "nombre": "Caballeros",
+      "id": 3,
+      "available": true
+    },
+    {
+      "nombre": "Magos",
+      "id": 4,
+      "available": false
+    }
+  ]
+}

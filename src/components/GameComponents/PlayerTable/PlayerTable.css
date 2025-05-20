@@ -1,0 +1,113 @@
+.player-table-container {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 1rem;
+  z-index: 10;
+  height: 170px;
+  width: auto;
+}
+
+.player-table-container:hover {
+  z-index: 1000;
+}
+
+.player-card-wrapper {
+  position: relative;
+}
+
+.player-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.player-card-table {
+  width: 100px;
+  height: 150px;
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+}
+
+.player-card-table:hover {
+  transition: 0.5s;
+  transform: scale(2.3);
+  border: 2px solid rgba(19, 128, 0, 0.8);
+  z-index: 1000;
+}
+
+
+.player-card-table.selected {
+  position: relative;
+  border: 2px solid rgba(19, 128, 0, 0.8);
+  transform: translateY(-15%);
+}
+
+.player-card-table.selected:hover {
+  transition: 0.5s;
+  transform: scale(2.3);
+  z-index: 1000;
+}
+
+
+.player-card-table.selected::after {
+  content: '';
+  position: absolute;
+  top: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 12px solid rgba(19, 128, 0, 0.8);
+}
+
+.player-card-table.selected::before {
+  content: 'ATACANDO';
+  position: absolute;
+  bottom: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(19, 128, 0, 0.8);
+  color: white;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 2px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+
+.player-battle {
+  position: relative;
+  border: 2px solid rgba(183, 0, 255, 0.8);
+  transform: translateY(-15%);
+}
+
+
+.phase-buttons {
+  position: absolute;
+  bottom: 30%;
+  right: 1%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 1000;
+}
+
+.phase-button {
+  font-size: 1rem;
+  text-transform: none;
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+  background-color: #ffffff !important;
+  color: green !important;
+  z-index: 1000;
+}
+
+.phase-button:hover {
+  color: white !important;
+  background-color: #1ba300 !important;
+}

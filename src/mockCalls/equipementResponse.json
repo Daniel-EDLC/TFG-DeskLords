@@ -1,0 +1,114 @@
+{
+    "action_result": {
+        "type": "use"        
+    },
+    "user": {
+        "hand": [
+            {
+                "id": "21",
+                "type": "criature", 
+                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "cost": 3,
+                "health": 100,
+                "attack": 111,
+                "defense": 222,
+                "equipements": []
+            },
+            {
+                "id": "22",
+                "type": "criature", 
+                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "cost": 4,
+                "health": 100,
+                "attack": 111,
+                "defense": 222,
+                "equipements": []
+            },
+            {
+                "id": "23",
+                "type": "criature",
+                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "cost": 5,
+                "health": 100,
+                "attack": 111,
+                "defense": 222,
+                "equipements": []
+            },
+            {
+                "id": "24",
+                "type": "criature", 
+                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "cost": 6,
+                "health": 100,
+                "attack": 111,
+                "defense": 222,
+                "equipements": []
+            },
+            {
+                "id": "25",
+                "type": "criature",
+                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "cost": 7,
+                "health": 100,
+                "attack": 111,
+                "defense": 222,
+                "equipements": []
+            }],
+        "table": [
+            {
+                "id": "26",
+                "type": "criature",
+                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "cost": 1,
+                "health": 100,
+                "attack": 111,
+                "defense": 222,
+                "equipements": [{
+                    "id": "211",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg"
+            }]
+            },
+            {
+                "id": "27",
+                "type": "criature",
+                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "cost": 1,
+                "health": 100,
+                "attack": 111,
+                "defense": 222,
+                "equipements": []
+            },
+            {
+                "id": "28",
+                "type": "criature",
+                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "cost": 1,
+                "health": 100,
+                "attack": 111,
+                "defense": 222,
+                "equipements": []
+            },
+            {
+                "id": "29",
+                "type": "criature",
+                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "cost": 1,
+                "health": 100,
+                "attack": 111,
+                "defense": 222,
+                "equipements": []
+            },
+            {
+                "id": "30",
+                "type": "criature",
+                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "cost": 1,
+                "health": 100,
+                "attack": 111,
+                "defense": 222,
+                "equipements": []
+            }
+            ],
+            "mana": 1
+}
+}

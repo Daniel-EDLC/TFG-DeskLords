@@ -1,0 +1,76 @@
+
+
+.end-turn-button {
+  font-size: 1rem;
+  text-transform: none;
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+  background-color: #ffffff !important;
+  color: red !important;
+}
+
+.end-turn-button:hover {
+  color: white !important;
+  background-color: #c00000 !important;
+}
+
+.profile-container {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 5;
+}
+
+.profile-card {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.avatar-wrapper {
+  position: relative;
+}
+
+.avatar-image {
+  width: 150px !important;
+  height: 150px !important;
+  margin-bottom: 8px;
+}
+
+.life-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.84) 30%, rgba(0, 0, 0, 0.6) 50%, rgba(0, 0, 0, 0) 70%);
+}
+
+.life-text {
+  color: green !important;
+  font-weight: bold !important;
+  font-size: 3rem !important;
+}
+
+.player-name {
+  font-size: 1.5rem !important;
+  font-weight: bold !important;
+}
+
+.mana-text {
+  color: green !important;
+  font-weight: bold !important;
+  font-size: 1rem !important;
+}

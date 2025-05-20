@@ -1,0 +1,85 @@
+.player-hand {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 250px;
+  display: block;
+  z-index: 10;
+}
+
+.card-container {
+  position: absolute;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.card-container:hover {
+  z-index: 1000;
+}
+
+.card {
+  width: 100px;
+  height: 150px;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  transform-origin: bottom center;
+  transition: transform 0.3s ease, border 0.3s ease;
+  cursor: pointer;
+  transform: rotate(var(--rotate, 0deg));
+}
+
+.card.hovered {
+  transition: 0.5s;
+  transform: rotate(var(--rotate, 0deg)) scale(2.3);
+  border: 2px solid blue;
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.play-button {
+  font-size: 1rem;
+  text-transform: none;
+  margin-top: 0.5rem;
+  background-color: #ffffff !important;
+  color: blue !important;
+  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.play-button:hover {
+  background-color: #002df7 !important;
+  color: white !important;
+}
+
+.floating-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+
+.floating-overlay.fade-out {
+  opacity: 0;
+}
+
+.floating-message {
+  background-color: white;
+  padding: 20px 40px;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: black;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}

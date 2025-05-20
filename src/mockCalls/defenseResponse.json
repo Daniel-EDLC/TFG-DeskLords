@@ -1,0 +1,101 @@
+{
+    "battle":{
+        
+    },
+    "id": "gam_d595ad1a-263a-485f-b6fc-70c513edf40d",
+    "status": "in_progress",
+    "start_at": "2025-05-02T13:00:00.00+02:00",
+    "turn": {
+        "number": 2,
+        "whose": "user", 
+        "phase": "hand"
+    },
+    "user": {
+        "hand": [
+            {
+                "id": "31",
+                "type": "criature", 
+                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "cost": 4,
+                "health": 100,
+                "attack": 111,
+                "defense": 222,
+                "equipements": []
+            },
+            {
+                "id": "32",
+                "type": "criature",
+                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "cost": 5,
+                "health": 100,
+                "attack": 111,
+                "defense": 222,
+                "equipements": []
+            },
+            {
+                "id": "33",
+                "type": "criature", 
+                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "cost": 6,
+                "health": 100,
+                "attack": 111,
+                "defense": 222,
+                "equipements": []
+            }
+        ],
+        "table": [
+            {
+                "id": "35",
+                "type": "criature",
+                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "cost": 1,
+                "health": 100,
+                "attack": 111,
+                "defense": 222,
+                "equipements": []
+            },
+            {
+                "id": "36",
+                "type": "criature",
+                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "cost": 1,
+                "health": 100,
+                "attack": 111,
+                "defense": 222,
+                "equipements": []
+            }
+        ], 
+        "pending_deck": 8,
+        "health": 25,
+        "mana": 6
+    },
+    "rival":{
+        "hand": 2,
+        "table": [
+            {
+                "id": "37",
+                "type": "criature",
+                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "cost": 7,
+                "health": 100,
+                "attack": 111,
+                "defense": 222,
+                "equipements": [],
+                "position":"waiting"
+            },{
+                "id": "38",
+                "type": "criature",
+                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "cost": 7,
+                "health": 100,
+                "attack": 111,
+                "defense": 222,
+                "equipements": [],
+                "position":"waiting"
+            }
+        ], 
+        "pending_deck": 8,
+        "health": 13,
+        "mana": 1
+    }
+}

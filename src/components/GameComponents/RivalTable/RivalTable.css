@@ -1,0 +1,78 @@
+.rival-table-container {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 1rem;
+  z-index: 10;
+  height: 170px;
+  width: auto;
+}
+
+.rival-table-container:hover {
+  z-index: 1000;
+}
+
+.rival-card-table {
+  width: 100px;
+  height: 150px;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform 0.3s ease, border 0.3s ease;
+}
+
+.rival-card-table:hover {
+  transition: 0.5s;
+  transform: scale(2.3);
+  border: 2px solid rgba(255, 0, 0, 0.8);
+  z-index: 1000;
+}
+
+.rival-card-table-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.attack-position {
+  position: relative;
+  border: 2px solid rgba(255, 0, 0, 0.8);
+  transform: translateY(15%);
+}
+
+.attack-position::after {
+  content: '';
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-top: 12px solid rgba(255, 0, 0, 0.8);
+}
+
+.attack-position::before {
+  content: 'ATACANDO';
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 0, 0, 0.8);
+  color: white;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 4px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.rival-battle {
+  position: relative;
+  border: 2px solid rgba(183, 0, 255, 0.8);
+  transform: translateY(15%);
+}
+
+
+
+
