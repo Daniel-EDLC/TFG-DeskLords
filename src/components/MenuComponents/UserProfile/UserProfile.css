@@ -1,13 +1,14 @@
- .profile-container {
+ .user-container {
   background-color: rgba(0, 0, 0, 0.5);
   border-radius: 12px;
   padding: 20px;
   text-align: center;
   width: 100%;
   color: white;
+  height: auto;
 }
 
-.profile-avatar {
+.user-avatar {
   width: 80px;
   height: 80px;
   border-radius: 50%;

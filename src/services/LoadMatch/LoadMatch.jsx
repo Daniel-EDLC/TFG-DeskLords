@@ -2,7 +2,7 @@ import mockData from '../../mockCalls/useLoadMatchMock.json';
 
 import { useEffect, useState } from 'react';
 
-// export function useLoadMatch(onDataReady) {
+// export default function useLoadMatch(onDataReady) {
 //   const [gameData, setGameData] = useState(null);
 
 //   useEffect(() => {

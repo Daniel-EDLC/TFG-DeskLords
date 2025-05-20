@@ -1,0 +1,98 @@
+.mapa-actual {
+  width: 100%;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  margin: 20px 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tittle{
+  font-size: 1.5rem;
+}
+.mapa-imagen {
+  width: 150px;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin: 2%;
+}
+
+.mapa-content{
+display: flex;
+flex-direction: row;
+}
+
+.mapa-info {
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+  flex: 1;
+}
+
+.mapa-info p {
+  font-size: 0.9rem;
+  color: #ccc;
+  text-align: center;
+}
+
+.mapa-info button {
+  
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 3px solid rgba(0, 131, 9, 0.267);
+  color: white;
+  font-weight: bold;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+
+}
+a {
+  text-decoration: none;
+  color: white;
+}
+.mapa-info button:hover {
+    color: rgb(24, 91, 0);
+  background-color: #dcdcdca8;
+}
+
+
+
+.deck-select {
+  margin: 15px 0;
+  color: white;
+}
+
+.deck-select select {
+  padding: 8px;
+  background-color: #222;
+  color: white;
+  border: 1px solid white;
+  border-radius: 5px;
+}
+
+
+.deck-select {
+  margin: 15px 0;
+  display: flex;
+  justify-content: center; /* Centra el select horizontalmente */
+  width: 100%;
+}
+
+.deck-select select {
+  padding: 8px;
+  background-color: #222;
+  color: white;
+  border: 1px solid white;
+  border-radius: 5px;
+  text-align: center; /* Esto alinea el texto dentro del select */
+  text-align-last: center; /* Necesario para algunos navegadores como Firefox */
+  width: 60%; /* Puedes ajustar esto según el diseño */
+}

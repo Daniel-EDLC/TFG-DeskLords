@@ -1,7 +1,8 @@
 body {
-  background-image: 
-  linear-gradient(rgba(0, 0, 0, 0.687), rgba(255, 255, 255, 0.67)), /* Capa de color translúcido */
-  url(https://media.istockphoto.com/id/1162351040/es/foto/fondo-de-comida-asi%C3%A1tica-vac%C3%ADa-alfombra-de-bamb%C3%BA-amarillo-en-vista-superior-de-fondo-de-madera.jpg?s=612x612&w=0&k=20&c=Fs-ac5FyA4Ue4KMymzfnG_rsG8QZOUCfTmjcdkiLWKc=); /* Imagen de fondo */
+  /* background-image: 
+  linear-gradient(rgba(0, 0, 0, 0.687), rgba(255, 255, 255, 0.67)), 
+  url(https://wallpapers.com/images/hd/starry-background-ials2h08l34rs83j.jpg);  */
+  background-color: rgba(0, 0, 0, 0.863);
   background-size: cover; 
   background-position: center; 
   background-repeat: no-repeat; 
@@ -41,9 +42,6 @@ body {
   color: #666;
   font-size: 0.95rem;
 }
-
-
-
 
 
 .app-container {

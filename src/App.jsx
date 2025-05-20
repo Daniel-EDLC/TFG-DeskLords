@@ -9,15 +9,20 @@ const App = () => {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    const cargar = async () => {
-      const resultado = await cargaInformacion();
-      setData(resultado);
-    };
-    cargar();
-  }, []);
+  const cargar = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 2000)); // Espera 2 segundos
+    const resultado = await cargaInformacion();
+    setData(resultado);
+  };
+  cargar();
+}, []);
 
   if (!data) {
-    return <div>Loading...</div>;
+    return <div className="loading-container">
+            <div className="loading-box">
+              <p>Espera unos segundos</p>
+            </div>
+          </div>;
   }
 
   return (

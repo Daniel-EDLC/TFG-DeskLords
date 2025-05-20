@@ -1,28 +1,95 @@
 {
-  "playerAvatar": "https://i.pravatar.cc/100?img=5",
+  "playerAvatar": "https://img.freepik.com/fotos-premium/angel-cara-angel-alas_901383-148607.jpg",
   "playerName": "nacho",
   "playerLevel": 12,
   "playerExperience": 2450,
   "rol": "user",
+  "decks":[
+    {
+      "nombre": "mazo1",
+      "id": 1
+    },
+    {
+      "nombre": "mazo2",
+      "id": 2
+    },
+    {
+      "nombre": "mazo3",
+      "id": 3
+    },
+    {
+      "nombre": "mazo4",
+      "id": 4
+    },
+    {
+      "nombre": "mazo5",
+      "id": 5
+    }
+
+  ],
   "mapas": [
     {
       "nombre": "Demonios",
       "id": 1,
+      "imagen": "https://i.pinimg.com/736x/f4/01/d7/f401d7ec64a668b9100d7c7d07d5d030.jpg",
       "available": true
     },
     {
       "nombre": "Angeles",
       "id": 2,
+      "imagen": "https://i.pinimg.com/736x/cc/b6/5a/ccb65a313a0736dda0d66321affd9066.jpg",
       "available": true
     },
     {
       "nombre": "Caballeros",
       "id": 3,
+      "imagen": "https://i.pinimg.com/736x/98/7a/bf/987abf31616274d74278358fae3d5b5e.jpg",
       "available": true
     },
     {
       "nombre": "Magos",
       "id": 4,
+      "imagen": "https://i.pinimg.com/736x/d2/64/96/d26496f419d18790cef3389f39706613.jpg",
+      "available": true
+    },
+    {
+      "nombre": "Demonios1",
+      "id": 11,
+      "available": false
+    },
+    {
+      "nombre": "Angeles1",
+      "id": 21,
+      "available": false
+    },
+    {
+      "nombre": "Caballeros1",
+      "id": 31,
+      "available": false
+    },
+    {
+      "nombre": "Magos1",
+      "id": 41,
+      "available": false
+    },
+    {
+      "nombre": "Demonios2",
+      "id": 12,
+      "available": false
+    },
+    {
+      "nombre": "Angeles2",
+      "id": 22,
+      "available": false
+    },
+    {
+      "nombre": "Caballeros2",
+      "id": 32,
+      "available": false
+    },
+    {
+      "nombre": "Magos2",
+      "id": 42,
       "available": false
     }
   ]
