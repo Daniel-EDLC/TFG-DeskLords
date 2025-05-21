@@ -323,15 +323,11 @@ async function useCard(req, res) {
             case 'spell':
                 switch (usedCard.effect) {
                     case 'protect_one':
-                        targetedCard.positiveEffect = "protected";
-                        break;
-                    case 'protect_all':
-                        game.playerTable.forEach(card => {
-                            card.positiveEffect = "protected";
-                        })
+                        targetedCard.temporaryAbilities = "invulnerable";
                         break;
                     case 'kill':
-                        targetedCard.negativeEffect.push("kill");
+                        game.rivalTable = game.rivalTable.filter(card => card._id.toString() !== req.body.action.target.id);
+                        game.rivalGraveyard.push(targetedCard);
                         break;
                 }
 
@@ -354,16 +350,94 @@ async function useCard(req, res) {
 
 async function attack(req, res) {
     try {
+        const gameObjectId = new ObjectId(req.body.gameId);
 
+        const attackers = req.body.cards;
 
+        const assignments = chooseDefenders(attackers, game.rivalTable);
+
+        assignments.forEach(assignment => {
+            try {
+                resolverCombate({
+                    gameId: gameObjectId,
+                    attacker: assignment.attackerr,
+                    defender: assignment.defender,
+                    isAI: req.body.isAI
+                })
+            } catch (error) {
+                return req.response.error(`Error al realizar la batalla 1: ${error.message}`);
+            }
+        });
 
     } catch (error) {
         req.response.error(`Error al atacar: ${error.message}`);
     }
 }
 
+function chooseDefenders(attackingCards, rivalTable) {
+    let availableDefenders = [...rivalTable];
+    const assignments = [];
+
+    for (const attacker of attackingCards) {
+        const attackerAbilities = new Set(attacker.abilities || []);
+        // Filtrar defensores válidos si el atacante vuela
+        let validDefenders = availableDefenders.filter(defender => {
+            if (attackerAbilities.has("volar")) {
+                const defenderAbilities = new Set(defender.abilities || []);
+                return defenderAbilities.has("volar");
+            }
+            return true;
+        });
+
+        // Si no hay defensores válidos, el ataque va directo al jugador
+        if (validDefenders.length === 0) {
+            assignments.push({ attacker, defender: "player" });
+            continue;
+        }
+
+        // Prioridad: invulnerable (por ability o temporaryAbilities)
+        let idxInvulnerable = validDefenders.findIndex(defender => {
+            const abilities = new Set(defender.abilities || []);
+            const tempAbilities = new Set(defender.temporaryAbilities || []);
+            return abilities.has("invulnerable") || tempAbilities.has("invulnerable");
+        });
+        let bestDefenderIdx = 0;
+        if (idxInvulnerable !== -1) {
+            bestDefenderIdx = idxInvulnerable;
+        } else {
+            // Si no hay invulnerables, elegir el de más vida
+            for (let i = 1; i < validDefenders.length; i++) {
+                if ((validDefenders[i].hp || 0) > (validDefenders[bestDefenderIdx].hp || 0)) {
+                    bestDefenderIdx = i;
+                }
+            }
+        }
+        const chosenDefender = validDefenders[bestDefenderIdx];
+        assignments.push({ attacker, defender: chosenDefender });
+        availableDefenders = availableDefenders.filter(d => d._id !== chosenDefender._id);
+    }
+    return assignments;
+}
+
 //FALTA VER SI PUEDO QUITAR LA RESPUESTA Y HACER QUE SE GUARDE TODO EN EL GAME DIRECTAMENTE -------------------------------------------------------------------------------
 async function resolverCombate({ gameId, attacker, defender, isAI }) {
+    // Si el defensor es el jugador directamente
+    if (defender === "player") {
+        // Determinar a quién pertenece el daño
+        const hpField = isAI ? "playerHp" : "rivalHp";
+        // Daño directo igual al ataque del atacante
+        const daño = attacker.atk;
+        // Actualizar la vida del jugador en la base de datos
+        const gameDoc = await Game.findById(gameId);
+        if (gameDoc) {
+            let nuevaVida = Math.max(0, (gameDoc[hpField] || 0) - daño);
+            await Game.updateOne(
+                { _id: gameId },
+                { $set: { [hpField]: nuevaVida } }
+            );
+        }
+    }
+
     const result = {
         attacker: { ...attacker },
         defender: { ...defender },
@@ -372,11 +446,10 @@ async function resolverCombate({ gameId, attacker, defender, isAI }) {
 
     const attackerHabs = new Set(attacker.abilities || []);
     const defenderHabs = new Set(defender.abilities || []);
-
-    const attackerInvulnerable = attackerHabs.has("invulnerable");
-    const defenderInvulnerable = defenderHabs.has("invulnerable");
+    // Comprobar invulnerabilidad en abilities o temporaryAbilities
+    const defenderInvulnerable = defenderHabs.has("invulnerable") || (defender.temporaryAbilities || []).includes("invulnerable");
     const attackerToqueMortal = attackerHabs.has("toque mortal");
-    const defenderToqueMortal = defenderHabs.has("toque mortal");
+    const attackerBruteForce = attackerHabs.has("brute force");
 
     // --- Daño al defender
     if (!defenderInvulnerable) {
@@ -395,17 +468,17 @@ async function resolverCombate({ gameId, attacker, defender, isAI }) {
     }
 
     // --- Sangrado
-    if (attackerHabs.has("bleeding") && result.defender.hp > 0) {
-        result.defender.effect = "bleeding";
-    } else {
-        result.defender.effect = null;
-    }
+    // if (attackerHabs.has("bleeding") && result.defender.hp > 0) {
+    //     result.defender.effect = "bleeding";
+    // } else {
+    //     result.defender.effect = null;
+    // }
 
     // --- Fuerza Bruta
-    if (attackerHabs.has("brute force") && result.defender.hp <= 0 && !defenderInvulnerable) {
-        const exceso = attacker.atk - defender.hp;
-        if (exceso > 0) {
-            result.dañoAlJugador = exceso;
+    if (attackerBruteForce && result.defender.hp <= 0 && !defenderInvulnerable) {
+        const excess = attacker.atk - defender.hp;
+        if (excess > 0) {
+            result.dañoAlJugador = excess;
         }
     }
 
@@ -419,13 +492,14 @@ async function resolverCombate({ gameId, attacker, defender, isAI }) {
     const attackerGraveyard = isAI ? "rivalGraveyard" : "playerGraveyard";
     const defenderGraveyard = isAI ? "playerGraveyard" : "rivalGraveyard";
 
-    // --- Si la carta sigue viva, actualizar hp/effect en mesa
+    // --- Si la carta sigue viva, actualizar hp/effect en mesa y limpiar temporaryAbilities
     if (result.attacker.hp > 0) {
         await Game.updateOne(
             { _id: gameId, [`${attackerTable}._id`]: result.attacker._id },
             {
                 $set: {
                     [`${attackerTable}.$.hp`]: result.attacker.hp,
+                    [`${attackerTable}.$.temporaryAbilities`]: [],
                 },
             }
         );
@@ -440,7 +514,6 @@ async function resolverCombate({ gameId, attacker, defender, isAI }) {
         );
     }
 
-    // --- Si la carta sigue viva, actualizar hp/effect en mesa
     if (result.defender.hp > 0) {
         await Game.updateOne(
             { _id: gameId, [`${defenderTable}._id`]: result.defender._id },
@@ -448,6 +521,7 @@ async function resolverCombate({ gameId, attacker, defender, isAI }) {
                 $set: {
                     [`${defenderTable}.$.hp`]: result.defender.hp,
                     [`${defenderTable}.$.effect`]: result.defender.effect,
+                    [`${defenderTable}.$.temporaryAbilities`]: [],
                 },
             }
         );
@@ -462,7 +536,7 @@ async function resolverCombate({ gameId, attacker, defender, isAI }) {
         );
     }
 
-    return result;
+    return true;
 }
 
 const PORT = process.env.PORT || 3000;
