@@ -2,7 +2,6 @@
 import React from 'react';
 import './ActualMap.css';
 
-import { Link } from 'react-router-dom';
 const ActualMap = ({ mapa, onPlay, decks, selectedDeckId, onSelectDeck }) => {
   if (!mapa) return null;
 
@@ -27,7 +26,7 @@ const ActualMap = ({ mapa, onPlay, decks, selectedDeckId, onSelectDeck }) => {
         </div>
 
         <button disabled={!selectedDeckId} onClick={onPlay}>
-         <Link to="/game">Comenzar batalla</Link>
+          Comenzar batalla
         </button>
       </div>
       </div>

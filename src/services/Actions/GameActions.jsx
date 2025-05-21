@@ -1,4 +1,5 @@
 
+// version real playCard
 
 // export async function playCard(setGameData, card) {
 //   let body = {};
@@ -75,11 +76,11 @@
 
 
 
-// version mock
+// version mock playCard
 
-import criatureResponse from '../../mockCalls/criatureResponse.json';
-import spellResponse from '../../mockCalls/spellResponse.json';
-import equipementResponse from '../../mockCalls/equipementResponse.json';
+import criatureResponse from '../../../public/mockCalls/criatureResponse.json';
+import spellResponse from '../../../public/mockCalls/spellResponse.json';
+import equipementResponse from '../../../public/mockCalls/equipementResponse.json';
 
 
 export async function playCard(setGameData, card) {
@@ -148,7 +149,7 @@ export async function playCard(setGameData, card) {
 
 
 
-// version real
+// version real switchPhase
 
 
 // export async function switchPhase(setGameData) {
@@ -180,11 +181,11 @@ export async function playCard(setGameData, card) {
 
 
 
-// version mock
+// version mock switchPhase
 
 
 
-import switchPhaseResponse from '../../mockCalls/switchPhase.json';
+import switchPhaseResponse from '../../../public/mockCalls/switchPhase.json';
 
 export async function switchPhase(setGameData) {
   try {
@@ -216,7 +217,7 @@ export async function switchPhase(setGameData) {
 
 
 
-//version real
+//version real attack
 
 // export async function attack(selectedAttackCards) {
 //     // Formatea las cartas como espera el backend
@@ -294,9 +295,9 @@ export async function switchPhase(setGameData) {
 
 
 
-//version mock
+//version mock attack
 
-import attackResponse from '../../mockCalls/attackResponse.json';
+import attackResponse from '../../../public/mockCalls/attackResponse.json';
 
 
 
@@ -335,26 +336,7 @@ export async function attack(selectedAttackCards, setGameData) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//version mock
-
+//funciones necesarias para batalla
 
 
 
@@ -452,9 +434,9 @@ export function addCardToBattle(carta) {
 
 
 
+// version mock / real defense
 
-
-import defenseResponse from '../../mockCalls/defenseResponse.json';
+import defenseResponse from '../../../public/mockCalls/defenseResponse.json';
 
 
 export async function defense(setGameData, gameData) {

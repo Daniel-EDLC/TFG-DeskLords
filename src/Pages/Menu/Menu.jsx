@@ -2,15 +2,21 @@ import React, { useEffect, useState } from 'react';
 import Maps from '../../components/MenuComponents/Maps/Maps';
 import UserProfile from '../../components/MenuComponents/UserProfile/UserProfile';
 import ActualMap from '../../components/MenuComponents/ActualMap/ActualMap';
+import { useNavigate } from 'react-router-dom';
 
 import './Menu.css';
+import { cargarPartida } from '../../services/Actions/MenuActions';
+
+
 import { Navigate } from 'react-router-dom';
 
 function Menu({ data }) {
   const [showGestion, setShowGestion] = useState(false);
   const [selectedMap, setSelectedMap] = useState(null);
   const [selectedDeckId, setSelectedDeckId] = useState('');
+  const navigate = useNavigate();
 
+    
 
     useEffect(() => {
     if (data?.habilitarGestion) {
@@ -33,14 +39,27 @@ function Menu({ data }) {
     }
   };
 
- const handlePlay = () => {
+ const handlePlay = async () => {
   if (selectedMap && selectedDeckId) {
-    console.log(`Iniciar juego en: ${selectedMap.nombre} con el mazo ID: ${selectedDeckId}`);
+  
+          console.log(`Iniciar juego en: ${selectedMap.nombre} con el mazo ID: ${selectedDeckId}`);
+    try {
+      const resultado = await cargarPartida(selectedDeckId, selectedMap);
+      console.log('Partida iniciada con éxito:', resultado);
+      navigate('/game');
+    } catch (error) {
+      console.error('Error al iniciar la partida desde el menú'+ error);
+    }
+  
     
-    // Aquí podrías navegar o lanzar la partida con los datos
   }
 };
 
+
+  if (!data) {
+      return <div>Cargando datos...</div>;
+    }
+    
   return (
     <div className="menu-container">
       <div className="menu-header">

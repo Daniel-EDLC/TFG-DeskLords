@@ -1,4 +1,4 @@
-import mockData from '../../mockCalls/useLoadMatchMock.json';
+import mockData from '../../../public/mockCalls/useLoadMatchMock.json';
 
 import { useEffect, useState } from 'react';
 
