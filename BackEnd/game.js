@@ -210,15 +210,15 @@ async function createPlayer(req, res) {
     }
 }
 
-// --------------------------------------------------------------------------- FUNCIONES DEL DESARROLLO DE UNA Game
+// --------------------------------------------------------------------------- FUNCIONES DEL DESARROLLO DE UNA PARTIDA
 
 function shuffleCards(array, size) {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled.slice(0, size);
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled.slice(0, size);
 }
 
 async function startGame(req, res) {
@@ -227,7 +227,7 @@ async function startGame(req, res) {
         const deckObjectId = new ObjectId(req.body.user.deck.id);
         const mapObjectId = new ObjectId(req.body.map.id);
 
-        const player1 = await Player.findById({playerObjectId});
+        const player1 = await Player.findById({ playerObjectId });
         if (!player1) {
             return req.response.error('El jugador no existe');
         }
@@ -294,22 +294,53 @@ async function useCard(req, res) {
         const gameObjectId = new ObjectId(req.body.gameId);
 
         const game = await Game.findById(gameObjectId);
-        
+
         // Encuentra la carta en la mano del jugador
-        const cardToMove = game.playerHand.find(card => card._id.toString() === req.body.cardId);
-        
+        const usedCard = game.playerHand.find(card => card._id.toString() == req.body.cardId);
+
+        // Encuentra la carta objetivo en la mesa del jugador o de la IA
+        const targetedCard = game.playerTable.find(card => card._id.toString() == req.body.action.target.id) || game.rivalTable.find(card => card._id.toString() === req.body.action.target.id)
+
         // Verifica que la carta exista
-        if (!cardToMove) {
+        if (!usedCard) {
             return req.response.error("Carta no encontrada en la mano del jugador");
         }
 
-        //FALTA EL SWITCH DE TIPO DE CARTA ------------------------------------------------------------------------------------------------------
-        
-        // Añade la carta a la mesa
-        game.playerTable.push(cardToMove);
-        
-        // Elimina la carta de la mano del jugador (creando un nuevo array)
-        game.playerHand = game.playerHand.filter(card => card._id.toString() !== req.body.cardId);
+        if (!targetedCard) {
+            return req.response.error("Carta no encontrada en la mesa del jugador o del rival");
+        }
+
+        switch (usedCard.type) {
+            case 'criature':
+                game.playerTable.push(usedCard);
+
+                game.playerHand = game.playerHand.filter(card => card._id.toString() !== req.body.cardId);
+                break;
+            case 'equipement':
+
+                game.playerHand = game.playerHand.filter(card => card._id.toString() !== req.body.cardId);
+                break;
+            case 'spell':
+                switch (usedCard.effect) {
+                    case 'protect_one':
+                        targetedCard.positiveEffect = "protected";
+                        break;
+                    case 'protect_all':
+                        game.playerTable.forEach(card => {
+                            card.positiveEffect = "protected";
+                        })
+                        break;
+                    case 'kill':
+                        targetedCard.negativeEffect.push("kill");
+                        break;
+                }
+
+                game.playerGraveyard = game.playerHand.find(card => card._id.toString() == req.body.cardId);
+                game.playerHand = game.playerHand.filter(card => card._id.toString() !== req.body.cardId);
+                break;
+        }
+
+        game.playerMana = game.playerMana - usedCard.cost;
 
         // Guarda los cambios
         const gameSaved = await game.save();
@@ -323,9 +354,9 @@ async function useCard(req, res) {
 
 async function attack(req, res) {
     try {
-        
 
-        
+
+
     } catch (error) {
         req.response.error(`Error al atacar: ${error.message}`);
     }
@@ -333,105 +364,105 @@ async function attack(req, res) {
 
 //FALTA VER SI PUEDO QUITAR LA RESPUESTA Y HACER QUE SE GUARDE TODO EN EL GAME DIRECTAMENTE -------------------------------------------------------------------------------
 async function resolverCombate({ gameId, attacker, defender, isAI }) {
-  const result = {
-    attacker: { ...attacker },
-    defender: { ...defender },
-    dañoAlJugador: 0,
-  };
+    const result = {
+        attacker: { ...attacker },
+        defender: { ...defender },
+        dañoAlJugador: 0,
+    };
 
-  const attackerHabs = new Set(attacker.abilities || []);
-  const defenderHabs = new Set(defender.abilities || []);
+    const attackerHabs = new Set(attacker.abilities || []);
+    const defenderHabs = new Set(defender.abilities || []);
 
-  const attackerInvulnerable = attackerHabs.has("invulnerable");
-  const defenderInvulnerable = defenderHabs.has("invulnerable");
-  const attackerToqueMortal = attackerHabs.has("toque mortal");
-  const defenderToqueMortal = defenderHabs.has("toque mortal");
+    const attackerInvulnerable = attackerHabs.has("invulnerable");
+    const defenderInvulnerable = defenderHabs.has("invulnerable");
+    const attackerToqueMortal = attackerHabs.has("toque mortal");
+    const defenderToqueMortal = defenderHabs.has("toque mortal");
 
-  // --- Daño al defender
-  if (!defenderInvulnerable) {
-    if (attackerToqueMortal) {
-      result.defender.hp = 0;
+    // --- Daño al defender
+    if (!defenderInvulnerable) {
+        if (attackerToqueMortal) {
+            result.defender.hp = 0;
+        } else {
+            result.defender.hp -= attacker.atk;
+        }
+    }
+
+    // --- Daño al attacker
+    if (!attackerInvulnerable) {
+        if (defenderToqueMortal) {
+            result.attacker.hp = 0;
+        }
+    }
+
+    // --- Sangrado
+    if (attackerHabs.has("bleeding") && result.defender.hp > 0) {
+        result.defender.effect = "bleeding";
     } else {
-      result.defender.hp -= attacker.atk;
+        result.defender.effect = null;
     }
-  }
 
-  // --- Daño al attacker
-  if (!attackerInvulnerable) {
-    if (defenderToqueMortal) {
-      result.attacker.hp = 0;
+    // --- Fuerza Bruta
+    if (attackerHabs.has("brute force") && result.defender.hp <= 0 && !defenderInvulnerable) {
+        const exceso = attacker.atk - defender.hp;
+        if (exceso > 0) {
+            result.dañoAlJugador = exceso;
+        }
     }
-  }
 
-  // --- Sangrado
-  if (attackerHabs.has("bleeding") && result.defender.hp > 0) {
-    result.defender.effect = "bleeding";
-  } else {
-    result.defender.effect = null;
-  }
+    // --- Limitar hp mínimo 0
+    result.attacker.hp = Math.max(0, result.attacker.hp);
+    result.defender.hp = Math.max(0, result.defender.hp);
 
-  // --- Fuerza Bruta
-  if (attackerHabs.has("brute force") && result.defender.hp <= 0 && !defenderInvulnerable) {
-    const exceso = attacker.atk - defender.hp;
-    if (exceso > 0) {
-      result.dañoAlJugador = exceso;
+    // --- Actualización en BD
+    const attackerTable = isAI ? "rivalTable" : "playerTable";
+    const defenderTable = isAI ? "playerTable" : "rivalTable";
+    const attackerGraveyard = isAI ? "rivalGraveyard" : "playerGraveyard";
+    const defenderGraveyard = isAI ? "playerGraveyard" : "rivalGraveyard";
+
+    // --- Si la carta sigue viva, actualizar hp/effect en mesa
+    if (result.attacker.hp > 0) {
+        await Game.updateOne(
+            { _id: gameId, [`${attackerTable}._id`]: result.attacker._id },
+            {
+                $set: {
+                    [`${attackerTable}.$.hp`]: result.attacker.hp,
+                },
+            }
+        );
+    } else {
+        // mover al cementerio
+        await Game.updateOne(
+            { _id: gameId },
+            {
+                $pull: { [attackerTable]: { _id: result.attacker._id } },
+                $push: { [attackerGraveyard]: result.attacker },
+            }
+        );
     }
-  }
 
-  // --- Limitar hp mínimo 0
-  result.attacker.hp = Math.max(0, result.attacker.hp);
-  result.defender.hp = Math.max(0, result.defender.hp);
+    // --- Si la carta sigue viva, actualizar hp/effect en mesa
+    if (result.defender.hp > 0) {
+        await Game.updateOne(
+            { _id: gameId, [`${defenderTable}._id`]: result.defender._id },
+            {
+                $set: {
+                    [`${defenderTable}.$.hp`]: result.defender.hp,
+                    [`${defenderTable}.$.effect`]: result.defender.effect,
+                },
+            }
+        );
+    } else {
+        // mover al cementerio
+        await Game.updateOne(
+            { _id: gameId },
+            {
+                $pull: { [defenderTable]: { _id: result.defender._id } },
+                $push: { [defenderGraveyard]: result.defender },
+            }
+        );
+    }
 
-  // --- Actualización en BD
-  const attackerTable = isAI ? "rivalTable" : "playerTable";
-  const defenderTable = isAI ? "playerTable" : "rivalTable";
-  const attackerGraveyard = isAI ? "rivalGraveyard" : "playerGraveyard";
-  const defenderGraveyard = isAI ? "playerGraveyard" : "rivalGraveyard";
-
-  // --- Si la carta sigue viva, actualizar hp/effect en mesa
-  if (result.attacker.hp > 0) {
-    await Game.updateOne(
-      { _id: gameId, [`${attackerTable}._id`]: result.attacker._id },
-      {
-        $set: {
-          [`${attackerTable}.$.hp`]: result.attacker.hp,
-        },
-      }
-    );
-  } else {
-    // mover al cementerio
-    await Game.updateOne(
-      { _id: gameId },
-      {
-        $pull: { [attackerTable]: { _id: result.attacker._id } },
-        $push: { [attackerGraveyard]: result.attacker },
-      }
-    );
-  }
-
-  // --- Si la carta sigue viva, actualizar hp/effect en mesa
-  if (result.defender.hp > 0) {
-    await Game.updateOne(
-      { _id: gameId, [`${defenderTable}._id`]: result.defender._id },
-      {
-        $set: {
-          [`${defenderTable}.$.hp`]: result.defender.hp,
-          [`${defenderTable}.$.effect`]: result.defender.effect,
-        },
-      }
-    );
-  } else {
-    // mover al cementerio
-    await Game.updateOne(
-      { _id: gameId },
-      {
-        $pull: { [defenderTable]: { _id: result.defender._id } },
-        $push: { [defenderGraveyard]: result.defender },
-      }
-    );
-  }
-
-  return result;
+    return result;
 }
 
 const PORT = process.env.PORT || 3000;
