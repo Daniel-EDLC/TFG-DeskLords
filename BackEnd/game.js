@@ -626,9 +626,7 @@ async function drawCard({ game, isAI }) {
 }
 
 // placeCardsAndAttack(): IA del rival para jugar cartas según prioridades y mana disponible.
-async function placeCardsAndAttack(gameId) {
-    const game = await Game.findById(gameId);
-    if (!game) throw new Error('Juego no encontrado');
+async function placeCardsAndAttack(game) {
 
     let rivalHand = [...game.rivalHand];
     let rivalTable = [...game.rivalTable];
@@ -695,7 +693,7 @@ async function placeCardsAndAttack(gameId) {
     // Calcula sumas
     const sumAtkPlayer = playerTable.reduce((acc, c) => acc + (c.atk || 0), 0);
     const sumHpPlayer = playerTable.reduce((acc, c) => acc + (c.hp || 0), 0);
-    
+
     const sumAtkRival = rivalTable.reduce((acc, c) => acc + (c.atk || 0), 0);
     const sumHpRival = rivalTable.reduce((acc, c) => acc + (c.hp || 0), 0);
 
@@ -723,7 +721,7 @@ async function placeCardsAndAttack(gameId) {
 
     // Actualiza el estado en la base de datos
     await Game.updateOne(
-        { _id: gameId },
+        { _id: game._id },
         {
             $set: {
                 rivalHand,
@@ -734,6 +732,9 @@ async function placeCardsAndAttack(gameId) {
             }
         }
     );
+
+    // Ataca con todas las cartas de la mesa del rival
+    return game.rivalTable;
 }
 
 const PORT = process.env.PORT || 3000;
