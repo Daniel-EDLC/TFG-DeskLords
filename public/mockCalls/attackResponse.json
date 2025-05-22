@@ -122,7 +122,28 @@
                 "health": 100,
                 "attack": 111,
                 "defense": 222,
-                "equipements": [],
+                "equipements": [
+                    {
+                    "id": "211",
+                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                    },
+                    {
+                    "id": "2111",
+                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                    },
+                    {
+                    "id": "211",
+                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                    },
+                    {
+                    "id": "2111",
+                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                    },
+                    {
+                    "id": "211",
+                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                    }
+                ],
                 "position":"attack"
             },
             {
@@ -154,7 +175,28 @@
                 "health": 100,
                 "attack": 111,
                 "defense": 222,
-                "equipements": [],
+                "equipements": [
+                    {
+                    "id": "211",
+                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                    },
+                    {
+                    "id": "2111",
+                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                    },
+                    {
+                    "id": "211",
+                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                    },
+                    {
+                    "id": "2111",
+                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                    },
+                    {
+                    "id": "211",
+                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                    }
+                ],
                 "position":"waiting"
             }
             ,{

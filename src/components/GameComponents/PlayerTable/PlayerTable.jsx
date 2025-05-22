@@ -177,25 +177,44 @@ function PlayerTable({ cartas, phase, onRequestPhaseChange, switchPhase, handleA
 
           
           // const cardClass = `player-card-table ${carta.battle ? 'player-battle' : ''}`;
-          const cardClass = `player-card-table`;
+          // const cardClass = `player-card-table`;
 
           return (
             <div key={carta.id} className="player-card-wrapper">
-              <Paper
-                elevation={10}
-                className={`${cardClass} ${isSelected ? 'selected' : ''}`}
-                onClick={() => handleCardClick(carta)}>
-                <img
-                  src={carta.image}
-                  alt={`Carta ${index + 1}`}
-                  className="player-card-img"
-                />
+              <div className={`player-card-table ${isSelected ? 'selected' : ''}`}>
+                <Paper
+                  elevation={10}
+                  className="player-card-inner"
+                  onClick={() => handleCardClick(carta)}
+                >
+                  <img
+                    src={carta.image}
+                    alt={`Carta ${index + 1}`}
+                    className="player-card-image"
+                  />
 
-                {isSelected && (
-                  <div className="attack-label"></div>
-                )}
+                  {carta.equipements && carta.equipements.length > 0 && (
+                    <div className="player-equipment-count">
+                      {carta.equipements.length}
+                    </div>
+                  )}
 
-              </Paper>
+                  {isSelected && <div className="attack-label"></div>}
+
+                  {carta.equipements && carta.equipements.length > 0 && (
+                    <div className="player-equipment-preview">
+                      {carta.equipements.map((equipo) => (
+                        <img
+                          key={equipo.id}
+                          src={equipo.image}
+                          alt={equipo.id}
+                          className="player-equipment-image"
+                        />
+                      ))}
+                    </div>
+                  )}
+                </Paper>
+              </div>
             </div>
           );
         })}

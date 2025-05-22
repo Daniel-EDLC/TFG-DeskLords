@@ -11,6 +11,12 @@
                 "cost": 2
             },
             {
+                "id": "41",
+                "type": "equipement",
+                "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg",
+                "cost": 2
+            },
+            {
                 "id": "42",
                 "type": "spell", 
                 "image": "https://m.media-amazon.com/images/I/412bfHjpFxL._AC_UF894,1000_QL80_.jpg",
@@ -23,16 +29,6 @@
                 "image": "https://elrincondemagic.wordpress.com/wp-content/uploads/2019/07/la-voluntad-de-los-dioses.png",
                 "cost": 3,
                 "action":"protect_all"
-            },
-            {
-                "id": "44",
-                "type": "criature",
-                "image": "https://i.ebayimg.com/00/s/MTYwMFgxMTU5/z/xxcAAOSwWWdeRm0g/$_57.JPG?set_id=8800005007",
-                "cost": 5,
-                "health": 100,
-                "attack": 111,
-                "defense": 222,
-                "equipements": []
             },
             {
                 "id": "45",
