@@ -306,10 +306,6 @@ async function useCard(req, res) {
             return req.response.error("Carta no encontrada en la mano del jugador");
         }
 
-        if (!targetedCard) {
-            return req.response.error("Carta no encontrada en la mesa del jugador o del rival");
-        }
-
         switch (usedCard.type) {
             case 'criature':
                 game.playerTable.push(usedCard);
@@ -317,6 +313,7 @@ async function useCard(req, res) {
                 game.playerHand = game.playerHand.filter(card => card._id.toString() !== req.body.cardId);
                 break;
             case 'equipement':
+                game.playerTable.find(card => card._id.toString() === targetedCard._id.toString()).equipment = usedCard;
 
                 game.playerHand = game.playerHand.filter(card => card._id.toString() !== req.body.cardId);
                 break;
@@ -360,9 +357,9 @@ async function attack(req, res) {
             try {
                 resolverCombate({
                     gameId: gameObjectId,
-                    attacker: assignment.attackerr,
+                    attacker: assignment.attacker,
                     defender: assignment.defender,
-                    isAI: req.body.isAI
+                    isAI: false
                 })
             } catch (error) {
                 return req.response.error(`Error al realizar la batalla 1: ${error.message}`);
@@ -466,13 +463,6 @@ async function resolverCombate({ gameId, attacker, defender, isAI }) {
             result.attacker.hp = 0;
         }
     }
-
-    // --- Sangrado
-    // if (attackerHabs.has("bleeding") && result.defender.hp > 0) {
-    //     result.defender.effect = "bleeding";
-    // } else {
-    //     result.defender.effect = null;
-    // }
 
     // --- Fuerza Bruta
     if (attackerBruteForce && result.defender.hp <= 0 && !defenderInvulnerable) {
