@@ -7,6 +7,9 @@ import PlayerHand from '../../components/GameComponents/PlayerHand/PlayerHand';
 import RivalHand from '../../components/GameComponents/RivalHand/RivalHand';
 import RivalTable from '../../components/GameComponents/RivalTable/RivalTable';
 import PlayerTable from '../../components/GameComponents/PlayerTable/PlayerTable';
+import Announcement from '../../components/GameComponents/Announcement/Announcement'; 
+
+
 
 import './Game.css'
 
@@ -16,80 +19,70 @@ import { playCard, switchPhase, attack, addCardToBattle, defense } from '../../s
 
 function Game() {
 
+  const [gameData, setGameData] = useLoadMatch();
 
+  const [selectedTableCardId, setSelectedTableCardId] = useState(null);
 
+  const [pendingEquipementCard, setPendingEquipementCard] = useState(null);
 
+  const [attackers, setAttackers] = useState([]);
 
-const [gameData, setGameData] = useLoadMatch();
-const [selectedTableCardId, setSelectedTableCardId] = useState(null);
-const [pendingEquipementCard, setPendingEquipementCard] = useState(null);
-const [attackers, setAttackers] = useState([]);
+  const [announcementLink, setAnnouncementLink] = useState('');
+  const [showAnnouncement, setShowAnnouncement] = useState(false);
 
-
-
-
-const handleRivalCardClick = (card) => {
-  if (card.position !== 'attack') {
-    alert('la carta no puede entrar en batalla');
-    return null;
-  }
-  addCardToBattle(card);
-};
-
-
-const handlePlayerCardClick = (card) => {
-  if (card.position !== 'defense') {
-    alert('la carta no puede entrar en batalla');
-    return null;
-  }
-  addCardToBattle(card);
-};
-
-
-
-const handlePlayCard = (card) => {
-    if (card.type === 'equipement' && !selectedTableCardId) {
-      setPendingEquipementCard(card);
-      return;
+  const handleRivalCardClick = (card) => {
+    if (card.position !== 'attack') {
+      alert('la carta no puede entrar en batalla');
+      return null;
     }
-    if (card.type === 'spell' && !selectedTableCardId) {
-      setPendingEquipementCard(card);
-      return;
+    addCardToBattle(card);
+  };
+
+  const handlePlayerCardClick = (card) => {
+    if (card.position !== 'defense') {
+      alert('la carta no puede entrar en batalla');
+      return null;
     }
-    playCard(setGameData, card);
-};
+    addCardToBattle(card);
+  };
 
+  const handlePlayCard = (card) => {
+      if (card.type === 'equipement' && !selectedTableCardId) {
+        setPendingEquipementCard(card);
+        return;
+      }
+      if (card.type === 'spell' && !selectedTableCardId) {
+        setPendingEquipementCard(card);
+        return;
+      }
+      playCard(setGameData, card);
+  };
 
-const handleSwitchPhase = () => {
-  switchPhase(setGameData);
-};
+  const handleSwitchPhase = () => {
+    switchPhase(setGameData);
+  };
 
+  const handleAttack = async (selectedAttackCards) => {
+    await attack(selectedAttackCards, setGameData);
+  };
 
-const handleAttack = async (selectedAttackCards) => {
-  await attack(selectedAttackCards, setGameData);
-};
+  const handleDefense = async () => {
+    await defense(setGameData, gameData);
+  };
 
-
-const handleDefense = async () => {
-  await defense(setGameData, gameData);
-};
-
-
-const setPhase = (nuevaFase) => {
+  const setPhase = (nuevaFase) => {
     setGameData((prevData) => ({
       ...prevData,
       turn: {
         ...prevData.turn,
-        phase: nuevaFase,
+        phase: nuevaFase
       },
     }));
   };
 
 
-
-     useEffect(() => {
+  useEffect(() => {
     if (pendingEquipementCard && selectedTableCardId) {
-      
       playCard(setGameData, {
         ...pendingEquipementCard,
         targetId: selectedTableCardId
@@ -99,41 +92,55 @@ const setPhase = (nuevaFase) => {
     }
   }, [pendingEquipementCard, selectedTableCardId, setGameData]);
 
+  useEffect(() => {
+    if (!gameData || !gameData.rival) return;
+        const nuevasCartas = gameData.rival.table.filter(carta => carta.position === 'attack');
+        if (nuevasCartas.length > 0) {
+        console.log('atacantes: ', nuevasCartas);
+        console.log('atacantes: ', attackers);
+        setAttackers(nuevasCartas);
+        return;
+      }
+  }, [gameData]);
 
-useEffect(() => {
-  if (!gameData || !gameData.rival) return;
-
-      const nuevasCartas = gameData.rival.table.filter(carta => carta.position === 'attack');
-      if (nuevasCartas.length > 0) {
-      console.log('atacantes: ', nuevasCartas);
-      setAttackers(nuevasCartas);
-      return;
+  useEffect(() => {
+    if (!gameData?.turn) return;
+    let link = '';
+    switch (gameData.turn.phase) {
+      case 'hand':
+        if (gameData.turn.whose==='user') {
+          link = '/TurnoUser.png';
+        }else if(gameData.turn.whose==='rival'){
+          link = '/TurnoUser.png';
+        }
+        break;
+      case 'table':
+        link = '/FaseAtaque.png';
+        break;
+      case 'defense':
+        link = '/FaseDefensa.png';
+        break;
+      default:
+        link = '';
     }
-    
 
-}, [gameData]);
+    if (link) {
+      setAnnouncementLink(link);
+      setShowAnnouncement(true);
+    }
+  }, [gameData]);
 
 
-
-if (!gameData ||  !gameData.rival ||  !gameData.user ||  !gameData.turn) {
-  return (
-    <div className="loading-container">
-      <div className="loading-box">
-        <h2>Cargando partida...</h2>
-        <p>Por favor, espera unos segundos</p>
+  if (!gameData ||  !gameData.rival ||  !gameData.user ||  !gameData.turn) {
+    return (
+      <div className="loading-container">
+        <div className="loading-box">
+          <h2>Cargando partida...</h2>
+          <p>Por favor, espera unos segundos</p>
+        </div>
       </div>
-    </div>
-  );
-}
-
-  // const cartas = ['/cards/card1.jpg','/cards/card2.jpg','/cards/card3.jpg','/cards/card4.jpg','/cards/card5.jpg','/cards/card6.jpg','/cards/card7.jpg',];
-  // const cartas2 = ['/cards/cardBack.jpg','/cards/cardBack.jpg','/cards/cardBack.jpg','/cards/cardBack.jpg','/cards/cardBack.jpg','/cards/cardBack.jpg','/cards/cardBack.jpg',];
-  // gameData.rival.mana = 10;
-  // gameData.user.mana = 10;
-  // gameData.rival.health = 100;
-  // gameData.user.health = 100;
-  // gameData.turn.phase = 'hand';
-
+    );
+  }
 
   return (
     <div className="app-container">
@@ -150,12 +157,12 @@ if (!gameData ||  !gameData.rival ||  !gameData.user ||  !gameData.turn) {
       <div className="mesa-container">
         <RivalTable 
           cartas={gameData.rival.table || []}
-          phase={gameData.turn.phase}
+          turn={gameData.turn}
           onCardClick={handleRivalCardClick}
         />
         <PlayerTable
           cartas={gameData.user.table || []}
-          phase={gameData.turn.phase}
+          turn={gameData.turn}
           onRequestPhaseChange={setPhase}
           switchPhase={handleSwitchPhase}
           handleAttack={handleAttack}
@@ -166,11 +173,11 @@ if (!gameData ||  !gameData.rival ||  !gameData.user ||  !gameData.turn) {
         />
       </div>
         <PlayerHand 
-           cartas={gameData.user.hand || []}
-           mana={gameData.user.mana}
-           phase={gameData.turn.phase}
-           onPlayCard={handlePlayCard}
-           selectedTableCardId={selectedTableCardId}
+            cartas={gameData.user.hand || []}
+            mana={gameData.user.mana}
+            phase={gameData.turn.phase}
+            onPlayCard={handlePlayCard}
+            selectedTableCardId={selectedTableCardId}
         />
         <PlayerProfile 
           className="player-profile" 
@@ -179,8 +186,14 @@ if (!gameData ||  !gameData.rival ||  !gameData.user ||  !gameData.turn) {
           life={gameData.user.health}
           mana={gameData.user.mana}
       />
+      {showAnnouncement && (
+        <Announcement
+          link={announcementLink}
+          duration={2000}
+          onFinish={() => setShowAnnouncement(false)}
+        />
+      )}
     </div>
-    
   )
 }
 

@@ -2,217 +2,617 @@
     "id": "gam_d595ad1a-263a-485f-b6fc-70c513edf40d",
     "status": "in_progress",
     "start_at": "2025-05-02T13:00:00.00+02:00",
-    "turn": {
-        "number": 1,
-        "whose": "user", 
-        "phase": "defense"
-    },
-    "user": {
-        "hand": [
-            {
-                "id": "61",
-                "type": "criature", 
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
-                "cost": 4,
-                "health": 100,
-                "attack": 111,
-                "defense": 222,
-                "equipements": []
-            },
-            {
-                "id": "62",
-                "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
-                "cost": 5,
-                "health": 100,
-                "attack": 111,
-                "defense": 222,
-                "equipements": []
-            },
-            {
-                "id": "63",
-                "type": "criature", 
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
-                "cost": 6,
-                "health": 100,
-                "attack": 111,
-                "defense": 222,
-                "equipements": []
-            },
-            {
-                "id": "64",
-                "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
-                "cost": 7,
-                "health": 100,
-                "attack": 111,
-                "defense": 222,
-                "equipements": []
-            }
-        ],
-        "table": [
-            {
-                "id": "65",
-                "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
-                "cost": 1,
-                "health": 100,
-                "attack": 111,
-                "defense": 222,
-                "equipements": [],
-                "position":"defense"
-            },
-            {
-                "id": "66",
-                "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
-                "cost": 1,
-                "health": 100,
-                "attack": 111,
-                "defense": 222,
-                "equipements": [],
-                "position":"defense"
-            },
-            {
-                "id": "67",
-                "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
-                "cost": 1,
-                "health": 100,
-                "attack": 111,
-                "defense": 222,
-                "equipements": [],
-                "position":"defense"
-            },
-            {
-                "id": "68",
-                "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
-                "cost": 1,
-                "health": 100,
-                "attack": 111,
-                "defense": 222,
-                "equipements": [],
-                "position":"defense"
-            },
-            {
-                "id": "69",
-                "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
-                "cost": 1,
-                "health": 100,
-                "attack": 111,
-                "defense": 222,
-                "equipements": [],
-                "position":"defense"
-            }
-        ], 
-        "pending_deck": 8,
-        "health": 30,
-        "mana": 6
-    },
-    "rival":{
-        "hand": 2,
-        "table": [
-            {
-                "id": "70",
-                "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
-                "cost": 7,
-                "health": 100,
-                "attack": 111,
-                "defense": 222,
-                "equipements": [
+    "action1":{
+        "turn": {
+            "number": 1,
+            "whose": "user", 
+            "phase": "defense"
+        },
+        "battle_result": [
+                {
+                "attacker": 
                     {
-                    "id": "211",
-                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        "id": "74",
+                        "type": "criature",
+                        "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                        "cost": 7,
+                        "health": 100,
+                        "attack": 111,
+                        "defense": 222,
+                        "equipements": [],
+                        "alive": true
                     },
+                "defender": 
                     {
-                    "id": "2111",
-                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
-                    },
-                    {
-                    "id": "211",
-                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
-                    },
-                    {
-                    "id": "2111",
-                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
-                    },
-                    {
-                    "id": "211",
-                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        "id": "74",
+                        "type": "criature",
+                        "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                        "cost": 7,
+                        "health": 100,
+                        "attack": 111,
+                        "defense": 222,
+                        "equipements": [],
+                        "alive": false
                     }
-                ],
-                "position":"attack"
-            },
-            {
-                "id": "71",
-                "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
-                "cost": 7,
-                "health": 100,
-                "attack": 111,
-                "defense": 222,
-                "equipements": [],
-                "position":"attack"
-            },
-            {
-                "id": "72",
-                "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
-                "cost": 7,
-                "health": 100,
-                "attack": 111,
-                "defense": 222,
-                "equipements": [],
-                "position":"waiting"
-            },{
-                "id": "73",
-                "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
-                "cost": 7,
-                "health": 100,
-                "attack": 111,
-                "defense": 222,
-                "equipements": [
+                },
+                {
+                "attacker": 
                     {
-                    "id": "211",
-                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        "id": "74",
+                        "type": "criature",
+                        "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                        "cost": 7,
+                        "health": 100,
+                        "attack": 111,
+                        "defense": 222,
+                        "equipements": [],
+                        "alive": false
                     },
+                "defender": 
                     {
-                    "id": "2111",
-                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
-                    },
-                    {
-                    "id": "211",
-                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
-                    },
-                    {
-                    "id": "2111",
-                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
-                    },
-                    {
-                    "id": "211",
-                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        "id": "74",
+                        "type": "criature",
+                        "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                        "cost": 7,
+                        "health": 100,
+                        "attack": 111,
+                        "defense": 222,
+                        "equipements": [],
+                        "alive": false
                     }
+                }
+            ],
+        "user": {
+            "hand": [
+                {
+                    "id": "61",
+                    "type": "criature", 
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 4,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": []
+                },
+                {
+                    "id": "62",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 5,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": []
+                },
+                {
+                    "id": "63",
+                    "type": "criature", 
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 6,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": []
+                },
+                {
+                    "id": "64",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 7,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": []
+                }
+            ],
+            "table": [
+                {
+                    "id": "65",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 1,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": [],
+                    "alive": true
+                },
+                {
+                    "id": "66",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 1,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": [],
+                    "alive": true
+                },
+                {
+                    "id": "67",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 1,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": [],
+                    "alive": true
+                },
+                {
+                    "id": "68",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 1,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": [],
+                    "alive": false
+                },
+                {
+                    "id": "69",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 1,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": [],
+                    "alive": false
+                }
+            ], 
+            "pending_deck": 8,
+            "health": 30,
+            "mana": 6
+        },
+        "rival":{
+            "hand": 3,
+            "table": [
+                {
+                    "id": "70",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 7,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": [],
+                    "alive": true
+                },
+                {
+                    "id": "71",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 7,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": [],
+                    "alive": true
+                },
+                {
+                    "id": "72",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 7,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": [],
+                    "alive": true
+                },{
+                    "id": "73",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 7,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": [
+                        {
+                        "id": "2111234543",
+                        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        },
+                        {
+                        "id": "211122222222333333",
+                        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        },
+                        {
+                        "id": "2113",
+                        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        }
+                    ],
+                    "alive": false
+                }
+                ,{
+                    "id": "74",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 7,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": [],
+                    "alive": false
+                }
+            ], 
+            "pending_deck": 8,
+            "health": 13,
+            "mana": 1
+        }
+    },
+    "action2":{
+        "turn": {
+            "number": 2,
+            "whose": "rival", 
+            "phase": "hand"
+        },
+        "action_result": [
+                    {
+                    "type": "use",
+                    "card": {
+                            "id": "11",
+                            "type": "spell",
+                            "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                            "cost": 3,
+                            "target":{
+                                        "id": "51"
+                                    }
+                        }},
+                    {
+                "type": "use",
+                "card": {
+                        "id": "11",
+                        "type": "criature",
+                        "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                        "cost": 3,
+                        "health": 100,
+                        "attack": 111,
+                        "defense": 222,
+                        "equipements": []
+                    }}
                 ],
-                "position":"waiting"
-            }
-            ,{
-                "id": "74",
-                "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
-                "cost": 7,
-                "health": 100,
-                "attack": 111,
-                "defense": 222,
-                "equipements": [],
-                "position":"attack"
-            }
-        ], 
-        "pending_deck": 8,
-        "health": 13,
-        "mana": 1
+        "user": {
+            "hand": [
+                {
+                    "id": "61",
+                    "type": "criature", 
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 4,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": []
+                },
+                {
+                    "id": "62",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 5,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": []
+                },
+                {
+                    "id": "63",
+                    "type": "criature", 
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 6,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": []
+                },
+                {
+                    "id": "64",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 7,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": []
+                }
+            ],
+            "table": [
+                {
+                    "id": "65",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 1,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": []
+                },
+                {
+                    "id": "66",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 1,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": []
+                },
+                {
+                    "id": "67",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 1,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": []
+                }
+            ], 
+            "pending_deck": 8,
+            "health": 30,
+            "mana": 6
+        },
+        "rival":{
+            "hand": 1,
+            "table": [
+                {
+                    "id": "70",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 7,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": [
+                        {
+                        "id": "21134534564635",
+                        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        },
+                        {
+                        "id": "2112311",
+                        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        },
+                        {
+                        "id": "2114",
+                        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        },
+                        {
+                        "id": "211321111",
+                        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        },
+                        {
+                        "id": "2115",
+                        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        }
+                    ]
+                },
+                {
+                    "id": "71",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 7,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": []
+                },
+                {
+                    "id": "72",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 7,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": [
+                        {
+                        "id": "2113",
+                        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        },
+                        {
+                        "id": "21112",
+                        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        },
+                        {
+                        "id": "2112",
+                        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        },
+                        {
+                        "id": "2111123",
+                        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        },
+                        {
+                        "id": "2111233333333333",
+                        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        }
+                    ]
+                }
+            ], 
+            "pending_deck": 8,
+            "health": 13,
+            "mana": 1
+        }
+    },
+    "action3":{
+        "turn": {
+            "number": 2,
+            "whose": "rival", 
+            "phase": "attack"
+        },
+        "user": {
+            "hand": [
+                {
+                    "id": "61",
+                    "type": "criature", 
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 4,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": []
+                },
+                {
+                    "id": "62",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 5,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": []
+                },
+                {
+                    "id": "63",
+                    "type": "criature", 
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 6,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": []
+                },
+                {
+                    "id": "64",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 7,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": []
+                }
+            ],
+            "table": [
+                {
+                    "id": "65",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 1,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": [],
+                    "position":"defense"
+                },
+                {
+                    "id": "66",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 1,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": [],
+                    "position":"defense"
+                },
+                {
+                    "id": "67",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 1,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": [],
+                    "position":"defense"
+                }
+            ], 
+            "pending_deck": 8,
+            "health": 30,
+            "mana": 6
+        },
+        "rival":{
+            "hand": 2,
+            "table": [
+                {
+                    "id": "70",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 7,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": [
+                        {
+                        "id": "2113452324324234",
+                        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        },
+                        {
+                        "id": "21112312331211111",
+                        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        },
+                        {
+                        "id": "21112312",
+                        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        },
+                        {
+                        "id": "211123",
+                        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        },
+                        {
+                        "id": "2113333333",
+                        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        }
+                    ],
+                    "position":"attack"
+                },
+                {
+                    "id": "71",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 7,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": [],
+                    "position":"attack"
+                },
+                {
+                    "id": "72",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 7,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": [],
+                    "position":"waiting"
+                },{
+                    "id": "73",
+                    "type": "criature",
+                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "cost": 7,
+                    "health": 100,
+                    "attack": 111,
+                    "defense": 222,
+                    "equipements": [
+                        {
+                        "id": "211555333",
+                        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        },
+                        {
+                        "id": "21113333123123",
+                        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        },
+                        {
+                        "id": "211344311",
+                        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        },
+                        {
+                        "id": "211112333333",
+                        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        },
+                        {
+                        "id": "211555555555",
+                        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                        }
+                    ],
+                    "position":"waiting"
+                }
+            ], 
+            "pending_deck": 8,
+            "health": 13,
+            "mana": 1
+        }
     }
 }

@@ -1,6 +1,15 @@
 {
     "action_result": {
-        "type": "use"
+        "type": "use",
+        "card": {
+                "id": "11",
+                "type": "spell",
+                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "cost": 3,
+                "target":{
+                             "id": "51"
+                        }
+            }
     },
     "user": {
         "hand": [
