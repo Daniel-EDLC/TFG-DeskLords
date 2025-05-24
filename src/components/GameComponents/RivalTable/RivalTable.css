@@ -128,6 +128,7 @@
 .attack-position {
   position: relative;
   transform: translateY(15%);
+  
 }
 
 .attack-position::after {
@@ -159,3 +160,9 @@
 }
 
 
+
+.rival-card-fade-out {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 1s ease-out, transform 1s ease-out;
+}

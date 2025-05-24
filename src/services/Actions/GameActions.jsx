@@ -316,17 +316,56 @@ export async function attack(selectedAttackCards, setGameData) {
       ...prev,
       turn: {
         ...prev.turn,
-        ...data.turn,
+        ...data.action1.turn,
       },
       user: {
         ...prev.user,
-        ...data.user,
+        ...data.action1.user,
       },
       rival: {
         ...prev.rival,
-        ...data.rival,
+        ...data.action1.rival,
       }
     }));
+
+
+    setTimeout(() => {
+      setGameData(prev => ({
+        ...prev,
+        turn: {
+          ...prev.turn,
+          ...data.action2.turn,
+        },
+        user: {
+          ...prev.user,
+          ...data.action2.user,
+        },
+        rival: {
+          ...prev.rival,
+          ...data.action2.rival,
+        }
+      }));
+    }, 3000);
+
+    setTimeout(() => {
+        setGameData(prev => ({
+        ...prev,
+        turn: {
+          ...prev.turn,
+          ...data.action3.turn,
+        },
+        user: {
+          ...prev.user,
+          ...data.action3.user,
+        },
+        rival: {
+          ...prev.rival,
+          ...data.action3.rival,
+        }
+      }));
+    }, 6000);
+
+
 
   } catch (error) {
     console.error('Error simulado al enviar ataque:', error);

@@ -1,40 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import { endTurn } from '../../../services/Actions/GameActions';
 import './PlayerTable.css';
 
-function PlayerTable({ cartas, phase, onRequestPhaseChange, switchPhase, handleAttack, handleDefense, targetEquipmentCard, isSelectingTargetForEquipment,  onCardClick }) {
+function PlayerTable({ cartas, turn, onRequestPhaseChange, switchPhase, handleAttack, handleDefense, targetEquipmentCard, isSelectingTargetForEquipment,  onCardClick }) {
 
   const [selectedAttackCards, setselectedAttackCards] = useState([]);
   const [pendingCardId, setPendingCardId] = useState(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   
+  const [hiddenCards, setHiddenCards] = useState([]);
+  const [removedCards, setRemovedCards] = useState([]);
 
   const handleCardClick = (carta) => {
 
-    switch (phase) {
-      case 'hand':
+    if (turn.whose === 'user') {
+      if (turn.phase === 'hand') {
+        console.log("hola");
         if (isSelectingTargetForEquipment && targetEquipmentCard) {
-            targetEquipmentCard(carta.id);
-            return;
+          targetEquipmentCard(carta.id);
+          return;
         }
         setPendingCardId(carta.id);
         setShowConfirmDialog(true);
-        break;
 
-      case 'table':
+      } else if (turn.phase === 'table') {
         toggleAttackCard(carta.id);
-        break;
 
-      case 'defense':
+      } 
+    }else if(turn.whose === 'rival'){
+      if (turn.phase === 'attack') {
         console.log('Defender con carta:', carta);
-        onCardClick(carta)
-        break;
-
-      default:
-        break;
-    }
-  };
+        onCardClick(carta);
+      }
+    };
+  }
 
 
   const toggleAttackCard = (id) => {
@@ -83,96 +83,85 @@ function PlayerTable({ cartas, phase, onRequestPhaseChange, switchPhase, handleA
     setPendingCardId(null);
   };
 
+  useEffect(() => {
+    cartas.forEach((carta) => {
+      if (carta.alive === false && !hiddenCards.includes(carta.id)) {
+        setTimeout(() => {
+          setHiddenCards((prev) => [...prev, carta.id]);
+        }, 1500);
+      }
+    });
+  }, [cartas]);
 
+  useEffect(() => {
+    cartas.forEach((carta) => {
+      if (carta.alive === false && !removedCards.includes(carta.id)) {
+        setTimeout(() => {
+          setRemovedCards((prev) => [...prev, carta.id]);
+        }, 2500);
+      }
+    });
+  }, [cartas]);
 
+  const renderPhaseButtons = (turn) => {
+    console.log(turn)
+    if (turn.whose === 'user'){
+      switch (turn.phase) {
+          case 'hand':
+            return (
+              <>
+                <Button variant="contained" className="phase-button" onClick={switchPhase}>
+                  Fase mesa
+                </Button>
+                <Button variant="contained" className="end-turn-button" onClick={endTurn}>
+                  Pasar turno
+                </Button>
+              </>
+            );
+
+          case 'table':
+            return (
+              <>
+                {selectedAttackCards.length > 0 ? (
+                  <Button variant="contained" className="phase-button" color="primary" onClick={handleAttackClick}>
+                    Atacar y finalizar
+                  </Button>
+                ) : (
+                  <Button variant="contained" className="end-turn-button" onClick={endTurn}>
+                    Finalizar
+                  </Button>
+                )}
+              </>
+            );
+            
+          default:
+            return null;
+
+         
+
+          
+        }
+    }else if(turn.whose === 'rival' && turn.phase === 'attack' ){
+            return (
+              <Button variant="contained" className="phase-button" color="primary" onClick={handleDefenseClick}>
+                Defender y empezar turno
+              </Button>
+            );
+    }
+};
 
   return (
     <>
       <Box className="phase-buttons">
-        {(() => {
-          switch (phase) {
-            case 'hand':
-              return (
-                <>
-                  <Button
-                    variant="contained"
-                    className="phase-button"
-                    onClick={switchPhase}
-                  >
-                    Fase mesa
-                  </Button>
-                  <Button
-                    variant="contained"
-                    className="end-turn-button"
-                    onClick={endTurn}
-                  >
-                    Pasar turno
-                  </Button>
-                </>
-              );
-
-            case 'table':
-              return (
-                <>
-                  {selectedAttackCards.length > 0 ? (
-                    <Button
-                      variant="contained"
-                      className="phase-button"
-                      color="primary"
-                      onClick={handleAttackClick}
-                    >
-                      Atacar y finalizar
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="contained"
-                      className="end-turn-button"
-                      onClick={endTurn}
-                    >
-                      Finalizar
-                    </Button>
-                  )}
-                </>
-              );
-
-            case 'defense':
-              return (
-                <>
-                  {(
-                    <Button
-                      variant="contained"
-                      className="phase-button"
-                      color="primary"
-                      onClick={handleDefenseClick}
-                    >
-                      Defender y empezar turno
-                    </Button>
-                  ) 
-                  // : (
-                  //   <Button
-                  //     variant="contained"
-                  //     className="end-turn-button"
-                  //     onClick={endTurn}
-                  //   >
-                  //     Pasar sin defender
-                  //   </Button>
-                  // )
-                  }
-                  
-                </>
-              );
-
-            default:
-              return null;
-          }
-        })()}
+        {renderPhaseButtons(turn)}
       </Box>
-
-
       <Box className="player-table-container">
 
-          {cartas.map((carta, index) => {
+         {cartas.map((carta, index) => {
+          if (removedCards.includes(carta.id)) return null;
+
           const isSelected = selectedAttackCards.includes(carta.id);
+          const isFadingOut = hiddenCards.includes(carta.id);
 
 
           
@@ -180,12 +169,12 @@ function PlayerTable({ cartas, phase, onRequestPhaseChange, switchPhase, handleA
           // const cardClass = `player-card-table`;
 
           return (
-            <div key={carta.id} className="player-card-wrapper">
+            <div key={carta.id} className={`player-card-wrapper ${isFadingOut ? 'player-card-fade-out' : ''}`}>
               <div className={`player-card-table ${isSelected ? 'selected' : ''}`}>
                 <Paper
                   elevation={10}
                   className="player-card-inner"
-                  onClick={() => handleCardClick(carta)}
+                  onClick={() => { handleCardClick(carta) }}
                 >
                   <img
                     src={carta.image}
