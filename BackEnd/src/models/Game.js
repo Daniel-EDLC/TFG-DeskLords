@@ -3,6 +3,7 @@ const deckSchema = require('./Deck').schema;
 const cardSchema = require('./Card').schema;
 
 const gameSchema = new mongoose.Schema({
+    idPlayer: {type: String, required: true},
     status: {type: String, required: true, enum: ['in-progress', 'abandoned', 'finished'], default: 'in-progress'},
     startTime: {type: Date, required: true, default: Date.now},
     endTime: {type: Date, required: false},
