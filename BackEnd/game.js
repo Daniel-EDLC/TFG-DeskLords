@@ -626,6 +626,14 @@ async function drawCard({ game, isAI }) {
 }
 
 // placeCardsAndAttack(): IA del rival para jugar cartas según prioridades y mana disponible.
+// Cómo funciona el reduce():
+//      maxIdx es el índice de la carta con mayor coste encontrado hasta ahora.
+//      c es la carta actual.
+//      i es el índice de la carta actual.
+//      arr es el array completo (playerTable).
+// Compara el coste de la carta actual (c.cost) con el de la carta más cara encontrada hasta ahora (arr[maxIdx].cost).
+// Si la actual es más cara, devuelve su índice (i).
+// Si no, mantiene el índice anterior (maxIdx).
 async function placeCardsAndAttack(game) {
 
     let rivalHand = [...game.rivalHand];
@@ -644,7 +652,7 @@ async function placeCardsAndAttack(game) {
         if (spell.effect === 'kill') {
             // Mata la carta de mayor coste de la mesa del jugador
             if (playerTable.length > 0) {
-                const idx = playerTable.reduce((maxIdx, c, i, arr) => c.cost > arr[maxIdx].cost ? i : maxIdx, 0);
+                const idx = playerTable.reduce((maxCostIdx, c, actualIdx, arr) => c.cost > arr[maxCostIdx].cost ? actualIdx : maxCostIdx, 0);
                 playerGraveyard.push(playerTable[idx]);
                 playerTable.splice(idx, 1);
                 rivalMana -= spell.cost;
@@ -654,7 +662,7 @@ async function placeCardsAndAttack(game) {
         } else if (spell.effect === 'protect') {
             // Protege la carta de la mesa del rival con menos vida
             if (rivalTable.length > 0) {
-                const idx = rivalTable.reduce((minIdx, c, i, arr) => c.hp < arr[minIdx].hp ? i : minIdx, 0);
+                const idx = rivalTable.reduce((maxCostIdx, c, actualIdx, arr) => c.hp < arr[maxCostIdx].hp ? actualIdx : maxCostIdx, 0);
                 if (!rivalTable[idx].temporaryAbilities) rivalTable[idx].temporaryAbilities = [];
                 if (!rivalTable[idx].temporaryAbilities.includes('invulnerable')) {
                     rivalTable[idx].temporaryAbilities.push('invulnerable');
@@ -673,12 +681,12 @@ async function placeCardsAndAttack(game) {
         if (rivalTable.length > 0) {
             if (equip.atk > equip.hp) {
                 // Busca la carta con menos atk
-                const idx = rivalTable.reduce((minIdx, c, i, arr) => c.atk < arr[minIdx].atk ? i : minIdx, 0);
+                const idx = rivalTable.reduce((maxCostIdx, c, actualIdx, arr) => c.atk < arr[maxCostIdx].atk ? actualIdx : maxCostIdx, 0);
                 if (!rivalTable[idx].equipements) rivalTable[idx].equipements = [];
                 rivalTable[idx].equipements.push(equip);
             } else {
                 // Busca la carta con menos hp
-                const idx = rivalTable.reduce((minIdx, c, i, arr) => c.hp < arr[minIdx].hp ? i : minIdx, 0);
+                const idx = rivalTable.reduce((maxCostIdx, c, actualIdx, arr) => c.hp < arr[maxCostIdx].hp ? actualIdx : maxCostIdx, 0);
                 if (!rivalTable[idx].equipements) rivalTable[idx].equipements = [];
                 rivalTable[idx].equipements.push(equip);
             }
@@ -701,10 +709,10 @@ async function placeCardsAndAttack(game) {
         let idx = -1;
         if (sumAtkPlayer > sumHpRival) {
             // Saca la carta con más vida
-            idx = criatureHand.reduce((maxIdx, c, i, arr) => c.hp > arr[maxIdx].hp ? i : maxIdx, 0);
+            idx = criatureHand.reduce((maxCostIdx, c, actualIdx, arr) => c.hp > arr[maxCostIdx].hp ? actualIdx : maxCostIdx, 0);
         } else if (sumHpPlayer > sumAtkRival) {
             // Saca la carta con más atk
-            idx = criatureHand.reduce((maxIdx, c, i, arr) => c.atk > arr[maxIdx].atk ? i : maxIdx, 0);
+            idx = criatureHand.reduce((maxCostIdx, c, actualIdx, arr) => c.atk > arr[maxCostIdx].atk ? actualIdx : maxCostIdx, 0);
         }
         if (idx !== -1 && criatureHand[idx].cost <= rivalMana) {
             rivalTable.push(criatureHand[idx]);
