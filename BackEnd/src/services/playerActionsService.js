@@ -81,10 +81,74 @@ async function attack(req, res) {
     );
 
     await Promise.all(combates);
-    await nextTurn({ game, isAi: true });
-    await placeCardsAndAttack(game);
 
-    return req.response.success();
+    // Action 1 response
+    const action1Response = {
+      turn: {
+          number: game.currentTurn,
+          whose: "player",
+          phase: "defense"
+        },
+        battle_result: assignments.map(a => ({
+            attacker: a.attacker._id.toString(),
+            defender: a.defender === "player" ? "player" : a.defender._id.toString(),
+          })),
+        user: {
+          table: game.playerTable,
+          pending_deck: game.playerPendingDeck,
+          health: game.playerHp,
+          mana: game.playerMana // En principio no es necesario
+        },
+        rival: {
+          hand: game.rivalHand,
+          table: game.rivalTable,
+          pending_deck: game.rivalPendingDeck,
+          health: game.rivalHp,
+          mana: game.rivalMana
+        }
+    }
+
+    // action de robar carta
+    await nextTurn({ game, isAi: true });
+
+    const result = await placeCardsAndAttack(game);
+
+    return req.response.success({
+      action1: action1Response ? action1Response : {},
+      action2: {
+        turn: {
+          number: game.currentTurn,
+          whose: "rival",
+          phase: "hand"
+        },
+        action_result: [
+          result.actionSpell,
+          result.actionEquipement,
+          ...result.rivalTable
+        ],
+        rival: {
+          hand: result.rivalHand,
+          table: result.rivalTable,
+          pending_deck: result.rivalPendingDeck,
+          health: result.rivalHp,
+          mana: result.rivalMana
+        }
+      },
+      action3: {
+        turn: {
+          number: game.currentTurn,
+          whose: "rival",
+          phase: "attack"
+        },
+        rival: {
+          hand: result.rivalHand,
+          table: result.rivalTable,
+          pending_deck: result.rivalPendingDeck,
+          health: result.rivalHp,
+          mana: result.rivalMana
+        }
+      }
+    });
   } catch (error) {
     return req.response.error(`Error al atacar: ${error.message}`);
   }

@@ -6,33 +6,48 @@ async function placeCardsAndAttack(game) {
   let playerTable = [...game.playerTable];
   let playerGraveyard = [...game.playerGraveyard];
   let rivalMana = game.rivalMana;
-  let cartasUsadas = [];
-  let spellUsada = false;
-  let equipementUsada = false;
+  let usedCards = [];
+  let spellUsed = false;
+  let equipementUsed = false;
+
+  let actionSpell = {
+    spell: null, // Spell to use
+    target: null, // Target for the spell
+  }
+
+  let actionEquipement = {
+    equipement: null, // Equipement to use
+    target: null, // Target for the equipement
+  }
+
 
   // 1. Spell
   const spellIdx = rivalHand.findIndex(c => c.type === 'spell' && c.cost <= rivalMana);
-  if (spellIdx !== -1 && !spellUsada) {
+  if (spellIdx !== -1 && !spellUsed) {
     const spell = rivalHand[spellIdx];
     if (spell.effect === 'kill' && playerTable.length > 0) {
       const idx = playerTable.reduce((maxIdx, c, i, arr) => c.cost > arr[maxIdx].cost ? i : maxIdx, 0);
       playerGraveyard.push(playerTable[idx]);
       playerTable.splice(idx, 1);
       rivalMana -= spell.cost;
-      cartasUsadas.push(spell._id);
-      spellUsada = true;
+      usedCards.push(spell._id);
+      spellUsed = true;
+      actionSpell.target = playerTable[idx];
     } else if (spell.effect === 'protect' && rivalTable.length > 0) {
       const idx = rivalTable.reduce((minIdx, c, i, arr) => c.hp < arr[minIdx].hp ? i : minIdx, 0);
       rivalTable[idx].temporaryAbilities = [...(rivalTable[idx].temporaryAbilities || []), 'invulnerable'];
       rivalMana -= spell.cost;
-      cartasUsadas.push(spell._id);
-      spellUsada = true;
+      usedCards.push(spell._id);
+      spellUsed = true;
+      actionSpell.target = rivalTable[idx];
     }
+
+    actionSpell.spell = spell;
   }
 
   // 2. Equipement
   const equipementIdx = rivalHand.findIndex(c => c.type === 'equipement' && c.cost <= rivalMana);
-  if (equipementIdx !== -1 && !equipementUsada) {
+  if (equipementIdx !== -1 && !equipementUsed) {
     const equip = rivalHand[equipementIdx];
     if (rivalTable.length > 0) {
       const idx = equip.atk > equip.hp ?
@@ -41,13 +56,15 @@ async function placeCardsAndAttack(game) {
 
       rivalTable[idx].equipements = [...(rivalTable[idx].equipements || []), equip];
       rivalMana -= equip.cost;
-      cartasUsadas.push(equip._id);
-      equipementUsada = true;
+      usedCards.push(equip._id);
+      equipementUsed = true;
+      actionEquipement.equipement = equip;
+      actionEquipement.target = rivalTable[idx];
     }
   }
 
   // 3. Criature
-  let criatureHand = rivalHand.filter(c => c.type === 'criature' && c.cost <= rivalMana && !cartasUsadas.includes(c._id));
+  let criatureHand = rivalHand.filter(c => c.type === 'criature' && c.cost <= rivalMana && !usedCards.includes(c._id));
 
   const sumAtkPlayer = playerTable.reduce((acc, c) => acc + (c.atk || 0), 0);
   const sumHpPlayer = playerTable.reduce((acc, c) => acc + (c.hp || 0), 0);
@@ -65,14 +82,14 @@ async function placeCardsAndAttack(game) {
     if (idx !== -1 && criatureHand[idx].cost <= rivalMana) {
       rivalTable.push(criatureHand[idx]);
       rivalMana -= criatureHand[idx].cost;
-      cartasUsadas.push(criatureHand[idx]._id);
+      usedCards.push(criatureHand[idx]._id);
       criatureHand.splice(idx, 1);
     } else {
       break;
     }
   }
 
-  rivalHand = rivalHand.filter(c => !cartasUsadas.includes(c._id));
+  rivalHand = rivalHand.filter(c => !usedCards.includes(c._id));
 
   await Game.updateOne(
     { _id: game._id },
@@ -87,7 +104,7 @@ async function placeCardsAndAttack(game) {
     }
   );
 
-  return game.rivalTable;
+  return {spell: actionSpell, equipement: actionEquipement, rivalTable: game.rivalTable};
 }
 
 module.exports = { placeCardsAndAttack };
