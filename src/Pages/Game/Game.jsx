@@ -15,11 +15,16 @@ import './Game.css'
 
 import useLoadMatch from '../../services/LoadMatch/LoadMatch';
 
-import { playCard, switchPhase, attack, addCardToBattle, defense } from '../../services/Actions/GameActions';
+import { playCard, switchPhase, endTurn, addCardToBattle, defense, resetBattle, getBattle } from '../../services/Actions/GameActions';
 
 function Game() {
 
   const [gameData, setGameData] = useLoadMatch();
+
+  const phaseTurn = gameData?.turn?.phase;
+  const whoseTurn = gameData?.turn?.whose;
+
+  const [battles, setBattles] = useState([]);
 
   const [selectedTableCardId, setSelectedTableCardId] = useState(null);
 
@@ -35,7 +40,10 @@ function Game() {
       alert('la carta no puede entrar en batalla');
       return null;
     }
-    addCardToBattle(card);
+    const addedBattle = addCardToBattle(card);
+    if (addedBattle) {
+      updateBattles();
+    }
   };
 
   const handlePlayerCardClick = (card) => {
@@ -43,7 +51,10 @@ function Game() {
       alert('la carta no puede entrar en batalla');
       return null;
     }
-    addCardToBattle(card);
+    const addedBattle = addCardToBattle(card);
+  if (addedBattle) {
+    updateBattles();
+  }
   };
 
   const handlePlayCard = (card) => {
@@ -62,8 +73,8 @@ function Game() {
     switchPhase(setGameData);
   };
 
-  const handleAttack = async (selectedAttackCards) => {
-    await attack(selectedAttackCards, setGameData);
+  const handleEndTurn = async (selectedAttackCards) => {
+    await endTurn(selectedAttackCards, setGameData);
   };
 
   const handleDefense = async () => {
@@ -88,7 +99,7 @@ function Game() {
         targetId: selectedTableCardId
       });
       setPendingEquipementCard(null);
-      setSelectedTableCardId(null); // limpiar selección
+      setSelectedTableCardId(null);
     }
   }, [pendingEquipementCard, selectedTableCardId, setGameData]);
 
@@ -96,39 +107,49 @@ function Game() {
     if (!gameData || !gameData.rival) return;
         const nuevasCartas = gameData.rival.table.filter(carta => carta.position === 'attack');
         if (nuevasCartas.length > 0) {
-        console.log('atacantes: ', nuevasCartas);
-        console.log('atacantes: ', attackers);
+          console.log(attackers)
         setAttackers(nuevasCartas);
         return;
       }
   }, [gameData]);
 
-  useEffect(() => {
-    if (!gameData?.turn) return;
-    let link = '';
-    switch (gameData.turn.phase) {
-      case 'hand':
-        if (gameData.turn.whose==='user') {
-          link = '/TurnoUser.png';
-        }else if(gameData.turn.whose==='rival'){
-          link = '/TurnoUser.png';
-        }
-        break;
-      case 'table':
-        link = '/FaseAtaque.png';
-        break;
-      case 'defense':
-        link = '/FaseDefensa.png';
-        break;
-      default:
-        link = '';
-    }
 
-    if (link) {
-      setAnnouncementLink(link);
-      setShowAnnouncement(true);
-    }
-  }, [gameData]);
+useEffect(() => {
+  if (!gameData?.turn?.phase) return;
+
+  let link = '';
+  switch (gameData.turn.phase) {
+    case 'hand':
+      link = gameData.turn.whose === 'user' ? '/TurnoUser.png' : '/TurnoRival.png';
+      break;
+    case 'table':
+      link = '/FaseAtaque.png';
+      break;
+    case 'defense':
+      link = '/FaseDefensa.png';
+      break;
+    case 'attack':
+    link = '/FaseAtaque.png';
+      break;
+    default:
+      link = '';
+  }
+
+  if (link) {
+    setAnnouncementLink(link);
+    setShowAnnouncement(true);
+  }
+}, [phaseTurn, whoseTurn]);
+
+const updateBattles = () => {
+  const currentBattles = getBattle();
+  setBattles([...currentBattles]);
+};
+
+const handleResetBattle = () => {
+  resetBattle();
+  setBattles([]);
+};
 
 
   if (!gameData ||  !gameData.rival ||  !gameData.user ||  !gameData.turn) {
@@ -165,11 +186,13 @@ function Game() {
           turn={gameData.turn}
           onRequestPhaseChange={setPhase}
           switchPhase={handleSwitchPhase}
-          handleAttack={handleAttack}
+          handleEndTurn={handleEndTurn}
           handleDefense={handleDefense}
           targetEquipmentCard={setSelectedTableCardId}
           isSelectingTargetForEquipment={!!pendingEquipementCard}
           onCardClick={handlePlayerCardClick}
+          battles={battles}
+          onResetBattle={handleResetBattle}
         />
       </div>
         <PlayerHand 

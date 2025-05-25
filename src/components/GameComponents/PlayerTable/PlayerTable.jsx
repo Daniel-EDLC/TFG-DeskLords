@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
-import { endTurn } from '../../../services/Actions/GameActions';
 import './PlayerTable.css';
 
-function PlayerTable({ cartas, turn, onRequestPhaseChange, switchPhase, handleAttack, handleDefense, targetEquipmentCard, isSelectingTargetForEquipment,  onCardClick }) {
+function PlayerTable({ cartas, turn, onRequestPhaseChange, switchPhase, handleEndTurn, handleDefense, targetEquipmentCard, isSelectingTargetForEquipment,  onCardClick, battles, onResetBattle }) {
 
   const [selectedAttackCards, setselectedAttackCards] = useState([]);
   const [pendingCardId, setPendingCardId] = useState(null);
@@ -45,11 +44,9 @@ function PlayerTable({ cartas, turn, onRequestPhaseChange, switchPhase, handleAt
     );
   };
 
-  const handleAttackClick = async () => {
-    if (selectedAttackCards.length === 0) return;
-
+  const handleEndTurnClick = async () => {
     try {
-      await handleAttack(selectedAttackCards);  
+      await handleEndTurn(selectedAttackCards);  
       setselectedAttackCards([]);
     } catch (error) {
       console.error('Error al atacar:', error);
@@ -104,7 +101,6 @@ function PlayerTable({ cartas, turn, onRequestPhaseChange, switchPhase, handleAt
   }, [cartas]);
 
   const renderPhaseButtons = (turn) => {
-    console.log(turn)
     if (turn.whose === 'user'){
       switch (turn.phase) {
           case 'hand':
@@ -113,7 +109,7 @@ function PlayerTable({ cartas, turn, onRequestPhaseChange, switchPhase, handleAt
                 <Button variant="contained" className="phase-button" onClick={switchPhase}>
                   Fase mesa
                 </Button>
-                <Button variant="contained" className="end-turn-button" onClick={endTurn}>
+                <Button variant="contained" className="end-turn-button" onClick={handleEndTurnClick}>
                   Pasar turno
                 </Button>
               </>
@@ -123,11 +119,11 @@ function PlayerTable({ cartas, turn, onRequestPhaseChange, switchPhase, handleAt
             return (
               <>
                 {selectedAttackCards.length > 0 ? (
-                  <Button variant="contained" className="phase-button" color="primary" onClick={handleAttackClick}>
+                  <Button variant="contained" className="phase-button" color="primary" onClick={handleEndTurnClick}>
                     Atacar y finalizar
                   </Button>
                 ) : (
-                  <Button variant="contained" className="end-turn-button" onClick={endTurn}>
+                  <Button variant="contained" className="end-turn-button" onClick={handleEndTurnClick}>
                     Finalizar
                   </Button>
                 )}
@@ -143,10 +139,25 @@ function PlayerTable({ cartas, turn, onRequestPhaseChange, switchPhase, handleAt
         }
     }else if(turn.whose === 'rival' && turn.phase === 'attack' ){
             return (
-              <Button variant="contained" className="phase-button" color="primary" onClick={handleDefenseClick}>
-                Defender y empezar turno
-              </Button>
-            );
+                <>
+                  {battles.length > 0 ? (
+                  <>
+                    <Button variant="contained" className="resetBattle-button" color="primary" onClick={onResetBattle}>
+                      Reiniciar batallas
+                    </Button>
+                    <Button variant="contained" className="phase-button" color="primary" onClick={handleDefenseClick}>
+                      Defender y empezar turno
+                    </Button>
+                  </>
+                ) : (
+                  <Button variant="contained" className="noDefense-button" color="primary" onClick={handleDefenseClick}>
+                    Empezar turno sin defender
+                  </Button>
+                )}
+                  
+                </>
+);
+
     }
 };
 

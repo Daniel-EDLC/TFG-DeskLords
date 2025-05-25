@@ -301,7 +301,7 @@ import attackResponse from '../../../public/mockCalls/attackResponse.json';
 
 
 
-export async function attack(selectedAttackCards, setGameData) {
+export async function endTurn(selectedAttackCards, setGameData) {
   // const payload = {
   //   cards: selectedAttackCards.map(id => ({ id })),
   // };
@@ -312,6 +312,8 @@ export async function attack(selectedAttackCards, setGameData) {
     const data = attackResponse;
     console.log('Respuesta simulada del ataque:', data);
 
+
+    console.log("defensa del rival");
     setGameData(prev => ({
       ...prev,
       turn: {
@@ -330,6 +332,7 @@ export async function attack(selectedAttackCards, setGameData) {
 
 
     setTimeout(() => {
+      console.log("mano del rival");
       setGameData(prev => ({
         ...prev,
         turn: {
@@ -345,9 +348,11 @@ export async function attack(selectedAttackCards, setGameData) {
           ...data.action2.rival,
         }
       }));
-    }, 3000);
+    }, 4000);
 
     setTimeout(() => {
+      console.log("ataque del rival");
+      
         setGameData(prev => ({
         ...prev,
         turn: {
@@ -363,7 +368,7 @@ export async function attack(selectedAttackCards, setGameData) {
           ...data.action3.rival,
         }
       }));
-    }, 6000);
+    }, 7000);
 
 
 
@@ -408,14 +413,9 @@ export function addCardToBattle(carta) {
   if (fight.atacanteId === carta.id || fight.defensorId === carta.id) {
     console.log('La carta ya estaba seleccionada, selección reiniciada');
     resetPendingFight();
-    if (carta.battle) {
-      delete carta.battle;
-    }
-    return null;
-  }
-
-  if (carta.battle === true) {
-    alert('la carta ya esta declarada en batalla');
+    // if (carta.battle) {
+    //   delete carta.battle;
+    // }
     return null;
   }
 
@@ -426,6 +426,23 @@ export function addCardToBattle(carta) {
     alert('La carta no es ni atacante ni defensor');
     return null;
   }
+
+
+  const activeBattle = battle.some(
+  pelea => pelea.atacanteId === carta.id || pelea.defensorId === carta.id
+  );
+
+  if (activeBattle) {
+    alert('La carta ya forma parte de una batalla confirmada');
+    return null;
+  }
+
+  // if (carta.battle === true) {
+  //   alert('la carta ya esta declarada en batalla');
+  //   return null;
+  // }
+
+ 
 
   if (esAtacante && pendingFight.atacanteId !== null){
     alert('Ya hay una carta asignada como atacante, debes seleccionar un defensor');
@@ -496,7 +513,11 @@ export async function defense(setGameData, gameData) {
 
   const nuevaBatalla = [...battle, ...nuevasEntradas];
 
-  console.log('batalla final:', nuevaBatalla);
+  console.log('batalla final1:', nuevaBatalla);
+  console.log('batalla final2:', getBattle());
+  resetBattle();
+  console.log('batalla final3:', nuevaBatalla);
+  console.log('batalla final4:', getBattle());
  
   // const payload = {
   //   cards: selectedDefenseCard.map(id => ({ id })),
@@ -536,7 +557,7 @@ export async function defense(setGameData, gameData) {
 
 
 
-export async function endTurn() {
- console.log('turno acabado');
-}
+// export async function endTurn() {
+//  console.log('turno acabado');
+// }
 

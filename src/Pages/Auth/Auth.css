@@ -1,0 +1,52 @@
+/* body{
+  background-image: url("https://i.pinimg.com/originals/c1/ca/f0/c1caf09dcc066c8a770336f1a00ad646.gif");
+} */
+
+/* body{
+  background-image: url("https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjWTcKNfbXzHQmyLYRxMluujbh4DY6OVfvJonr117wD-NGnInR2GMCRxwWoWIOYeGKoonvAGpxMsyQ-GXEl1cjF5oesVQRvVgirJx8EvvcSY0ZBgYcNnJTL-o2otJ970AyAyhV4/s1600/tumblr_mdlyhqFV6x1qck4u0.gif");
+} */
+
+body{
+  background-image: url("https://www.ticketfairy.com/uploaded/public/67f5908f407986.52000910.gif");
+}
+
+.auth-container {
+  position: absolute;       
+  left: 50%;                  
+  transform: translateX(-50%);
+  display: flex;
+  width: 70%;
+  flex-direction: column;
+  color: white;
+  box-sizing: border-box;
+}
+
+.auth-menu-tittle{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-tittle-tittle {
+  width: 60%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px #cacacaa1);
+}
+
+.auth-card {
+  flex: 0 0 70%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-card > * {
+  background-color: #1f1f1fe0;
+  border: 2px solid #a8a8a844;
+  padding: 2.5rem;
+  border-radius: 16px;
+  filter: drop-shadow(0 0 10px #cacacaa1);
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+}

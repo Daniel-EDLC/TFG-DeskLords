@@ -1,9 +1,6 @@
 .menu-tittle{
-  
-  position: absolute;         /* Necesario para usar left y transform */
-  left: 46%;                  /* Mueve el punto de anclaje al centro */
-  transform: translateX(-50%);
   width: 60%;
+  filter: drop-shadow(0 0 10px #cacacaa1);
 }
 .menu-container {
   position: absolute;         /* Necesario para usar left y transform */
@@ -29,18 +26,22 @@
   
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-evenly;
   overflow: hidden;
   height: 55%;
+  
 }
 
 .perfil-area {
+  
+  min-width: 13vw;
   display: flex;
   justify-content: center;
   height: auto;
 }
 
 .maps-area  {
+  min-width: 13vw;
   display: flex;
   justify-content: center;
   align-items: flex-start;

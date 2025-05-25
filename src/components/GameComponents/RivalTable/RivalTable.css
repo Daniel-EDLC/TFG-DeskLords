@@ -124,12 +124,30 @@
 
 
 
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes attackShift {
+  from {
+    transform: translateY(0%);
+  }
+  to {
+    transform: translateY(15%);
+  }
+}
+
+
 
 .attack-position {
   position: relative;
-  transform: translateY(15%);
-  
+  animation: attackShift 0.3s ease forwards;
+  animation-delay: 2s;
 }
+
+
 
 .attack-position::after {
   content: '';
@@ -142,6 +160,9 @@
   border-left: 15px solid transparent;
   border-right: 15px solid transparent;
   border-top: 12px solid rgba(255, 0, 0, 0.8);
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+  animation-delay: 2.5s;
 }
 
 .attack-position::before {
@@ -157,7 +178,12 @@
   font-weight: bold;
   border-radius: 4px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+  animation-delay: 2.5s;
 }
+
+
 
 
 
