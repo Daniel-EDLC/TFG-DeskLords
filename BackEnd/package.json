@@ -1,11 +1,11 @@
 {
   "name": "tfg-desklords",
   "version": "1.0.0",
-  "main": "game.js",
+  "main": "src/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node game.js",
-    "dev": "nodemon game.js"
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
   },
   "keywords": [],
   "author": "",
