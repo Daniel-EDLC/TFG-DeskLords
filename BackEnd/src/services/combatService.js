@@ -53,7 +53,7 @@ async function resolverCombate({ gameId, attacker, defender, isAI }) {
   const defenderTempHabs = new Set(defender.temporaryAbilities || []);
 
   const defenderInvulnerable = defenderHabs.has("invulnerable") || defenderTempHabs.has("invulnerable");
-  const attackerToqueMortal = attackerHabs.has("toque mortal");
+  const attackerToqueMortal = attackerHabs.has("mortal touch");
   const attackerBruteForce = attackerHabs.has("brute force");
 
   const result = { attacker: { ...attacker }, defender: { ...defender }, dmgToPlayer: 0 };
@@ -62,7 +62,7 @@ async function resolverCombate({ gameId, attacker, defender, isAI }) {
     result.defender.hp = attackerToqueMortal ? 0 : result.defender.hp - attacker.atk;
   }
   if (!attackerHabs.has("invulnerable")) {
-    const defenderToqueMortal = defenderHabs.has("toque mortal");
+    const defenderToqueMortal = defenderHabs.has("mortal touch");
     result.attacker.hp = defenderToqueMortal ? 0 : result.attacker.hp - defender.atk;
   }
 

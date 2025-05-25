@@ -10,7 +10,7 @@ const gameSchema = new mongoose.Schema({
     playerId: {type: String, required: true},
     playerHp: {type: Number, required: true, default: 30},
     rivalHp: {type: Number, required: true, default: 30},
-    currentTurn: {type: Number, required: true, default: 0},
+    currentTurn: {type: Number, required: true, default: 1},
     winner: {type: String, required: false, default: null},
     playerDeck: {type: deckSchema, required: false},
     playerHand: {type: [cardSchema], required: false},
