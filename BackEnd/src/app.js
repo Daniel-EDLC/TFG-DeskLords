@@ -2,6 +2,7 @@ require('dotenv').config();
 
 // Inicializacion de express
 const express = require('express');
+const cors = require('cors');
 const app = express();
 
 // Importar los middlewares
@@ -18,6 +19,8 @@ const setRoutes = require('./routes/setRoutes');
 
 app.use(express.json());
 
+app.use(cors());
+
 // Middleware que agrega el helper a cada request
 app.use((req, res, next) => {
     req.response = createResponseHelper(res);
@@ -28,12 +31,12 @@ app.use((req, res, next) => {
 // app.use(validarTokenJWT);
 
 // Usa las rutas agrupadas bajo /api
-app.use('/api/abilities', abilityRoutes);
-app.use('/api/cards', cardRoutes);
-app.use('/api/decks', deckRoutes);
-app.use('/api/games', gameRoutes);
-app.use('/api/maps', mapRoutes);
-app.use('/api/players', playerRoutes);
-app.use('/api/sets', setRoutes);
+app.use('/api', abilityRoutes);
+app.use('/api', cardRoutes);
+app.use('/api', deckRoutes);
+app.use('/api', gameRoutes);
+app.use('/api', mapRoutes);
+app.use('/api', playerRoutes);
+app.use('/api', setRoutes);
 
 module.exports = app;

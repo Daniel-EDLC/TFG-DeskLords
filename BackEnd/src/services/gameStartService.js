@@ -15,6 +15,7 @@ function shuffleCards(array, size) {
 
 async function startGame(req, res) {
     try {
+        const ObjectId = Types.ObjectId;
         const playerObjectId = new ObjectId(req.body.playerId);
         const deckObjectId = new ObjectId(req.body.user.deck.id);
         const mapObjectId = new ObjectId(req.body.map.id);
@@ -54,6 +55,8 @@ async function startGame(req, res) {
 
         const gameSaved = await newGame.save();
 
+        console.log(gameSaved.rivalHand)
+
         req.response.success({
             gameId: gameSaved._id.toString(),
             status: gameSaved.status,
@@ -70,7 +73,7 @@ async function startGame(req, res) {
                 mana: gameSaved.manaPerTurn
             },
             rival: {
-                hand: gameSaved.rivalHand,
+                hand: gameSaved.rivalHand.length,
                 table: [],
                 pending_deck: gameSaved.rivalPendingDeck,
                 health: gameSaved.rivalHp,

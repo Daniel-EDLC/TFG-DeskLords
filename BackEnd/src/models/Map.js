@@ -3,9 +3,9 @@ const deckSchema = require('./Deck').schema;
 
 const mapSchema = new mongoose.Schema({
     name: {type: String, required: true},
-    description: {type: String, required: false},
+    description: {type: String, required: true},
+    deck: {type: deckSchema, required: true},
     image: {type: String, required: false},
-    deck: {type: deckSchema, required: false},
     element: {type: String, required: false},
 });
 
