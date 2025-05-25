@@ -16,22 +16,20 @@
 
 .maps-grid {
   flex: 1;
-  overflow-y: auto;
+  padding: 0 10px;
+  overflow-y: scroll;
+  scrollbar-width: none;
+   -ms-overflow-style: none;
   display: flex;
   flex-direction: column; /* Cambia a columna para stackear verticalmente */
   gap: 15px;
   padding-right: 10px; /* espacio para el scrollbar */
 }
 
-/* Opcional: estiliza el scrollbar para que quede bien visualmente */
 .maps-grid::-webkit-scrollbar {
-  width: 8px;
+  width: 0px;
 }
 
-.maps-grid::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.3);
-  border-radius: 4px;
-}
 
 .mapa-card {
   background-color: rgba(255, 255, 255, 0.1);

@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import './RivalTable.css';
 
 function RivalTable({ cartas, turn, onCardClick }) {
-  console.log('el turno es: ', turn)
 
   const [hiddenCards, setHiddenCards] = useState([]);
 
@@ -15,7 +14,7 @@ function RivalTable({ cartas, turn, onCardClick }) {
       if (carta.alive === false && !hiddenCards.includes(carta.id)) {
         setTimeout(() => {
           setHiddenCards((prev) => [...prev, carta.id]);
-        }, 1500); // espera 1.5 segundos antes de ocultarla
+        }, 1500);
       }
     });
   }, [cartas]);
@@ -24,10 +23,9 @@ function RivalTable({ cartas, turn, onCardClick }) {
   useEffect(() => {
     cartas.forEach((carta) => {
       if (carta.alive === false && !removedCards.includes(carta.id)) {
-        // Aplicar fade primero
         setTimeout(() => {
           setRemovedCards((prev) => [...prev, carta.id]);
-        }, 2300); // tiempo total antes de quitarla del DOM
+        }, 2300);
       }
     });
   }, [cartas]);
@@ -38,8 +36,9 @@ function RivalTable({ cartas, turn, onCardClick }) {
     <Box className="rival-table-container">
       {cartas.map((carta, index) => {
       if (removedCards.includes(carta.id)) return null;
-
+        
       const cardClass = ` ${carta.position === 'attack' ? 'attack-position' : ''}`;
+
       const isFadingOut = hiddenCards.includes(carta.id);
 
         return (
