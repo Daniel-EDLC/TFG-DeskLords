@@ -4,8 +4,10 @@
   gap: 2rem;
   padding: 1rem;
   z-index: 10;
-  width: 120px;
-  height: 160px;
+  min-width: 400px;
+  height: 180px;
+  border-radius: 25px;
+  background-color: #ffffff48;
 }
 
 .rival-table-container:hover {
@@ -124,13 +126,13 @@
 
 
 
-@keyframes fadeIn {
+@keyframes rivalFadeIn {
   to {
     opacity: 1;
   }
 }
 
-@keyframes attackShift {
+@keyframes rivalAttackShift {
   from {
     transform: translateY(0%);
   }
@@ -143,7 +145,7 @@
 
 .attack-position {
   position: relative;
-  animation: attackShift 0.3s ease forwards;
+  animation: rivalAttackShift 0.3s ease forwards;
   animation-delay: 2s;
 }
 
@@ -161,7 +163,7 @@
   border-right: 15px solid transparent;
   border-top: 12px solid rgba(255, 0, 0, 0.8);
   opacity: 0;
-  animation: fadeIn 0.3s ease forwards;
+  animation: rivalFadeIn 0.3s ease forwards;
   animation-delay: 2.5s;
 }
 
@@ -179,7 +181,7 @@
   border-radius: 4px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
   opacity: 0;
-  animation: fadeIn 0.3s ease forwards;
+  animation: rivalFadeIn 0.3s ease forwards;
   animation-delay: 2.5s;
 }
 

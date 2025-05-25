@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import './PlayerTable.css';
 
-function PlayerTable({ cartas, turn, onRequestPhaseChange, switchPhase, handleEndTurn, handleDefense, targetEquipmentCard, isSelectingTargetForEquipment,  onCardClick, battles, onResetBattle }) {
+function PlayerTable({ cartas, turn, onRequestPhaseChange, switchPhase, handleEndTurn, handleDefense, targetEquipmentCard, isSelectingTargetForEquipment,  onCardClick, battles, onResetBattle , mana , selectedTableCardId , onPlayCard}) {
 
   const [selectedAttackCards, setselectedAttackCards] = useState([]);
   const [pendingCardId, setPendingCardId] = useState(null);
@@ -11,6 +11,10 @@ function PlayerTable({ cartas, turn, onRequestPhaseChange, switchPhase, handleEn
   const [hiddenCards, setHiddenCards] = useState([]);
   const [removedCards, setRemovedCards] = useState([]);
 
+  const [hoveredCardId, setHoveredCardId] = useState(null);
+
+
+  
   const handleCardClick = (carta) => {
 
     if (turn.whose === 'user') {
@@ -85,7 +89,7 @@ function PlayerTable({ cartas, turn, onRequestPhaseChange, switchPhase, handleEn
       if (carta.alive === false && !hiddenCards.includes(carta.id)) {
         setTimeout(() => {
           setHiddenCards((prev) => [...prev, carta.id]);
-        }, 1500);
+        }, 3000);
       }
     });
   }, [cartas]);
@@ -95,11 +99,10 @@ function PlayerTable({ cartas, turn, onRequestPhaseChange, switchPhase, handleEn
       if (carta.alive === false && !removedCards.includes(carta.id)) {
         setTimeout(() => {
           setRemovedCards((prev) => [...prev, carta.id]);
-        }, 2500);
+        }, 4000);
       }
     });
   }, [cartas]);
-
   const renderPhaseButtons = (turn) => {
     if (turn.whose === 'user'){
       switch (turn.phase) {
@@ -114,7 +117,6 @@ function PlayerTable({ cartas, turn, onRequestPhaseChange, switchPhase, handleEn
                 </Button>
               </>
             );
-
           case 'table':
             return (
               <>
@@ -129,109 +131,143 @@ function PlayerTable({ cartas, turn, onRequestPhaseChange, switchPhase, handleEn
                 )}
               </>
             );
-            
           default:
             return null;
-
-         
-
-          
         }
     }else if(turn.whose === 'rival' && turn.phase === 'attack' ){
-            return (
-                <>
-                  {battles.length > 0 ? (
-                  <>
-                    <Button variant="contained" className="resetBattle-button" color="primary" onClick={onResetBattle}>
-                      Reiniciar batallas
-                    </Button>
-                    <Button variant="contained" className="phase-button" color="primary" onClick={handleDefenseClick}>
-                      Defender y empezar turno
-                    </Button>
-                  </>
-                ) : (
-                  <Button variant="contained" className="noDefense-button" color="primary" onClick={handleDefenseClick}>
-                    Empezar turno sin defender
-                  </Button>
-                )}
-                  
-                </>
+      return (
+          <>
+            {battles.length > 0 ? (
+            <>
+              <Button variant="contained" className="resetBattle-button" color="primary" onClick={onResetBattle}>
+                Reiniciar batallas
+              </Button>
+              <Button variant="contained" className="phase-button" color="primary" onClick={handleDefenseClick}>
+                Defender y empezar turno
+              </Button>
+            </>
+          ) : (
+            <Button variant="contained" className="noDefense-button" color="primary" onClick={handleDefenseClick}>
+              Empezar turno sin defender
+            </Button>
+          )}
+          </>
 );
+    }};
+return (
+  <>
+    <Box className="phase-buttons">
+      {renderPhaseButtons(turn)}
+    </Box>
+    <Box
+      className="player-table-container"
+      onDragOver={(e) => e.preventDefault()}
+      onDrop={(e) => {
+        e.preventDefault();
+        const data = JSON.parse(e.dataTransfer.getData('application/json'));
 
-    }
-};
+        if (data.cost > mana) {
+          alert(`Mana insuficiente! Coste: ${data.cost}, Tienes: ${mana}`);
+          return;
+        }
+        const cardToSend = {
+          id: data.id,
+          type: data.type,
+          ...((data.type === 'equipement' || data.type === 'spell') && selectedTableCardId
+            ? { targetId: selectedTableCardId }
+            : {}),
+        };
+        onPlayCard(cardToSend);
+      }}
+    >
+      {cartas.map((carta, index) => {
+        if (removedCards.includes(carta.id)) return null;
 
-  return (
-    <>
-      <Box className="phase-buttons">
-        {renderPhaseButtons(turn)}
-      </Box>
-      <Box className="player-table-container">
+        const isSelected = selectedAttackCards.includes(carta.id);
+        const isFadingOut = hiddenCards.includes(carta.id);
 
-         {cartas.map((carta, index) => {
-          if (removedCards.includes(carta.id)) return null;
-
-          const isSelected = selectedAttackCards.includes(carta.id);
-          const isFadingOut = hiddenCards.includes(carta.id);
-
-
-          
-          // const cardClass = `player-card-table ${carta.battle ? 'player-battle' : ''}`;
-          // const cardClass = `player-card-table`;
-
-          return (
-            <div key={carta.id} className={`player-card-wrapper ${isFadingOut ? 'player-card-fade-out' : ''}`}>
-              <div className={`player-card-table ${isSelected ? 'selected' : ''}`}>
-                <Paper
-                  elevation={10}
-                  className="player-card-inner"
-                  onClick={() => { handleCardClick(carta) }}
-                >
-                  <img
-                    src={carta.image}
-                    alt={`Carta ${index + 1}`}
-                    className="player-card-image"
-                  />
-
-                  {carta.equipements && carta.equipements.length > 0 && (
-                    <div className="player-equipment-count">
-                      {carta.equipements.length}
-                    </div>
-                  )}
-
-                  {isSelected && <div className="attack-label"></div>}
-
-                  {carta.equipements && carta.equipements.length > 0 && (
-                    <div className="player-equipment-preview">
-                      {carta.equipements.map((equipo) => (
-                        <img
-                          key={equipo.id}
-                          src={equipo.image}
-                          alt={equipo.id}
-                          className="player-equipment-image"
-                        />
-                      ))}
-                    </div>
-                  )}
-                </Paper>
-              </div>
-            </div>
-          );
-        })}
-      </Box>
-
-      <Dialog open={showConfirmDialog} onClose={cancelPhaseChange}>
-        <DialogTitle>Estás en fase de mano. ¿Quieres cambiar a fase de ataque?</DialogTitle>
+        return (
+  <div key={carta.id} className={`player-card-wrapper ${isFadingOut ? 'player-card-fade-out' : ''}`}>
+    <div className={`player-card-table ${isSelected ? 'selected' : ''}`}>
+      <Paper
+        elevation={10}
+        className={`player-card-inner ${hoveredCardId === carta.id ? 'hovered' : ''}`}
+        onClick={() => { handleCardClick(carta) }}
         
-        <DialogActions>
-          <Button onClick={cancelPhaseChange}>Cancelar</Button>
-          <Button variant="contained" onClick={confirmPhaseChange} color="primary">
-            Cambiar y seleccionar atacante
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
+        onDragOver={(e) => e.preventDefault()}
+        onDragEnter={() => setHoveredCardId(carta.id)}
+        onDragLeave={() => setHoveredCardId(null)} 
+        onDrop={(e) => {
+            e.preventDefault();
+            const data = JSON.parse(e.dataTransfer.getData('application/json'));
+
+            if (data.type === 'equipement') {
+              if (data.cost > mana) {
+                alert(`Mana insuficiente! Coste: ${data.cost}, Tienes: ${mana}`);
+                return;
+              }
+              const cardToSend = {
+                id: data.id,
+                type: data.type,
+                targetId: carta.id, 
+              };
+              onPlayCard(cardToSend);
+              return;
+            }
+            if (data.cost > mana) {
+              alert(`Mana insuficiente!`);
+              return;
+            }
+            const cardToSend = {
+              id: data.id,
+              type: data.type,
+              ...((data.type === 'spell' && selectedTableCardId)
+                ? { targetId: selectedTableCardId }
+                : {}),
+            };
+            onPlayCard(cardToSend);
+          }}
+        >
+          <img
+            src={carta.image}
+            alt={`Carta ${index + 1}`}
+            className="player-card-image"
+          />
+          {carta.equipements && carta.equipements.length > 0 && (
+            <div className="player-equipment-count">
+              {carta.equipements.length}
+            </div>
+          )}
+          {isSelected && <div className="attack-label"></div>}
+          {carta.equipements && carta.equipements.length > 0 && (
+            <div className="player-equipment-preview">
+              {carta.equipements.map((equipo) => (
+                <img
+                  key={equipo.id}
+                  src={equipo.image}
+                  alt={equipo.id}
+                  className="player-equipment-image"
+                />
+              ))}
+            </div>
+          )}
+        </Paper>
+      </div>
+    </div>
   );
+      })}
+    </Box>
+    <Dialog open={showConfirmDialog} onClose={cancelPhaseChange}>
+      <DialogTitle>Estás en fase de mano. ¿Quieres cambiar a fase de ataque?</DialogTitle>
+      <DialogActions>
+        <Button onClick={cancelPhaseChange}>Cancelar</Button>
+        <Button variant="contained" onClick={confirmPhaseChange} color="primary">
+          Cambiar y seleccionar atacante
+        </Button>
+      </DialogActions>
+    </Dialog>
+  </>
+);
 }
 
 export default PlayerTable;

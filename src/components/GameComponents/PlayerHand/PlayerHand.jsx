@@ -42,6 +42,7 @@ function PlayerHand({ cartas, mana, phase, onPlayCard, selectedTableCardId  }) {
           const isHovered = hoveredIndex === index;
 
           return (
+            
             <div
               key={carta.id}
               className="card-container"
@@ -49,25 +50,30 @@ function PlayerHand({ cartas, mana, phase, onPlayCard, selectedTableCardId  }) {
                 left: `calc(50% + ${offset * spacing}px)`,
                 bottom: `${translateY}px`,
               }}
+              
             >
               <Paper
                 className={`card ${isHovered ? 'hovered' : ''}`}
                 elevation={24}
-                onClick={() => setSelectedIndex(index)}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
                 data-rotate={`${rotate}deg`}
-                style={{
-                  '--rotate': `${rotate}deg`,
+                style={{ '--rotate': `${rotate}deg` }}
+                draggable
+                onDragStart={(e) => {
+                  e.dataTransfer.setData('application/json', JSON.stringify({
+                    id: carta.id,
+                    type: carta.type,
+                    cost: carta.cost,
+                  }));
                 }}
               >
                 <img
                   src={carta.image}
                   alt={`Carta ${index + 1}`}
                   className="card-image"
-                />
+              />
               </Paper>
-
               {selectedIndex === index && phase === 'hand' && (
                   <Button
                     className="play-button"

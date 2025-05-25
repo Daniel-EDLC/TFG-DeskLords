@@ -348,7 +348,7 @@ export async function endTurn(selectedAttackCards, setGameData) {
           ...data.action2.rival,
         }
       }));
-    }, 4000);
+    }, 5000);
 
     setTimeout(() => {
       console.log("ataque del rival");
@@ -368,7 +368,7 @@ export async function endTurn(selectedAttackCards, setGameData) {
           ...data.action3.rival,
         }
       }));
-    }, 7000);
+    }, 10000);
 
 
 

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import './Announcement.css';
 
-function Announcement({ link, duration = 2000, onFinish }) {
+function Announcement({ link, duration = 3000, onFinish }) {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
       setVisible(false);
       if (onFinish) onFinish();
-    }, duration);
+    }, duration + 500);
 
     return () => clearTimeout(timeout);
   }, [link]);

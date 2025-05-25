@@ -57,17 +57,20 @@ function Game() {
   }
   };
 
-  const handlePlayCard = (card) => {
-      if (card.type === 'equipement' && !selectedTableCardId) {
-        setPendingEquipementCard(card);
-        return;
-      }
-      if (card.type === 'spell' && !selectedTableCardId) {
-        setPendingEquipementCard(card);
-        return;
-      }
-      playCard(setGameData, card);
-  };
+const handlePlayCard = (card) => {
+  if (card.type === 'equipement' && !card.targetId) {
+    setPendingEquipementCard(card);
+    return;
+  }
+
+  if (card.type === 'spell' && !card.targetId) {
+    setPendingEquipementCard(card);
+    return;
+  }
+
+  playCard(setGameData, card);
+};
+
 
   const handleSwitchPhase = () => {
     switchPhase(setGameData);
@@ -120,16 +123,16 @@ useEffect(() => {
   let link = '';
   switch (gameData.turn.phase) {
     case 'hand':
-      link = gameData.turn.whose === 'user' ? '/TurnoUser.png' : '/TurnoRival.png';
+      link = gameData.turn.whose === 'user' ? '/FASEMANOPLAYERFINAL.png' : '/FASEMANORIVALFINAL.png';
       break;
     case 'table':
-      link = '/FaseAtaque.png';
+      link = '/FASEATAQUEFINAL.png';
       break;
     case 'defense':
-      link = '/FaseDefensa.png';
+      link = '/FASEDEFENSAFINAL.png';
       break;
     case 'attack':
-    link = '/FaseAtaque.png';
+    link = '/FASEATAQUEFINAL.png';
       break;
     default:
       link = '';
@@ -193,6 +196,9 @@ const handleResetBattle = () => {
           onCardClick={handlePlayerCardClick}
           battles={battles}
           onResetBattle={handleResetBattle}
+          mana={gameData.user.mana}
+          selectedTableCardId={selectedTableCardId}
+          onPlayCard={handlePlayCard}
         />
       </div>
         <PlayerHand 

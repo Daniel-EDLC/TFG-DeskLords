@@ -14,7 +14,7 @@ function RivalTable({ cartas, turn, onCardClick }) {
       if (carta.alive === false && !hiddenCards.includes(carta.id)) {
         setTimeout(() => {
           setHiddenCards((prev) => [...prev, carta.id]);
-        }, 1500);
+        }, 3000);
       }
     });
   }, [cartas]);
@@ -25,7 +25,7 @@ function RivalTable({ cartas, turn, onCardClick }) {
       if (carta.alive === false && !removedCards.includes(carta.id)) {
         setTimeout(() => {
           setRemovedCards((prev) => [...prev, carta.id]);
-        }, 2300);
+        }, 4000);
       }
     });
   }, [cartas]);
