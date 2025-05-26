@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Paper, Button } from '@mui/material';
+import { Paper } from '@mui/material';
 import './PlayerHand.css';
 
-function PlayerHand({ cartas, mana, phase, onPlayCard, selectedTableCardId  }) {
-  const [selectedIndex, setSelectedIndex] = useState(null);
+function PlayerHand({ cartas, mana, turn, onPlayCard }) {
+  const [selectedCardId, setSelectedCardId] = useState(null);
   const [floatingMessage, setFloatingMessage] = useState('');
   const [isFading, setIsFading] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
   useEffect(() => {
-    if (phase !== 'hand') {
-      setSelectedIndex(null);
+    if (turn.phase !== 'hand') {
+      setSelectedCardId(null);
     }
-  }, [phase]);
+  }, [turn.phase]);
 
   useEffect(() => {
     if (floatingMessage) {
@@ -31,6 +31,41 @@ function PlayerHand({ cartas, mana, phase, onPlayCard, selectedTableCardId  }) {
   const maxRotation = 25;
   const spacing = 110;
 
+  const handleClick = (carta) => {
+    if (turn.whose !== 'user' || turn.phase !== 'hand') {
+      setFloatingMessage('Solo puedes jugar cartas durante tu fase de mano!');
+      return;
+    }
+
+    if (selectedCardId === carta.id) {
+      // Si es spell o equipamiento, simplemente desselecciona
+      if (carta.type === 'equipement' || carta.type === 'spell') {
+        setSelectedCardId(null);
+        return;
+      }
+
+      // Si es criatura, intenta jugarla
+      if (carta.cost > mana) {
+        setFloatingMessage(`Mana insuficiente! Coste: ${carta.cost}, Tienes: ${mana}`);
+        return;
+      }
+
+      onPlayCard(carta);
+      setSelectedCardId(null);
+    } else {
+      setSelectedCardId(carta.id);
+
+      // Si es spell o equipamiento, lo preparamos para que el usuario seleccione objetivo
+       if (carta.cost > mana) {
+        setFloatingMessage(`Mana insuficiente! Coste: ${carta.cost}, Tienes: ${mana}`);
+        return;
+      }
+      if (carta.type === 'equipement' || carta.type === 'spell') {
+        onPlayCard(carta);
+      }
+    }
+  };
+
   return (
     <>
       <div className="player-hand" style={{ width: `${spacing * total}px` }}>
@@ -40,9 +75,9 @@ function PlayerHand({ cartas, mana, phase, onPlayCard, selectedTableCardId  }) {
           const rotate = (offset / centerIndex) * maxRotation;
           const translateY = -Math.abs(offset) * 12;
           const isHovered = hoveredIndex === index;
+          const isSelected = selectedCardId === carta.id;
 
           return (
-            
             <div
               key={carta.id}
               className="card-container"
@@ -50,60 +85,44 @@ function PlayerHand({ cartas, mana, phase, onPlayCard, selectedTableCardId  }) {
                 left: `calc(50% + ${offset * spacing}px)`,
                 bottom: `${translateY}px`,
               }}
-              
             >
               <Paper
-                className={`card ${isHovered ? 'hovered' : ''}`}
+                className={`card ${isHovered ? 'hovered' : ''} ${isSelected ? 'selectedToUse' : ''}`}
                 elevation={24}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
                 data-rotate={`${rotate}deg`}
                 style={{ '--rotate': `${rotate}deg` }}
-                draggable
+                draggable={turn.whose === 'user' && turn.phase === 'hand'}
                 onDragStart={(e) => {
-                  e.dataTransfer.setData('application/json', JSON.stringify({
-                    id: carta.id,
-                    type: carta.type,
-                    cost: carta.cost,
-                  }));
+                  if (turn.whose === 'user' && turn.phase === 'hand') {
+                     if (carta.cost > mana) {
+                          setFloatingMessage(`Mana insuficiente! Coste: ${carta.cost}, Tienes: ${mana}`);
+                          return;
+                      }     
+                    e.dataTransfer.setData('application/json', JSON.stringify({
+                      id: carta.id,
+                      type: carta.type,
+                      cost: carta.cost,
+                    }));
+                  } else {
+                    setFloatingMessage('No puedes jugar cartas fuera de tu fase de mano!!');
+                  }
                 }}
+                onClick={() => handleClick(carta)}
               >
                 <img
                   src={carta.image}
                   alt={`Carta ${index + 1}`}
                   className="card-image"
-              />
+                />
               </Paper>
-              {selectedIndex === index && phase === 'hand' && (
-                  <Button
-                    className="play-button"
-                    variant="contained"
-                    onClick={() => {
-                      if (carta.cost > mana) {
-                        setFloatingMessage(`Mana insuficiente! Coste: ${carta.cost}, Tienes: ${mana}`);
-                        return;
-                      }
-
-                      const cardToSend = {
-                        id: carta.id,
-                        type: carta.type,
-                        ...((carta.type === 'equipement' || carta.type === 'spell') && selectedTableCardId
-                          ? { targetId: selectedTableCardId }
-                          : {}),
-                      };
-
-                      onPlayCard(cardToSend);
-                    }}
-                  >
-                    Jugar
-                  </Button>
-                )}
             </div>
           );
         })}
       </div>
 
-      {floatingMessage && ( 
+      {floatingMessage && (
         <div className={`floating-overlay ${isFading ? 'fade-out' : ''}`}>
           <div className="floating-message">{floatingMessage}</div>
         </div>

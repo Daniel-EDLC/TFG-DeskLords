@@ -261,7 +261,7 @@
                 }
             ], 
             "pending_deck": 8,
-            "health": 30,
+            "health": 0,
             "mana": 6
         },
         "rival":{
@@ -341,6 +341,7 @@
                 }
             ], 
             "pending_deck": 8,
+            "health": 10,
             "mana": 1
         }
     },

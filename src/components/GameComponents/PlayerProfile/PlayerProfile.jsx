@@ -1,13 +1,19 @@
-import React from 'react';
-import { Avatar, Typography, Box, Button } from '@mui/material';
-import './PlayerProfile.css';
+import React from "react";
+import { Avatar, Typography, Box } from "@mui/material";
+import "./PlayerProfile.css";
 
-function PlayerProfile({ name, imageUrl, life, mana}) {
+function PlayerProfile({ name, imageUrl, life, mana, deck }) {
   return (
-    <>
-      
-
-      <Box className="profile-container">
+    <Box className="profile-container">
+      <Box className="profile-with-deck">
+        <Box className="deck-preview">
+          <img
+            src="public/cards/cardBack.jpg"
+            alt="Mazo"
+            className="deck-card-image"
+          />
+          <Box className="deck-count">{deck}</Box>
+        </Box>
         <Box className="profile-card">
           <Box className="avatar-wrapper">
             <Avatar src={imageUrl} className="avatar-image" />
@@ -15,14 +21,19 @@ function PlayerProfile({ name, imageUrl, life, mana}) {
               <Typography className="life-text">{life}</Typography>
             </Box>
           </Box>
-          <Typography className="player-name">{name}</Typography>
-          <Typography className="mana-text">Mana: {mana}</Typography>
+          <Typography className="profile-name">{name}</Typography>
+          <Box className="mana-wrapper">
+            <img
+              src="public\manaFinal2.gif"
+              alt="Mana"
+              className="mana-image"
+            />
+            <Box className="mana-count">{mana}</Box>
+          </Box>
         </Box>
       </Box>
-    </>
+    </Box>
   );
 }
-
-
 
 export default PlayerProfile;

@@ -7,8 +7,15 @@
   min-width: 400px;
   height: 180px;
   border-radius: 25px;
-  background-color: #ffffff48;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 0, 0, 0.473) 0%,     
+    rgba(255, 0, 0, 0.226) 10%,
+    rgba(0, 0, 0, 0.616) 50%, 
+    rgba(255, 255, 255, 0) 85% 
+  );
 }
+
 
 .rival-table-container:hover {
   z-index: 1000;
@@ -27,14 +34,6 @@
   
 }
 
-.rival-card-image:hover {
-  border: 2px solid rgba(255, 0, 0, 0.8); 
-}
-
-
-
-
-
 .rival-card-table {
   width: 100px;
   height: 138px;
@@ -49,8 +48,8 @@
 .rival-card-table:hover {
   transform: scale(2.3);
   border-radius: 6px;
-
   z-index: 1000;
+  
 }
 
 
@@ -89,7 +88,7 @@
   visibility: hidden;
   padding: 2px;
   margin: 2px;
-  border-radius: 2px;
+  border-radius: 4px;
   justify-content: center;
   z-index: 100;
   transition: opacity 1s ease, visibility 1s ease, transform 1s ease;
@@ -111,7 +110,7 @@
   width: 50%;
   height: 50%;
   object-fit: contain;
-  border-radius: 2px;
+  border-radius: 4px;
   transition: 0.5s;
 }
 
@@ -147,6 +146,10 @@
   position: relative;
   animation: rivalAttackShift 0.3s ease forwards;
   animation-delay: 2s;
+}
+
+.attack-position:hover {
+border: 2px solid rgba(255, 0, 0, 0.8);
 }
 
 
@@ -193,4 +196,58 @@
   opacity: 0;
   transform: scale(0.9);
   transition: opacity 1s ease-out, transform 1s ease-out;
+}
+
+
+.rival-card-table .hovered {
+  border: 2px solid red;
+  transform: scale(1.5);
+  transition: all 0.2s ease;
+  
+  box-shadow: 0 0 30px rgb(220, 20, 203);
+}
+
+.rival-card-in-battle {
+  border: 3px solid rgb(220, 20, 203);
+  border-radius: 5px;
+  position: relative;
+}
+
+.rival-card-in-battle:hover {
+  box-shadow: 0 0 30px rgb(220, 20, 203);
+}
+
+
+.rival-card-in-battle::after {
+  content: '';
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-top: 12px solid rgb(220, 20, 203);
+  opacity: 0;
+  animation: rivalFadeIn 0.3s ease forwards;
+  animation-delay: 2.5s;
+}
+
+.rival-card-in-battle::before {
+  content: 'BATALLA';
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgb(220, 20, 203);
+  color: white;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 4px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  animation: rivalFadeIn 0.3s ease forwards;
+  animation-delay: 2.5s;
 }

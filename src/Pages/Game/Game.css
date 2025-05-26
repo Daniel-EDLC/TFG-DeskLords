@@ -65,8 +65,8 @@ body {
 
 .mesa-container {
   position: absolute;
-  top: 220px; 
-  bottom: 220px; 
+  top: 180px; 
+  bottom: 180px; 
   left: 0;
   right: 0;
   display: flex;
@@ -74,3 +74,74 @@ body {
   justify-content: space-between;
   align-items: center;
 }
+
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.end-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(3px);
+  animation: fadeInScale 0.5s ease-out forwards;
+}
+
+.end-logo {
+  max-width: 500px;
+  max-height: 60vh;
+  margin-bottom: 2rem;
+  opacity: 0;
+  animation: fadeInScale 0.5s ease-out 0.3s forwards;
+}
+
+
+.end-buttons-container {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.end-button {
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  background-color: #fff;
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.end-buttons-container, .end-button {
+  opacity: 0;
+  animation: fadeInScale 1s ease-out 1s forwards;
+}
+
+
+.end-button:hover {
+  background-color: #ccc;
+}
+
+
+
+
+

@@ -1,6 +1,6 @@
 .player-hand {
   position: fixed;
-  bottom: 30px;
+  bottom: -20px;
   left: 50%;
   transform: translateX(-50%);
   height: 250px;
@@ -31,7 +31,7 @@
 
 .card.hovered {
   transition: 0.5s;
-  transform: rotate(var(--rotate, 0deg)) scale(2.3);
+  transform: translateY(-80px) rotate(var(--rotate, 0deg)) scale(2.3);
   border: 2px solid blue;
 }
 
@@ -54,6 +54,16 @@
   background-color: #002df7 !important;
   color: white !important;
 }
+
+
+.selectedToUse{
+  border: 2px solid blue;
+  transform: translateY(-45px) rotate(var(--rotate));
+  scale: 1.1;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  z-index: 99999;
+}
+
 
 .floating-overlay {
   position: fixed;
