@@ -1,144 +1,146 @@
 
-// version real playCard
+//  version real playCard
 
-// export async function playCard(setGameData, card) {
-//   let body = {};
+ export async function playCard(setGameData, card) {
+   let payload = {};
+  console.log("jugando carta3", card);
+   switch (card.type) {
+     case "Criatura":
+       payload = {
+        idPlayer: "680d1b6f3f11cda356ec54f1",
+         id: card._id.toString(),
+         type: "Criatura"
+       };
+       console.log("jugando carta4", card);
+       break;
 
-//   switch (card.type) {
-//     case "criature":
-//       console.log("criatura sacada" + card.targetId );
-//       body = {
-//         id: card.id,
-//         type: "criature"
-//       };
-//       break;
+     case "spell":
+       console.log("hechizo sacada" + card.targetId);
+       payload = {
+         type: "spell",
+         action: {
+           type: "kill", 
+           target: [{ id: card.id }]
+         }
+       };
+       break;
 
-//     case "spell":
-//       console.log("hechizo sacada" + card.targetId);
-//       body = {
-//         type: "spell",
-//         action: {
-//           type: "kill", 
-//           target: [{ id: card.id }]
-//         }
-//       };
-//       break;
+     case "equipement":
+       console.log("equipo sacada" + card.targetId);
+       payload = {
+         id: card.id,
+         type: "equipement",
+         action_result: {
+           type: "use"
+         },
+         target: {
+           id: card.targetId
+         }
+       };
+       break;
 
-//     case "equipement":
-//       console.log("equipo sacada" + card.targetId);
-//       body = {
-//         id: card.id,
-//         type: "equipement",
-//         action_result: {
-//           type: "use"
-//         },
-//         target: {
-//           id: card.targetId
-//         }
-//       };
-//       break;
-
-//     default:
+     default:
       
-//       return;
-//   }
+       break;
+   }
+     console.log(payload);
+   try {
+     const response = await fetch(
+       'http://localhost:3000/api/useCard',
+       {
+         method: 'POST',
+         headers: {
+           'Content-Type': 'application/json',
+         },
+         body: JSON.stringify(payload),
+       }       
+    
+     );
 
-//   try {
-//     const response = await fetch(
-//       'https://fd167768-d9ff-4c53-ac9d-93f430094cf7.mock.pstmn.io/games/1111/cards/use',
-//       {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify(body),
-//       }
-//     );
+     if (!response.ok) throw new Error('Fallo en la acción de juego');
 
-//     if (!response.ok) throw new Error('Fallo en la acción de juego');
-
-//     const result = await response.json();
-
-//     setGameData(prev => ({
-//       ...prev,
-//       user: {
-//         ...prev.user,
-//         ...result.user,
-//       }
+     const result = await response.json();
+     console.log('Respuesta del servidor:', result);
+     setGameData(prev => ({
+       ...prev,
+       user: {
+         ...prev.user,
+         ...result.user,
+       }
       
-//     }));
+     }));
       
-//   } catch (error) {
-//     console.error('Error al jugar la carta:', error);
-//   }
-// }
+   } catch (error) {
+     console.error('Error al jugar la carta:', error);
+   }
+ }
 
 
 
 
 // version mock playCard
 
-import criatureResponse from '../../../public/mockCalls/criatureResponse.json';
-import spellResponse from '../../../public/mockCalls/spellResponse.json';
-import equipementResponse from '../../../public/mockCalls/equipementResponse.json';
+// import criatureResponse from '../../../public/mockCalls/criatureResponse.json';
+// import spellResponse from '../../../public/mockCalls/spellResponse.json';
+// import equipementResponse from '../../../public/mockCalls/equipementResponse.json';
 
 
-export async function playCard(setGameData, card) {
-  // let body = {};
+// export async function playCard(setGameData, card) {
+//   // let body = {};
 
-  switch (card.type) {
-    case "criature":
-      // body = { id: card.id, type: "criature" };
-      break;
+//   switch (card.type) {
+//     case "criature":
+//       // body = { id: card.id, type: "criature" };
+//       break;
 
-    case "spell":
-      // body = {
-      //   type: "spell",
-      //   action: { type: "kill", target: [{ id: card.id }] }
-      // };
-      break;
+//     case "spell":
+//       // body = {
+//       //   type: "spell",
+//       //   action: { type: "kill", target: [{ id: card.id }] }
+//       // };
+//       break;
 
-    case "equipement":
-      // body = {
-      //   id: card.id,
-      //   type: "equipement",
-      //   action_result: { type: "use" },
-      //   target: { id: card.targetId }
-      // };
-      break;
+//     case "equipement":
+//       // body = {
+//       //   id: card.id,
+//       //   type: "equipement",
+//       //   action_result: { type: "use" },
+//       //   target: { id: card.targetId }
+//       // };
+//       break;
 
-    default:
-      return;
-  }
+//     default:
+//       return;
+//   }
 
-  try {
-    await new Promise(res => setTimeout(res, 500)); // Simula delay
+//   try {
+//     await new Promise(res => setTimeout(res, 500)); // Simula delay
 
-    let simulatedResponse;
-    switch (card.type) {
-      case "criature":
-        simulatedResponse = criatureResponse;
-        break;
-      case "spell":
-        simulatedResponse = spellResponse;
-        break;
-      case "equipement":
-        simulatedResponse = equipementResponse;
-        break;
-    }
+//     let simulatedResponse;
+//     switch (card.type) {
+//       case "criature":
+//         simulatedResponse = criatureResponse;
+//         break;
+//       case "spell":
+//         simulatedResponse = spellResponse;
+//         break;
+//       case "equipement":
+//         simulatedResponse = equipementResponse;
+//         break;
+//     }
 
-    setGameData(prev => ({
-      ...prev,
-      user: {
-        ...prev.user,
-        ...simulatedResponse.user
-      }
-    }));
+//     setGameData(prev => ({
+//       ...prev,
+//       user: {
+//         ...prev.user,
+//         ...simulatedResponse.user
+//       }
+//     }));
 
-  } catch (error) {
-    console.error("Error simulado al jugar carta:", error);
-  }
-}
+//   } catch (error) {
+//     console.error("Error simulado al jugar carta:", error);
+//   }
+// }
 
 
 

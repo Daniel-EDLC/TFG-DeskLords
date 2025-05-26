@@ -49,7 +49,7 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
         setFloatingMessage(`Mana insuficiente! Coste: ${carta.cost}, Tienes: ${mana}`);
         return;
       }
-
+      console.log('Jugando carta:', carta);
       onPlayCard(carta);
       setSelectedCardId(null);
     } else {
@@ -79,7 +79,7 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
 
           return (
             <div
-              key={carta._id.toString()}
+              key={carta.id}
               className="card-container"
               style={{
                 left: `calc(50% + ${offset * spacing}px)`,
@@ -101,7 +101,7 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
                           return;
                       }     
                     e.dataTransfer.setData('application/json', JSON.stringify({
-                      id: carta.id,
+                      id: carta._id.toString(),
                       type: carta.type,
                       cost: carta.cost,
                     }));

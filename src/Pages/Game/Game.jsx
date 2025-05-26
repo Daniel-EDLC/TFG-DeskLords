@@ -63,6 +63,7 @@ function Game() {
       setPendingSpellCard(card);
       return;
     }
+    console.log('Jugando carta2:', card);
     playCard(setGameData, card);
   };
 
