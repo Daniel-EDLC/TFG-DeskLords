@@ -62,7 +62,7 @@ function PlayerHand({ cartas, mana, phase, onPlayCard, selectedTableCardId  }) {
                 }}
               >
                 <img
-                  src={carta.image}
+                  src={carta.front_image}
                   alt={`Carta ${index + 1}`}
                   className="card-image"
                 />

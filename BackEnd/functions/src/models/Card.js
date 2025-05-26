@@ -9,8 +9,8 @@ const cardSchema = new mongoose.Schema({
     atk: {type: Number, required: true},
     hp: {type: Number, required: true},
     cost: {type: Number, required: true},
-    front_image: {type: String, required: false}, // Cambiar a true cuando tengamos las imágenes
-    back_image: {type: String, required: false}, // Cambiar a true cuando tengamos las imágenes
+    front_image: {type: String, required: true}, // Cambiar a true cuando tengamos las imágenes
+    back_image: {type: String, required: true}, // Cambiar a true cuando tengamos las imágenes
     // Campos opcionales
     abilities: {type: [String], required: false, default: []},
     temporaryAbilities: {type: [String], required: false, default: []},

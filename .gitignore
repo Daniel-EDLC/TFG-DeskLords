@@ -25,6 +25,7 @@ dist-ssr
 *.sw?
 
 # BackEnd
-BackEnd/node_modules/
-BackEnd/.env
-BackEnd/firebase-credentials.json
+BackEnd/functions/node_modules/
+BackEnd/functions/*.local
+BackEnd/functions/.env
+BackEnd/functions/src/config/firebase-credentials.json

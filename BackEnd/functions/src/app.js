@@ -6,7 +6,7 @@ const cors = require('cors');
 const app = express();
 
 // Importar los middlewares
-const validarTokenJWT = require('./middlewares/validarTokenJWT');
+// const validarTokenJWT = require('./middlewares/validarTokenJWT');
 const createResponseHelper = require('./middlewares/responseHelper');
 
 const abilityRoutes = require('./routes/abilityRoutes');
