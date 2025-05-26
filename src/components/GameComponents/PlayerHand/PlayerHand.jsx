@@ -79,7 +79,7 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
 
           return (
             <div
-              key={carta.id}
+              key={carta._id.toString()}
               className="card-container"
               style={{
                 left: `calc(50% + ${offset * spacing}px)`,
@@ -112,7 +112,7 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
                 onClick={() => handleClick(carta)}
               >
                 <img
-                  src={carta.image}
+                  src={carta.front_image}
                   alt={`Carta ${index + 1}`}
                   className="card-image"
                 />
