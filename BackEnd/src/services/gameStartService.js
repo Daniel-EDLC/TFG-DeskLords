@@ -63,19 +63,20 @@ async function startGame(req, res) {
             start_at: gameSaved.startTime,
             turn: {
                 number: gameSaved.currentTurn,
+                whose: "user",
                 phase: "hand"
             },
             user: {
                 hand: gameSaved.playerHand,
                 table: [],
-                pending_deck: gameSaved.playerPendingDeck,
+                pending_deck: gameSaved.playerPendingDeck.length,
                 health: gameSaved.playerHp,
                 mana: gameSaved.manaPerTurn
             },
             rival: {
                 hand: gameSaved.rivalHand.length,
                 table: [],
-                pending_deck: gameSaved.rivalPendingDeck,
+                pending_deck: gameSaved.rivalPendingDeck.length,
                 health: gameSaved.rivalHp,
                 mana: gameSaved.manaPerTurn
             }
