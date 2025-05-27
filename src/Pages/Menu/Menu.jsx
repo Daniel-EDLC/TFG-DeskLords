@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Maps from '../../components/MenuComponents/Maps/Maps';
 import UserProfile from '../../components/MenuComponents/UserProfile/UserProfile';
 import ActualMap from '../../components/MenuComponents/ActualMap/ActualMap';
+import Gestion from '../../components/MenuComponents/Gestion/Gestion'
 import { useNavigate } from 'react-router-dom';
 
 import './Menu.css';
@@ -19,7 +20,7 @@ function Menu({ data }) {
     
 
     useEffect(() => {
-    if (data?.habilitarGestion) {
+    if (data.rol==="admin") {
       setShowGestion(true);
     }
 
@@ -65,10 +66,10 @@ function Menu({ data }) {
       <div className="menu-header">
         <img className='menu-tittle' src="/public/LOGO.png" alt="" />
       </div>
-
       <div className="menu-main">
         <div className="perfil-area">
           <UserProfile
+            className="user-profile"
             avatar={data.playerAvatar}
             name={data.playerName}
             level={data.playerLevel}
@@ -91,9 +92,10 @@ function Menu({ data }) {
         </div>
       </div>
 
-      <div className="menu-footer">
-        {/* {showGestion && <Gestion />} */}
-      </div>
+        <div className="menu-footer">
+          {showGestion && <Gestion />}
+        </div>
+
     </div>
   );
 }

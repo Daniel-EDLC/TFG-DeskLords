@@ -1,11 +1,11 @@
 .maps-wrapper {
   width: 100%;
-  height: 100%; /* Asegura que use el alto total disponible del contenedor padre */
+  height: 100%;
   background-color: rgba(255, 255, 255, 0.05);
   padding: 20px;
   border-radius: 12px;
   border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+  /* box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); */
   display: flex;
   flex-direction: column;
 }
@@ -52,9 +52,46 @@
 .mapa-card.disabled {
   opacity: 0.4;
   pointer-events: none;
-  background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255, 255, 255, 0.05);
   border: 3px solid rgba(255, 0, 0, 0.267);
   cursor: not-allowed;
 }
 
 
+@media (max-width: 435px) {
+  .maps-wrapper {
+    padding: 12px;
+    border-radius: 8px;
+      border: 0px transparent;
+      box-shadow: transparent;
+      background-color: transparent;
+  }
+
+  .maps-wrapper h2 {
+    font-size: 1.1rem;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  .maps-grid {
+    gap: 10px;
+    padding: 0;
+  }
+
+  .mapa-card {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border-width: 2px;
+    border-radius: 8px;
+  }
+
+
+
+  .mapa-card.disabled {
+    font-size: 0.95rem;
+    opacity: 0.5;
+    border-width: 2px;
+  }
+
+}

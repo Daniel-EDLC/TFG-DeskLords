@@ -3,7 +3,7 @@
   "playerName": "nacho",
   "playerLevel": 12,
   "playerExperience": 2450,
-  "rol": "user",
+  "rol": "admin",
   "decks":[
     {
       "nombre": "mazo1",
