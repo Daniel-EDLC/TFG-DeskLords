@@ -28,6 +28,11 @@ async function drawCard({ game, isAI }) {
   const pendingDeckField = isAI ? 'rivalPendingDeck' : 'playerPendingDeck';
   const hpField = isAI ? 'rivalHp' : 'playerHp';
 
+  // Comprobar si la mano ya tiene 5 cartas
+  if (game[handField].length >= 5) {
+    return; // No se puede robar más cartas
+  }
+
   if (game[pendingDeckField].length === 0) {
     await Game.updateOne(
       { _id: game._id },

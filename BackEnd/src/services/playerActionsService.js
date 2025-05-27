@@ -2,7 +2,7 @@ const { Types } = require('mongoose');
 const Game = require('../models/Game');
 const Player = require('../models/Player');
 const { resolverCombate, chooseDefenders } = require('./combatService');
-const { nextTurn } = require('./turnService');
+const { nextTurn, drawCard } = require('./turnService');
 const { placeCardsAndAttack } = require('./IAService');
 
 async function useCard(req, res) {
@@ -63,6 +63,7 @@ async function useCard(req, res) {
           );
 
           return req.response.success({
+            gameId: req.body.gameId,
             action_result: {
               type: 'use',
               card: usedCard
@@ -94,6 +95,7 @@ async function useCard(req, res) {
             );
 
             return req.response.success({
+              gameId: req.body.gameId,
               action_result: {
                 type: 'use',
                 card: usedCard
@@ -125,6 +127,7 @@ async function useCard(req, res) {
           }
 
           return req.response.success({
+            gameId: req.body.gameId,
             action_result: {
               type: 'use',
               card: usedCard
@@ -204,6 +207,8 @@ async function attack(req, res) {
     // action de robar carta
     await nextTurn({ game, isAi: true });
 
+    await drawCard({ game, isAI: true });
+
     const result = await placeCardsAndAttack(game);
 
     // action 2 response
@@ -237,6 +242,7 @@ async function attack(req, res) {
     )
 
     return req.response.success({
+      gameId: req.body.gameId,
       action1: action1Response ? action1Response : {},
       action2: action2Response,
       action3: {
@@ -296,6 +302,7 @@ async function defend(req, res) {
 
 
     return req.response.success({
+      gameId: req.body.gameId,
       battle: combats.map(combat => ({
         attacker: combat.attacker,
         defender: combat.defender
@@ -340,6 +347,7 @@ async function switchPhase(req, res) {
 
     if (req.body.turn.phase === 'hand') {
       return req.response.success({
+        gameId: req.body.gameId,
         turn: {
           phase: 'table'
         }
