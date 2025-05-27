@@ -19,5 +19,6 @@ exports.api = onRequest({
     timeoutSeconds: 60,
     memory: "512MiB",
     maxInstances: 10,
-    region: "us-central1",
+    allowUnauthenticated: true,
+    region: "europe-southwest1",
 }, app);
