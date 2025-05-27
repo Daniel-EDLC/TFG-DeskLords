@@ -17,7 +17,8 @@ import {
   addCardToBattle,
   defense,
   resetBattle,
-  getBattle
+  getBattle,
+  onSurrender
 } from '../../services/Actions/GameActions';
 
 function Game() {
@@ -34,7 +35,10 @@ function Game() {
   const [announcementLink, setAnnouncementLink] = useState('');
   const [showAnnouncement, setShowAnnouncement] = useState(false);
   const [gameEnded, setGameEnded] = useState(false);
-  const [isWinner, setIsWinner] = useState(null); 
+  const [isWinner, setIsWinner] = useState(null);
+
+
+
 
   const handleRivalCardClick = (card) => {
     if (card.position !== 'attack') {
@@ -153,6 +157,11 @@ function Game() {
     setBattles([]);
   };
 
+  const handleSurrenderClick = () => {
+  setGameEnded(true);
+  setIsWinner(false);
+  };
+
   if (!gameData || !gameData.rival || !gameData.user || !gameData.turn) {
     return (
       <div className="loading-container">
@@ -226,6 +235,7 @@ function Game() {
         life={gameData.user.health}
         mana={gameData.user.mana}
         deck={gameData.user.pending_deck}
+        onSurrender={handleSurrenderClick}
       />
 
       {showAnnouncement && (

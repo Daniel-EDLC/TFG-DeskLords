@@ -1,38 +1,73 @@
-import React from "react";
-import { Avatar, Typography, Box } from "@mui/material";
+import React, { useState } from "react";
+import { Avatar, Typography, Box, Dialog, DialogTitle, DialogActions, Button } from "@mui/material";
 import "./PlayerProfile.css";
 
-function PlayerProfile({ name, imageUrl, life, mana, deck }) {
+function PlayerProfile({ name, imageUrl, life, mana, deck, onSurrender }) {
+  const [isSurrendering, setIsSurrendering] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const handleClick = () => {
+    setIsSurrendering(true);
+    setConfirmOpen(true);
+  };
+
+  const handleConfirm = () => {
+    setConfirmOpen(false);
+    if (onSurrender) onSurrender();
+    setIsSurrendering(false);
+  };
+
+  const handleCancel = () => {
+    setConfirmOpen(false);
+    setIsSurrendering(false);
+  };
+
   return (
-    <Box className="profile-container">
-      <Box className="profile-with-deck">
-        <Box className="deck-preview">
-          <img
-            src="public/cards/cardBack.jpg"
-            alt="Mazo"
-            className="deck-card-image"
-          />
-          <Box className="deck-count">{deck}</Box>
-        </Box>
-        <Box className="profile-card">
-          <Box className="avatar-wrapper">
-            <Avatar src={imageUrl} className="avatar-image" />
-            <Box className="life-overlay">
-              <Typography className="life-text">{life}</Typography>
-            </Box>
-          </Box>
-          <Typography className="profile-name">{name}</Typography>
-          <Box className="mana-wrapper">
+    <>
+      <Box className="profile-container">
+        <Box className="profile-with-deck">
+          <Box className="deck-preview">
             <img
-              src="public\manaFinal2.gif"
-              alt="Mana"
-              className="mana-image"
+              src="public/cards/cardBack.jpg"
+              alt="Mazo"
+              className="deck-card-image"
             />
-            <Box className="mana-count">{mana}</Box>
+            <Box className="deck-count">{deck}</Box>
+          </Box>
+          <Box className="profile-card">
+            <Box
+              className={`avatar-wrapper clickable ${isSurrendering ? 'surrendering' : ''}`}
+              onClick={handleClick}
+            >
+              <Avatar src={imageUrl} className="avatar-image" />
+              <Box className="life-overlay">
+                <Typography className="life-text">{life}</Typography>
+              </Box>
+            </Box>
+            <Typography className="profile-name">{name}</Typography>
+            <Box className="mana-wrapper">
+              <img
+                src="public/manaFinal2.gif"
+                alt="Mana"
+                className="mana-image"
+              />
+              <Box className="mana-count">{mana}</Box>
+            </Box>
           </Box>
         </Box>
       </Box>
-    </Box>
+
+      {/* Modal de confirmación */}
+      <Dialog open={confirmOpen} onClose={handleCancel}>
+        <DialogTitle>¿Estás seguro de que quieres rendirte?</DialogTitle>
+        <DialogActions>
+          <Button onClick={handleCancel}>Cancelar</Button>
+          <Button onClick={handleConfirm} variant="contained" color="error">
+            Rendirse
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 }
 

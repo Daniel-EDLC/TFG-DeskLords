@@ -4,7 +4,7 @@
             "card": {
                     "id": "51",
                     "type": "criature",
-                    "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                    "front_image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
                     "cost": 1,
                     "health": 100,
                     "attack": 111,
@@ -16,33 +16,33 @@
             {
                 "id": "4112322",
                 "type": "equipement",
-                "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg",
+                "front_image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg",
                 "cost": 2
             },
             {
                 "id": "1234121",
                 "type": "equipement",
-                "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg",
+                "front_image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg",
                 "cost": 2
             },
             {
                 "id": "42",
                 "type": "spell", 
-                "image": "https://m.media-amazon.com/images/I/412bfHjpFxL._AC_UF894,1000_QL80_.jpg",
+                "front_image": "https://m.media-amazon.com/images/I/412bfHjpFxL._AC_UF894,1000_QL80_.jpg",
                 "cost": 3,
                 "action":"kill_one"
             },
             {
                 "id": "43",
                 "type": "spell", 
-                "image": "https://elrincondemagic.wordpress.com/wp-content/uploads/2019/07/la-voluntad-de-los-dioses.png",
+                "front_image": "https://elrincondemagic.wordpress.com/wp-content/uploads/2019/07/la-voluntad-de-los-dioses.png",
                 "cost": 3,
                 "action":"protect_all"
             },
             {
                 "id": "45",
                 "type": "criature", 
-                "image": "https://i.ebayimg.com/00/s/MTYwMFgxMTU5/z/xxcAAOSwWWdeRm0g/$_57.JPG?set_id=8800005007",
+                "front_image": "https://i.ebayimg.com/00/s/MTYwMFgxMTU5/z/xxcAAOSwWWdeRm0g/$_57.JPG?set_id=8800005007",
                 "cost": 6,
                 "health": 100,
                 "attack": 111,
@@ -52,7 +52,7 @@
             {
                 "id": "46",
                 "type": "criature",
-                "image": "https://i.ebayimg.com/00/s/MTYwMFgxMTU5/z/xxcAAOSwWWdeRm0g/$_57.JPG?set_id=8800005007",
+                "front_image": "https://i.ebayimg.com/00/s/MTYwMFgxMTU5/z/xxcAAOSwWWdeRm0g/$_57.JPG?set_id=8800005007",
                 "cost": 7,
                 "health": 100,
                 "attack": 111,
@@ -63,7 +63,7 @@
             {
                 "id": "47",
                 "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "front_image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
                 "cost": 1,
                 "health": 100,
                 "attack": 111,
@@ -73,7 +73,7 @@
             {
                 "id": "48",
                 "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "front_image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
                 "cost": 1,
                 "health": 100,
                 "attack": 111,
@@ -83,7 +83,7 @@
             {
                 "id": "49",
                 "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "front_image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
                 "cost": 1,
                 "health": 100,
                 "attack": 111,
@@ -93,7 +93,7 @@
             {
                 "id": "50",
                 "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "front_image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
                 "cost": 1,
                 "health": 100,
                 "attack": 111,
@@ -103,7 +103,7 @@
             {
                 "id": "51",
                 "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "front_image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
                 "cost": 1,
                 "health": 100,
                 "attack": 111,

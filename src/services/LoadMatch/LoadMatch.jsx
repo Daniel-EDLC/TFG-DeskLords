@@ -1,7 +1,7 @@
-// import mockData from '../../../public/mockCalls/useLoadMatchMock.json';
+import mockData from '../../../public/mockCalls/useLoadMatchMock.json';
 
 import { useEffect, useState } from 'react';
-
+/*
  export default function useLoadMatch(onDataReady) {
    const [gameData, setGameData] = useState(null);
 
@@ -32,21 +32,21 @@ import { useEffect, useState } from 'react';
    }, [onDataReady]);
 
    return [gameData, setGameData];
- }
+ } */
 
 
 
-// export default function useLoadMatch() {
-//   const [data, setData] = useState(null);
+export default function useLoadMatch() {
+  const [data, setData] = useState(null);
 
-//   useEffect(() => {
-//     setTimeout(() => {
-//       setData(mockData);
-//     }, 500);
-//   }, []);
+  useEffect(() => {
+    setTimeout(() => {
+      setData(mockData);
+    }, 500);
+  }, []);
 
-//   return [data, setData];
-// }
+  return [data, setData];
+}
 
 
 

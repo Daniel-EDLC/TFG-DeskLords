@@ -1,6 +1,6 @@
 
 //  version real playCard
-
+/*
  export async function playCard(setGameData, card) {
    let payload = {};
   console.log("jugando carta3", card);
@@ -74,73 +74,73 @@
      console.error('Error al jugar la carta:', error);
    }
  }
-
+*/
 
 
 
 // version mock playCard
 
-// import criatureResponse from '../../../public/mockCalls/criatureResponse.json';
-// import spellResponse from '../../../public/mockCalls/spellResponse.json';
-// import equipementResponse from '../../../public/mockCalls/equipementResponse.json';
+import criatureResponse from '../../../public/mockCalls/criatureResponse.json';
+import spellResponse from '../../../public/mockCalls/spellResponse.json';
+import equipementResponse from '../../../public/mockCalls/equipementResponse.json';
 
 
-// export async function playCard(setGameData, card) {
-//   // let body = {};
+export async function playCard(setGameData, card) {
+  let body = {};
 
-//   switch (card.type) {
-//     case "criature":
-//       // body = { id: card.id, type: "criature" };
-//       break;
+  switch (card.type) {
+    case "criature":
+      body = { id: card.id, type: "criature" };
+      break;
 
-//     case "spell":
-//       // body = {
-//       //   type: "spell",
-//       //   action: { type: "kill", target: [{ id: card.id }] }
-//       // };
-//       break;
+    case "spell":
+      body = {
+        type: "spell",
+        action: { type: "kill", target: [{ id: card.id }] }
+      };
+      break;
 
-//     case "equipement":
-//       // body = {
-//       //   id: card.id,
-//       //   type: "equipement",
-//       //   action_result: { type: "use" },
-//       //   target: { id: card.targetId }
-//       // };
-//       break;
+    case "equipement":
+      body = {
+        id: card.id,
+        type: "equipement",
+        action_result: { type: "use" },
+        target: { id: card.targetId }
+      };
+      break;
 
-//     default:
-//       return;
-//   }
+    default:
+      return;
+  }
 
-//   try {
-//     await new Promise(res => setTimeout(res, 500)); // Simula delay
+  try {
+    await new Promise(res => setTimeout(res, 500)); 
 
-//     let simulatedResponse;
-//     switch (card.type) {
-//       case "criature":
-//         simulatedResponse = criatureResponse;
-//         break;
-//       case "spell":
-//         simulatedResponse = spellResponse;
-//         break;
-//       case "equipement":
-//         simulatedResponse = equipementResponse;
-//         break;
-//     }
+    let simulatedResponse;
+    switch (card.type) {
+      case "criature":
+        simulatedResponse = criatureResponse;
+        break;
+      case "spell":
+        simulatedResponse = spellResponse;
+        break;
+      case "equipement":
+        simulatedResponse = equipementResponse;
+        break;
+    }
 
-//     setGameData(prev => ({
-//       ...prev,
-//       user: {
-//         ...prev.user,
-//         ...simulatedResponse.user
-//       }
-//     }));
+    setGameData(prev => ({
+      ...prev,
+      user: {
+        ...prev.user,
+        ...simulatedResponse.user
+      }
+    }));
 
-//   } catch (error) {
-//     console.error("Error simulado al jugar carta:", error);
-//   }
-// }
+  } catch (error) {
+    console.error("Error simulado al jugar carta:", error);
+  }
+}
 
 
 
@@ -562,4 +562,8 @@ export async function defense(setGameData, gameData) {
 // export async function endTurn() {
 //  console.log('turno acabado');
 // }
+
+export async function onSurrender() {
+ console.log('te mataste amigo');
+}
 

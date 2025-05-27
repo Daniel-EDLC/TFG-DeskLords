@@ -144,4 +144,51 @@ body {
 
 
 
+@media (max-width: 435px) {
+  body, html {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* evita scroll vertical y horizontal */
+    height: 100dvh; /* altura dinámica en móviles */
+  }
 
+  .app-container {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .rival-profile {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 10px;
+  }
+
+  .player-profile {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin: 10px;
+  }
+
+  .mesa-container {
+    position: absolute;
+    top: 28%;
+    bottom: 28%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+  }
+
+  .player-hand {
+    justify-content: center;
+    overflow-x: visible;
+    flex-wrap: wrap;
+  }
+
+  .phase-buttons {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+}

@@ -1,3 +1,11 @@
+.player-offset--3 { left: calc(50% - 330px); bottom: 0px;  --rotate: -15deg; }
+.player-offset--2 { left: calc(50% - 220px); bottom: 8px;  --rotate: -10deg; }
+.player-offset--1 { left: calc(50% - 110px); bottom: 16px; --rotate: -5deg; }
+.player-offset-0  { left: calc(50%);         bottom: 24px; --rotate: 0deg; }
+.player-offset-1  { left: calc(50% + 110px); bottom: 16px; --rotate: 5deg; }
+.player-offset-2  { left: calc(50% + 220px); bottom: 8px;  --rotate: 10deg; }
+.player-offset-3  { left: calc(50% + 330px); bottom: 0px;  --rotate: 15deg; }
+
 .player-hand {
   position: fixed;
   bottom: -20px;
@@ -41,20 +49,6 @@
   object-fit: cover;
 }
 
-.play-button {
-  font-size: 1rem;
-  text-transform: none;
-  margin-top: 0.5rem;
-  background-color: #ffffff !important;
-  color: blue !important;
-  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
-}
-
-.play-button:hover {
-  background-color: #002df7 !important;
-  color: white !important;
-}
-
 
 .selectedToUse{
   border: 2px solid blue;
@@ -92,5 +86,74 @@
   font-weight: bold;
   color: black;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 435px) {
+  .player-hand {
+    height: 180px;
+  }
+
+  .card {
+    
+    width: 80px;
+    height: 120px;
+  }
+
+.card.hovered {
+  transform: rotate(var(--rotate, 0deg));
+  border: 2px solid blue;
+}
+
+
+  .selectedToUse {
+    border: 2px solid blue;
+    transform: rotate(var(--rotate, 0deg));
+  }
+
+
+@keyframes playerHandMoveToCenter {
+  from {
+    transform: translateY(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(2.5);
+    opacity: 1;
+  }
+}
+
+  .long-pressed-container {
+    position: fixed !important;
+    top: -53% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 9999 !important;
+    pointer-events: none;
+  }
+
+  .card.long-pressed {
+    position: fixed;
+    top: 0%;
+    left: 50%;
+    z-index: 10000;
+    border-radius: 6px;
+    pointer-events: none;
+    animation: playerHandMoveToCenter 0.4s ease forwards;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  }
+
+.card.hover {
+  transform: none;
+  border: 0px;
+}
+
+
+  .player-offset--3 { left: calc(50% - 240px); bottom: 0px;  --rotate: -10deg; }
+  .player-offset--2 { left: calc(50% - 160px); bottom: 6px;  --rotate: -6deg;  }
+  .player-offset--1 { left: calc(50% - 80px);  bottom: 12px; --rotate: -3deg;  }
+  .player-offset-0  { left: 50%;              bottom: 18px; --rotate: 0deg;   }
+  .player-offset-1  { left: calc(50% + 80px);  bottom: 12px; --rotate: 3deg;  }
+  .player-offset-2  { left: calc(50% + 160px); bottom: 6px;  --rotate: 6deg;  }
+  .player-offset-3  { left: calc(50% + 240px); bottom: 0px;  --rotate: 10deg; }
 }
 
