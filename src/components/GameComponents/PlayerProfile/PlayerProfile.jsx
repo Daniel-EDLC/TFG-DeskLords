@@ -3,23 +3,19 @@ import { Avatar, Typography, Box, Dialog, DialogTitle, DialogActions, Button } f
 import "./PlayerProfile.css";
 
 function PlayerProfile({ name, imageUrl, life, mana, deck, onSurrender }) {
-  const [isSurrendering, setIsSurrendering] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const handleClick = () => {
-    setIsSurrendering(true);
     setConfirmOpen(true);
   };
 
   const handleConfirm = () => {
     setConfirmOpen(false);
-    if (onSurrender) onSurrender();
-    setIsSurrendering(false);
+    if (onSurrender) onSurrender(); 
   };
 
   const handleCancel = () => {
     setConfirmOpen(false);
-    setIsSurrendering(false);
   };
 
   return (
@@ -36,7 +32,7 @@ function PlayerProfile({ name, imageUrl, life, mana, deck, onSurrender }) {
           </Box>
           <Box className="profile-card">
             <Box
-              className={`avatar-wrapper clickable ${isSurrendering ? 'surrendering' : ''}`}
+              className="avatar-wrapper clickable"
               onClick={handleClick}
             >
               <Avatar src={imageUrl} className="avatar-image" />
