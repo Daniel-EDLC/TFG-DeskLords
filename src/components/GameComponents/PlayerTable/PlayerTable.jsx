@@ -14,6 +14,9 @@ function PlayerTable({
   const [removedCards, setRemovedCards] = useState([]);
   const [hoveredCardId, setHoveredCardId] = useState(null);
 
+  const [longPressCardId, setLongPressCardId] = useState(null);
+  const [longPressTimeout, setLongPressTimeout] = useState(null);
+
   const handleCardClick = (carta) => {
     if (turn.whose === 'user') {
       if (turn.phase === 'hand') {
@@ -111,18 +114,18 @@ function PlayerTable({
       switch (turn.phase) {
         case 'hand':
           return (
-            <>
+             <Box className="phase-buttons-inner">
               <Button variant="contained" className="phase-button" onClick={switchPhase}>
                 Fase mesa
               </Button>
               <Button variant="contained" className="end-turn-button" onClick={handleEndTurnClick}>
                 Pasar turno
               </Button>
-            </>
+            </Box>
           );
         case 'table':
           return (
-            <>
+             <Box className="phase-buttons-inner">
               {selectedAttackCards.length > 0 ? (
                 <Button variant="contained" className="phase-button" color="primary" onClick={handleEndTurnClick}>
                   Atacar y finalizar
@@ -132,7 +135,7 @@ function PlayerTable({
                   Finalizar
                 </Button>
               )}
-            </>
+            </Box>
           );
         default:
           return null;
@@ -141,18 +144,20 @@ function PlayerTable({
       return (
         <>
           {battles.length > 0 ? (
-            <>
+             <Box className="phase-buttons-inner">
               <Button variant="contained" className="resetBattle-button" color="primary" onClick={onResetBattle}>
                 Reiniciar batallas
               </Button>
               <Button variant="contained" className="phase-button" color="primary" onClick={handleDefenseClick}>
                 Defender y empezar turno
               </Button>
-            </>
+            </Box>
           ) : (
+            <Box className="phase-buttons-inner">
             <Button variant="contained" className="noDefense-button" color="primary" onClick={handleDefenseClick}>
               Empezar turno sin defender
             </Button>
+            </Box>
           )}
         </>
       );
@@ -194,7 +199,7 @@ function PlayerTable({
               <div className={`player-card-table ${isSelected ? 'selected' : ''} ${isInPlayerBattle ? 'player-card-in-battle' : ''}`}>
                 <Paper
                   elevation={10}
-                  className={`player-card-inner ${hoveredCardId === carta.id ? 'hovered' : ''}`}
+                  className={`player-card-inner ${hoveredCardId === carta.id ? 'hovered' : ''} ${longPressCardId === carta.id ? 'player-long-pressed' : ''} `}
                   onClick={() => handleCardClick(carta)}
                   onDragOver={(e) => e.preventDefault()}
                   onDragEnter={() => setHoveredCardId(carta.id)}
@@ -218,8 +223,22 @@ function PlayerTable({
                     }
                     // alert("Solo puedes lanzar hechizos o equipamientos sobre cartas de la mesa.");
                   }}
+                  onTouchStart={() => {
+                    const timeoutId = setTimeout(() => {
+                      setLongPressCardId(carta.id);
+                    }, 500);
+                    setLongPressTimeout(timeoutId);
+                  }}
+                  onTouchEnd={() => {
+                    clearTimeout(longPressTimeout);
+                    setLongPressCardId(null);
+                  }}
+                  onTouchCancel={() => {
+                    clearTimeout(longPressTimeout);
+                    setLongPressCardId(null);
+                  }}
                 >
-                  <img src={carta.image} alt={`Carta ${index + 1}`} className="player-card-image" />
+                  <img src={carta.front_image} alt={`Carta ${index + 1}`} className="player-card-image" />
                   {carta.equipements?.length > 0 && (
                     <>
                       <div className="player-equipment-count">{carta.equipements.length}</div>
@@ -227,7 +246,7 @@ function PlayerTable({
                         {carta.equipements.map((equipo) => (
                           <img
                             key={equipo.id}
-                            src={equipo.image}
+                            src={equipo.front_image}
                             alt={equipo.id}
                             className="player-equipment-image"
                           />

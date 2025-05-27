@@ -7,6 +7,11 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
   const [floatingMessage, setFloatingMessage] = useState('');
   const [isFading, setIsFading] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [longPressCardId, setLongPressCardId] = useState(null);
+  const [longPressTimeout, setLongPressTimeout] = useState(null);
+  
+
+  
 
   useEffect(() => {
     if (turn.phase !== 'hand') {
@@ -19,7 +24,6 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
       setIsFading(false);
       const fadeTimer = setTimeout(() => setIsFading(true), 2500);
       const removeTimer = setTimeout(() => setFloatingMessage(''), 3000);
-
       return () => {
         clearTimeout(fadeTimer);
         clearTimeout(removeTimer);
@@ -28,8 +32,6 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
   }, [floatingMessage]);
 
   const total = cartas.length;
-  const maxRotation = 25;
-  const spacing = 110;
 
   const handleClick = (carta) => {
     if (turn.whose !== 'user' || turn.phase !== 'hand') {
@@ -38,13 +40,11 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
     }
 
     if (selectedCardId === carta.id) {
-      // Si es spell o equipamiento, simplemente desselecciona
       if (carta.type === 'equipement' || carta.type === 'spell') {
         setSelectedCardId(null);
         return;
       }
 
-      // Si es criatura, intenta jugarla
       if (carta.cost > mana) {
         setFloatingMessage(`Mana insuficiente! Coste: ${carta.cost}, Tienes: ${mana}`);
         return;
@@ -55,11 +55,11 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
     } else {
       setSelectedCardId(carta.id);
 
-      // Si es spell o equipamiento, lo preparamos para que el usuario seleccione objetivo
-       if (carta.cost > mana) {
+      if (carta.cost > mana) {
         setFloatingMessage(`Mana insuficiente! Coste: ${carta.cost}, Tienes: ${mana}`);
         return;
       }
+
       if (carta.type === 'equipement' || carta.type === 'spell') {
         onPlayCard(carta);
       }
@@ -68,38 +68,32 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
 
   return (
     <>
-      <div className="player-hand" style={{ width: `${spacing * total}px` }}>
+      <div className="player-hand">
         {cartas.map((carta, index) => {
           const centerIndex = (total - 1) / 2;
-          const offset = index - centerIndex;
-          const rotate = (offset / centerIndex) * maxRotation;
-          const translateY = -Math.abs(offset) * 12;
+          const offset = Math.round(index - centerIndex);
+          const offsetClass = `player-offset-${offset}`;
+
           const isHovered = hoveredIndex === index;
           const isSelected = selectedCardId === carta.id;
 
           return (
             <div
               key={carta.id}
-              className="card-container"
-              style={{
-                left: `calc(50% + ${offset * spacing}px)`,
-                bottom: `${translateY}px`,
-              }}
+            className={`card-container ${offsetClass} ${longPressCardId === carta.id ? 'long-pressed-container' : ''}`}
             >
               <Paper
-                className={`card ${isHovered ? 'hovered' : ''} ${isSelected ? 'selectedToUse' : ''}`}
+                className={`card ${isHovered ? 'hovered' : ''} ${isSelected ? 'selectedToUse' : ''} ${longPressCardId === carta.id ? 'long-pressed' : ''}`}
                 elevation={24}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
-                data-rotate={`${rotate}deg`}
-                style={{ '--rotate': `${rotate}deg` }}
                 draggable={turn.whose === 'user' && turn.phase === 'hand'}
                 onDragStart={(e) => {
                   if (turn.whose === 'user' && turn.phase === 'hand') {
-                     if (carta.cost > mana) {
-                          setFloatingMessage(`Mana insuficiente! Coste: ${carta.cost}, Tienes: ${mana}`);
-                          return;
-                      }     
+                    if (carta.cost > mana) {
+                      setFloatingMessage(`Mana insuficiente! Coste: ${carta.cost}, Tienes: ${mana}`);
+                      return;
+                    }
                     e.dataTransfer.setData('application/json', JSON.stringify({
                       id: carta.id,
                       type: carta.type,
@@ -109,10 +103,24 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
                     setFloatingMessage('No puedes jugar cartas fuera de tu fase de mano!!');
                   }
                 }}
+                onTouchStart={() => {
+                  const timeoutId = setTimeout(() => {
+                    setLongPressCardId(carta.id);
+                  }, 500);
+                  setLongPressTimeout(timeoutId);
+                }}
+                onTouchEnd={() => {
+                  clearTimeout(longPressTimeout);
+                  setLongPressCardId(null);
+                }}
+                onTouchCancel={() => {
+                  clearTimeout(longPressTimeout);
+                  setLongPressCardId(null);
+                }}
                 onClick={() => handleClick(carta)}
               >
                 <img
-                  src={carta.image}
+                  src={carta.front_image}
                   alt={`Carta ${index + 1}`}
                   className="card-image"
                 />

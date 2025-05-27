@@ -96,3 +96,52 @@ a {
   text-align-last: center; /* Necesario para algunos navegadores como Firefox */
   width: 60%; /* Puedes ajustar esto según el diseño */
 }
+
+
+@media (max-width: 435px) {
+  .mapa-actual {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: white;
+    border: none;
+    padding: 16px;
+    box-shadow: inset 0 0 0 2000px rgba(0, 0, 0, 0.5); /* oscurece fondo */
+  }
+
+  .mapa-content.vertical {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .tittle {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+
+  .mapa-info {
+    width: 100%;
+    padding: 0;
+  }
+
+  .mapa-info p {
+    font-size: 0.9rem;
+    margin: 0 0 8px 0;
+  }
+
+  .deck-select select {
+    width: 90%;
+    font-size: 0.95rem;
+  }
+
+  .mapa-info button {
+    width: 90%;
+    font-size: 1rem;
+    margin-top: 10px;
+  }
+
+  .mapa-imagen {
+    display: none; /* oculta la imagen original */
+  }
+}

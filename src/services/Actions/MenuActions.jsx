@@ -11,7 +11,6 @@
      await new Promise(res => setTimeout(res, 300));
 
      const data = Informacion;
-     console.log('Respuesta simulada de la carga:');
 
      return data;
 

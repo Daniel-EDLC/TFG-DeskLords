@@ -1,36 +1,28 @@
 import React from 'react';
 import { Box, Paper } from '@mui/material';
-import './RivalHand.css'; // Importa el archivo CSS
+import './RivalHand.css';
 
 function RivalHand({ cantidad }) {
   const total = cantidad;
-  const maxRotation = 25;
-  const spacing = 110;
-
   const cartas = Array.from({ length: total }, () => '/cards/cardBack.jpg');
 
   return (
-    <Box className="rival-hand-container" sx={{ width: `${spacing * total}px` }}>
+    <Box className="rival-hand-container">
       {cartas.map((url, index) => {
         const centerIndex = (total - 1) / 2;
-        const offset = index - centerIndex;
-        const rotate = -(offset / centerIndex) * maxRotation;
-        const translateY = -Math.abs(offset) * 12;
+        const offset = Math.round(index - centerIndex);
+        const offsetClass = `rival-offset-${offset}`;
 
         return (
           <Paper
             key={index}
             elevation={24}
-            className="rival-card"
-            sx={{
-              left: `calc(50% + ${offset * spacing}px)`,
-              top: `${translateY}px`,
-              transform: `translateX(-50%) rotate(${rotate}deg)`,
-            }}
+            className={`rival-card ${offsetClass}`}
           >
             <img
               src={url}
               alt={`Carta ${index + 1}`}
+              className="rival-card-image"
             />
           </Paper>
         );

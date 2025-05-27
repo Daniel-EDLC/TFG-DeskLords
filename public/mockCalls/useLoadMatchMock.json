@@ -12,7 +12,7 @@
             {
                 "id": "1",
                 "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "front_image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
                 "cost": 1,
                 "health": 100,
                 "attack": 111,
@@ -22,7 +22,7 @@
             {
                 "id": "2",
                 "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "front_image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
                 "cost": 2,
                 "health": 100,
                 "attack": 111,
@@ -32,7 +32,7 @@
             {
                 "id": "3",
                 "type": "criature", 
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "front_image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
                 "cost": 3,
                 "health": 100,
                 "attack": 111,
@@ -42,7 +42,7 @@
             {
                 "id": "4",
                 "type": "criature", 
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "front_image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
                 "cost": 4,
                 "health": 100,
                 "attack": 111,
@@ -52,7 +52,7 @@
             {
                 "id": "5",
                 "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "front_image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
                 "cost": 5,
                 "health": 100,
                 "attack": 111,
@@ -62,7 +62,7 @@
             {
                 "id": "6",
                 "type": "criature", 
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "front_image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
                 "cost": 6,
                 "health": 100,
                 "attack": 111,
@@ -72,7 +72,7 @@
             {
                 "id": "7",
                 "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "front_image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
                 "cost": 7,
                 "health": 100,
                 "attack": 111,
@@ -91,7 +91,7 @@
                 {
                 "id": "8",
                 "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "front_image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
                 "cost": 7,
                 "health": 100,
                 "attack": 111,
@@ -99,29 +99,29 @@
                 "equipements": [
                     {
                     "id": "2118888888",
-                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                    "front_image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
                     },
                     {
                     "id": "2111552352",
-                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                    "front_image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
                     },
                     {
                     "id": "211999999999",
-                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                    "front_image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
                     },
                     {
                     "id": "21123521",
-                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                    "front_image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
                     },
                     {
                     "id": "2119999999999999999999",
-                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                    "front_image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
                     }]
             },
             {
                 "id": "811111",
                 "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "front_image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
                 "cost": 7,
                 "health": 100,
                 "attack": 111,
@@ -129,29 +129,29 @@
                 "equipements": [
                     {
                     "id": "2110988",
-                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                    "front_image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
                     },
                     {
                     "id": "21231321",
-                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                    "front_image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
                     },
                     {
                     "id": "2118888888888",
-                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                    "front_image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
                     },
                     {
                     "id": "2123535211",
-                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                    "front_image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
                     },
                     {
                     "id": "21199999999999999",
-                    "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
+                    "front_image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjSYwcqz1HzbHrfKu2cL_y3DKvKxDi5d4ini1ZJIqaiXnAqGuk14EqpzwVxrbLfVAoyjGuvs7TYqvSpkmfwf9JCO4pyFUGLp6f8vNvivTEfK0QFUIudN_d3Hn77yNZ1r1p5JP-wBktxWbOX/s1600/Martillo+de+guerra+loxod%25C3%25B3n.jpg"
                     }]
             },
             {
                 "id": "82222",
                 "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "front_image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
                 "cost": 7,
                 "health": 100,
                 "attack": 111,
@@ -161,7 +161,7 @@
             {
                 "id": "83333",
                 "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "front_image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
                 "cost": 7,
                 "health": 100,
                 "attack": 111,
@@ -171,7 +171,7 @@
             {
                 "id": "84444",
                 "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "front_image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
                 "cost": 7,
                 "health": 100,
                 "attack": 111,

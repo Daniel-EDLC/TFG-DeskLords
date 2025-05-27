@@ -1,36 +1,38 @@
 import mockData from '../../../public/mockCalls/useLoadMatchMock.json';
 
 import { useEffect, useState } from 'react';
+/*
+ export default function useLoadMatch(onDataReady) {
+   const [gameData, setGameData] = useState(null);
 
-// export default function useLoadMatch(onDataReady) {
-//   const [gameData, setGameData] = useState(null);
+   useEffect(() => {
+     const fetchGameData = async () => {
+       const payload = {
+        playerId: "680d1b6f3f11cda356ec54f1",
+        map: { id: "683498b5985f7d2718edf693" },
+        user: { deck: { id: "683497e1a61c67ad15a141cf" } }
+       };
+       try {
+         const response = await fetch('http://localhost:3000/api/startGame', {
+           method: 'POST',
+           headers: { 'Content-Type': 'application/json' },
+           body: JSON.stringify(payload)
+         });
 
-//   useEffect(() => {
-//     const fetchGameData = async () => {
-//       const payload = {
-//         map: { id: "map_a0ea77ea-e28c-4c57-be6d-63d34c63696a" },
-//         user: { deck: { id: "dck_47690572-f6e3-4d2b-9472-77e75ca83c41" } }
-//       };
-//       try {
-//         const response = await fetch('https://fd167768-d9ff-4c53-ac9d-93f430094cf7.mock.pstmn.io/games', {
-//           method: 'POST',
-//           headers: { 'Content-Type': 'application/json' },
-//           body: JSON.stringify(payload)
-//         });
+         const data = await response.json();
+         console.log("Datos del juego obtenidos:", data.data);
+         setGameData(data.data);
+         if (onDataReady) onDataReady(data.data);
+       } catch (error) {
+         console.error("Error al obtener datos del juego:", error);
+       }
+     };
 
-//         const data = await response.json();
-//         setGameData(data);
-//         if (onDataReady) onDataReady(data);
-//       } catch (error) {
-//         console.error("Error al obtener datos del juego:", error);
-//       }
-//     };
+     fetchGameData();
+   }, [onDataReady]);
 
-//     fetchGameData();
-//   }, [onDataReady]);
-
-//   return [gameData, setGameData];
-// }
+   return [gameData, setGameData];
+ } */
 
 
 
@@ -38,7 +40,6 @@ export default function useLoadMatch() {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    // Simula un fetch
     setTimeout(() => {
       setData(mockData);
     }, 500);

@@ -15,7 +15,7 @@
             {
                 "id": "31",
                 "type": "criature", 
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "front_image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
                 "cost": 4,
                 "health": 100,
                 "attack": 111,
@@ -25,7 +25,7 @@
             {
                 "id": "32",
                 "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "front_image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
                 "cost": 5,
                 "health": 100,
                 "attack": 111,
@@ -35,7 +35,7 @@
             {
                 "id": "33",
                 "type": "criature", 
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "front_image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
                 "cost": 6,
                 "health": 100,
                 "attack": 111,
@@ -47,7 +47,7 @@
             {
                 "id": "35",
                 "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "front_image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
                 "cost": 1,
                 "health": 100,
                 "attack": 111,
@@ -57,7 +57,7 @@
             {
                 "id": "36",
                 "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "front_image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
                 "cost": 1,
                 "health": 100,
                 "attack": 111,
@@ -75,7 +75,7 @@
             {
                 "id": "37",
                 "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "front_image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
                 "cost": 7,
                 "health": 100,
                 "attack": 111,
@@ -85,7 +85,7 @@
             },{
                 "id": "38",
                 "type": "criature",
-                "image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
+                "front_image": "https://sm.ign.com/t/ign_es/screenshot/default/talento-cuidados-carta-de-magic-the-gathering_mxkt.960.jpg",
                 "cost": 7,
                 "health": 100,
                 "attack": 111,

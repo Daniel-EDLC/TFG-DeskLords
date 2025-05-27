@@ -17,7 +17,8 @@ import {
   addCardToBattle,
   defense,
   resetBattle,
-  getBattle
+  getBattle,
+  onSurrender
 } from '../../services/Actions/GameActions';
 
 function Game() {
@@ -34,7 +35,10 @@ function Game() {
   const [announcementLink, setAnnouncementLink] = useState('');
   const [showAnnouncement, setShowAnnouncement] = useState(false);
   const [gameEnded, setGameEnded] = useState(false);
-  const [isWinner, setIsWinner] = useState(null); 
+  const [isWinner, setIsWinner] = useState(null);
+
+
+
 
   const handleRivalCardClick = (card) => {
     if (card.position !== 'attack') {
@@ -63,6 +67,7 @@ function Game() {
       setPendingSpellCard(card);
       return;
     }
+    console.log('Jugando carta2:', card);
     playCard(setGameData, card);
   };
 
@@ -152,6 +157,11 @@ function Game() {
     setBattles([]);
   };
 
+  const handleSurrenderClick = () => {
+  setGameEnded(true);
+  setIsWinner(false);
+  };
+
   if (!gameData || !gameData.rival || !gameData.user || !gameData.turn) {
     return (
       <div className="loading-container">
@@ -171,14 +181,14 @@ function Game() {
         imageUrl="https://m.media-amazon.com/images/I/51hPfLUZE0L._AC_UL1002_.jpg"
         life={gameData.rival.health}
         mana={gameData.rival.mana}
-        deck={gameData.user.pending_deck || []}
+        deck={gameData.rival.pending_deck}
       />
 
       <RivalHand cantidad={gameData.rival.hand || 0} />
 
       <div className="mesa-container">
         <RivalTable
-          cartas={gameData.rival.table || []}
+          cartas={gameData.rival.table}
           turn={gameData.turn}
           battles={battles}
           targetEquipmentCard={setSelectedTableCardIdForEquipment}
@@ -191,7 +201,7 @@ function Game() {
         />
 
         <PlayerTable
-          cartas={gameData.user.table || []}
+          cartas={gameData.user.table}
           turn={gameData.turn}
           onRequestPhaseChange={setPhase}
           switchPhase={handleSwitchPhase}
@@ -210,7 +220,7 @@ function Game() {
       </div>
 
       <PlayerHand
-        cartas={gameData.user.hand || []}
+        cartas={gameData.user.hand}
         mana={gameData.user.mana}
         turn={gameData.turn}
         onPlayCard={handlePlayCard}
@@ -224,7 +234,8 @@ function Game() {
         imageUrl="https://img.freepik.com/fotos-premium/angel-cara-angel-alas_901383-148607.jpg"
         life={gameData.user.health}
         mana={gameData.user.mana}
-        deck={gameData.user.pending_deck || []}
+        deck={gameData.user.pending_deck}
+        onSurrender={handleSurrenderClick}
       />
 
       {showAnnouncement && (

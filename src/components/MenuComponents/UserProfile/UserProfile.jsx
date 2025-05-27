@@ -7,7 +7,7 @@ const UserProfile = ({ avatar, name, level, experience }) => {
       <img src={avatar} alt="avatar" className="user-avatar" />
       <h3>{name}</h3>
       <p>Nivel: {level}</p>
-      <p>Experiencia: {experience}</p>
+      <p>Exp: {experience}</p>
     </div>
   );
 };

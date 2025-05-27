@@ -13,6 +13,8 @@ function RivalTable({
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [pendingEquipTarget, setPendingEquipTarget] = useState(null);
   const [pendingCardData, setPendingCardData] = useState(null);
+  const [longPressCardId, setLongPressCardId] = useState(null);
+  const [longPressTimeout, setLongPressTimeout] = useState(null);
 
   useEffect(() => {
     cartas.forEach((carta) => {
@@ -64,7 +66,9 @@ function RivalTable({
             >
               <div className={`rival-card-table`}>
                 <Paper
-                  className={`${cardClass} ${isInRivalBattle ? 'rival-card-in-battle' : hoveredCardId === carta.id ? 'hovered' : ''}`}
+                  className={`${cardClass} 
+                  ${isInRivalBattle ? 'rival-card-in-battle' : hoveredCardId === carta.id ? 'hovered' : ''} 
+                  ${longPressCardId === carta.id ? 'rival-long-pressed' : ''}`}
                   elevation={10}
                   onClick={() => {
                     if (isSelectingTargetForSpell && targetSpellCard) {
@@ -112,9 +116,23 @@ function RivalTable({
 
                     onPlayCard(cardToSend);
                   }}
+                  onTouchStart={() => {
+                    const timeoutId = setTimeout(() => {
+                      setLongPressCardId(carta.id);
+                    }, 500);
+                    setLongPressTimeout(timeoutId);
+                  }}
+                  onTouchEnd={() => {
+                    clearTimeout(longPressTimeout);
+                    setLongPressCardId(null);
+                  }}
+                  onTouchCancel={() => {
+                    clearTimeout(longPressTimeout);
+                    setLongPressCardId(null);
+                  }}
                 >
                   <img
-                    src={carta.image}
+                    src={carta.front_image}
                     alt={`Carta ${index + 1}`}
                     className="rival-card-image"
                   />
@@ -126,7 +144,7 @@ function RivalTable({
                         {carta.equipements.map((equipo) => (
                           <img
                             key={equipo.id}
-                            src={equipo.image}
+                            src={equipo.front_image}
                             alt={equipo.id}
                             className="rival-equipment-image"
                           />

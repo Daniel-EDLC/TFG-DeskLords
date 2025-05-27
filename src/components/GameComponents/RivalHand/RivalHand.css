@@ -1,4 +1,4 @@
-/* RivalHand.css */
+/* Posición y estructura del contenedor */
 .rival-hand-container {
   position: fixed;
   top: -20px;
@@ -9,18 +9,51 @@
   z-index: 10;
 }
 
+/* Cartas individuales */
 .rival-card {
   width: 100px;
   height: 150px;
   border-radius: 2px;
   overflow: hidden;
   position: absolute;
-  transform-origin: bottom center;
+  transform-origin: top center;
+  transition: transform 0.3s ease;
 }
 
+/* Imagen dentro de la carta */
 .rival-card img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: rotate(180deg);
+  transform: rotate(180deg); /* Vista desde el rival */
+}
+
+/* Posiciones e inclinaciones según índice */
+.rival-offset--3 { left: calc(50% - 330px); top: 0px;  transform: translateX(-50%) rotate(15deg); }
+.rival-offset--2 { left: calc(50% - 220px); top: 8px;  transform: translateX(-50%) rotate(10deg); }
+.rival-offset--1 { left: calc(50% - 110px); top: 16px; transform: translateX(-50%) rotate(5deg);  }
+.rival-offset-0  { left: 50%;              top: 24px; transform: translateX(-50%) rotate(0deg);   }
+.rival-offset-1  { left: calc(50% + 110px); top: 16px; transform: translateX(-50%) rotate(-5deg); }
+.rival-offset-2  { left: calc(50% + 220px); top: 8px;  transform: translateX(-50%) rotate(-10deg);}
+.rival-offset-3  { left: calc(50% + 330px); top: 0px;  transform: translateX(-50%) rotate(-15deg);}
+
+@media (max-width: 435px) {
+  .rival-hand-container {
+    height: 160px;
+  }
+
+  .rival-card {
+    width: 80px;
+    height: 120px;
+  }
+
+  /* Imagen volteada se mantiene igual */
+
+  .rival-offset--3 { left: calc(50% - 240px); top: 0px;  transform: translateX(-50%) rotate(10deg); }
+  .rival-offset--2 { left: calc(50% - 160px); top: 6px;  transform: translateX(-50%) rotate(6deg);  }
+  .rival-offset--1 { left: calc(50% - 80px);  top: 12px; transform: translateX(-50%) rotate(3deg);  }
+  .rival-offset-0  { left: 50%;               top: 18px; transform: translateX(-50%) rotate(0deg);  }
+  .rival-offset-1  { left: calc(50% + 80px);  top: 12px; transform: translateX(-50%) rotate(-3deg); }
+  .rival-offset-2  { left: calc(50% + 160px); top: 6px;  transform: translateX(-50%) rotate(-6deg); }
+  .rival-offset-3  { left: calc(50% + 240px); top: 0px;  transform: translateX(-50%) rotate(-10deg);}
 }
