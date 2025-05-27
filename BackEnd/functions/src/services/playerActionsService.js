@@ -155,11 +155,11 @@ async function attack(req, res) {
     const playerObjectId = new ObjectId(req.body.playerId);
 
     const game = await Game.findById(gameObjectId);
-    const player = await Player.findById(playerObjectId);
+    // const player = await Player.findById(playerObjectId);
 
-    if (!player) return req.response.error('Jugador no encontrado');
+    // if (!player) return req.response.error('Jugador no encontrado');
     if (!game) return req.response.error('Partida no encontrada');
-    if (game.idPlayer !== player._id.toString()) return req.response.error('El id del jugador no coincide con el de la partida');
+    // if (game.idPlayer !== player._id.toString()) return req.response.error('El id del jugador no coincide con el de la partida');
 
     const attackers = req.body.cards;
     const assignments = chooseDefenders(attackers, game.rivalTable);
@@ -266,11 +266,11 @@ async function defend(req, res) {
     const playerObjectId = new ObjectId(req.body.playerId);
 
     const game = await Game.findById(gameObjectId);
-    const player = await Player.findById(playerObjectId);
+    // const player = await Player.findById(playerObjectId);
 
-    if (!player) return req.response.error('Jugador no encontrado');
+    // if (!player) return req.response.error('Jugador no encontrado');
     if (!game) return req.response.error('Partida no encontrada');
-    if (game.idPlayer !== player._id.toString()) return req.response.error('El id del jugador no coincide con el de la partida');
+    // if (game.idPlayer !== player._id.toString()) return req.response.error('El id del jugador no coincide con el de la partida');
 
     const combats = [];
     for (const combat of req.body.battle) {
@@ -333,9 +333,9 @@ async function switchPhase(req, res) {
     const game = await Game.findById(gameObjectId);
     if (!game) return req.response.error('Partida no encontrada');
 
-    const player = await Player.findById(playerObjectId);
-    if (!player) return req.response.error('Jugador no encontrado');
-    if (game.idPlayer !== player._id.toString()) return req.response.error('El id del jugador no coincide con el de la partida');
+    // const player = await Player.findById(playerObjectId);
+    // if (!player) return req.response.error('Jugador no encontrado');
+    // if (game.idPlayer !== player._id.toString()) return req.response.error('El id del jugador no coincide con el de la partida');
     if (game.status !== 'in-progress') return req.response.error('La partida no está en progreso');
 
     if (req.body.turn.phase === 'hand') {
