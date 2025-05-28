@@ -3,7 +3,7 @@ import { Box, Paper, Dialog, DialogTitle, DialogActions, Button } from '@mui/mat
 import './PlayerTable.css';
 
 function PlayerTable({ 
-  cartas, turn, onRequestPhaseChange, switchPhase, handleEndTurn, handleDefense, targetEquipmentCard, targetSpellCard, 
+  cartas, turn, onRequestPhaseChange, handleSwitchPhase, handleEndTurn, handleDefense, targetEquipmentCard, targetSpellCard, 
   isSelectingTargetForEquipment, isSelectingTargetForSpell,  onCardClick, battles, onResetBattle , mana , onPlayCard }) {
 
   const [selectedAttackCards, setselectedAttackCards] = useState([]);
@@ -115,7 +115,7 @@ function PlayerTable({
         case 'hand':
           return (
              <Box className="phase-buttons-inner">
-              <Button variant="contained" className="phase-button" onClick={switchPhase}>
+              <Button variant="contained" className="phase-button" onClick={handleSwitchPhase}>
                 Fase mesa
               </Button>
               <Button variant="contained" className="end-turn-button" onClick={handleEndTurnClick}>

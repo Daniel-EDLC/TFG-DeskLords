@@ -68,11 +68,11 @@ function Game() {
       return;
     }
     console.log('Jugando carta2:', card);
-    playCard(setGameData, card);
+    playCard(setGameData, gameData, card);
   };
 
-  const handleSwitchPhase = () => switchPhase(setGameData);
-  const handleEndTurn = async (selectedAttackCards) => await endTurn(selectedAttackCards, setGameData);
+  const handleSwitchPhase = () => switchPhase(setGameData, gameData);
+  const handleEndTurn = async (selectedAttackCards) => await endTurn(selectedAttackCards, setGameData, gameData);
   const handleDefense = async () => await defense(setGameData, gameData);
 
   const setPhase = (nuevaFase) => {
@@ -87,7 +87,7 @@ function Game() {
 
   useEffect(() => {
     if (pendingEquipementCard && selectedTableCardIdForEquipment) {
-      playCard(setGameData, {
+      playCard(setGameData, gameData, {
         ...pendingEquipementCard,
         targetId: selectedTableCardIdForEquipment
       });
@@ -98,7 +98,7 @@ function Game() {
 
   useEffect(() => {
     if (pendingSpellCard && selectedTableCardIdforSpell) {
-      playCard(setGameData, {
+      playCard(setGameData, gameData, {
         ...pendingSpellCard,
         targetId: selectedTableCardIdforSpell
       });
@@ -157,10 +157,15 @@ function Game() {
     setBattles([]);
   };
 
-  const handleSurrenderClick = () => {
-  setGameEnded(true);
-  setIsWinner(false);
-  };
+  const handleSurrenderClick = async () => {
+  try {
+    await onSurrender(gameData); 
+    setGameEnded(true);
+    setIsWinner(false);
+  } catch (error) {
+    console.error('No se pudo rendir');
+  }
+};
 
   if (!gameData || !gameData.rival || !gameData.user || !gameData.turn) {
     return (

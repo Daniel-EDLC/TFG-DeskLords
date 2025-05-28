@@ -1,29 +1,38 @@
 // version mock cargaInformacion
 
 
- import Informacion from '../../../public/mockCalls/info.json';
+// import Informacion from '../../../public/mockCalls/info.json';
 
+export async function cargaInformacion() {
+  try {
+    const response = await fetch('/api/infoUser', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        // Si tu backend requiere autenticación, puedes añadir aquí el token
+        // 'Authorization': `Bearer ${tuToken}`
+      }
+    });
 
- export async function cargaInformacion() {
+    if (!response.ok) {
+      throw new Error('No se pudo obtener la información del juego');
+    }
 
+    const data = await response.json();
+    return data;
 
-   try {
-     await new Promise(res => setTimeout(res, 300));
+  } catch (error) {
+    console.error('Error al cargar la información:', error);
+    throw error;
+  }
+}
 
-     const data = Informacion;
-
-     return data;
-
-   } catch (error) {
-     console.error('Error simulado al enviar defensa:', error);
-   }
- }
 
 
 
 // version real llamarPartida
 
-import InformacionPartida from '../../../public/mockCalls/infoPartida.json';
+// import InformacionPartida from '../../../public/mockCalls/infoPartida.json';
 
 
 // export const cargarPartida = async (deckId, mapa) => {
@@ -53,18 +62,28 @@ import InformacionPartida from '../../../public/mockCalls/infoPartida.json';
 
 export const cargarPartida = async (deckId, mapa) => {
   try {
-    const response = await fetch('/mockCalls/infoPartida.json');
+    const response = await fetch('/api/startGame', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        deckId: deckId,
+        mapaId: mapa.id,
+      }),
+    });
 
     if (!response.ok) {
-      throw new Error('No se pudo cargar el mock de partida');
+      throw new Error('No se pudo iniciar la partida');
     }
 
     const data = await response.json();
-    console.log('Mock de partida cargado correctamente:', data);
+    console.log('Partida iniciada correctamente:', data);
     return data;
   } catch (error) {
-    console.error('Error al cargar partida mock:', error);
+    console.error('Error al iniciar partida:', error);
     throw error;
   }
 };
+
 
