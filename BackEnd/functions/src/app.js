@@ -3,6 +3,7 @@ require('dotenv').config();
 // Inicializacion de express
 const express = require('express');
 const cors = require('cors');
+const connectDB = require('./config/db');
 const app = express();
 
 // Importar los middlewares
@@ -18,7 +19,7 @@ const playerRoutes = require('./routes/playerRoutes');
 const setRoutes = require('./routes/setRoutes');
 
 app.use(express.json());
-
+app.use(connectDB);
 app.use(cors());
 
 // Middleware que agrega el helper a cada request

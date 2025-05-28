@@ -21,4 +21,8 @@ exports.api = onRequest({
     maxInstances: 10,
     allowUnauthenticated: true,
     region: "europe-southwest1",
+    enviromentsVariables: {
+        MONGODB_URI: process.env.MONGODB_URI,
+        APPLICATION_CREDENTIALS: process.env.APPLICATION_CREDENTIALS,
+    }
 }, app);
