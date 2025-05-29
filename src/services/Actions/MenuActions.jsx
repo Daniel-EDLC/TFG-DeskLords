@@ -1,7 +1,7 @@
 // version mock cargaInformacion
 
 
-// import Informacion from '../../../public/mockCalls/info.json';
+import Informacion from '../../../public/mockCalls/info.json';
 
 export async function cargaInformacion() {
   try {
@@ -18,7 +18,8 @@ export async function cargaInformacion() {
       throw new Error('No se pudo obtener la información del juego');
     }
 
-    const data = await response.json();
+    // const data = await response.json();
+    const data = Informacion;
     return data;
 
   } catch (error) {
@@ -85,5 +86,52 @@ export const cargarPartida = async (deckId, mapa) => {
     throw error;
   }
 };
+
+
+//version real decks
+import mazos from '../../../public/mockCalls/decks.json';
+
+/*
+export const getDecks = async (userId) => {
+  try {
+    const response = await fetch(`/api/decks/${userId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Error al obtener los decks');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error en getDecks:', error);
+    throw error;
+  }
+};*/
+
+export const getDecks = async () => {
+  try {
+    const response = await fetch('../../../public/mockCalls/decks.json'); // sin `${userId}` si no filtras
+    if (!response.ok) {
+      throw new Error('Error al obtener los decks');
+    }
+
+    const data = await response.json();
+
+    // Si quieres filtrar por userId, puedes hacerlo aquí si el JSON lo soporta
+    // return data.filter(deck => deck.userId === userId);
+    
+    return data;
+  } catch (error) {
+    console.error('Error en getDecks:', error);
+    throw error;
+  }
+};
+
+
 
 

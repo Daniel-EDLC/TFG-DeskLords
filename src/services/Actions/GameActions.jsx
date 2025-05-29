@@ -157,7 +157,7 @@ export async function playCard(setGameData, card) {
 
 
 
-// version real switchPhase
+// version real switchPhase ---------------------------------------------------------------------------------------------------------------------------------------------
 
 
 export async function switchPhase(setGameData, gameData) {
@@ -166,7 +166,7 @@ export async function switchPhase(setGameData, gameData) {
   };
 
   try {
-    const response = await fetch('http://localhost:3000/api/phase', {
+    const response = await fetch('http://localhost:3000/api/switchPhase', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -343,7 +343,7 @@ export function addCardToBattle(carta) {
 
 
 
-// version mock attack
+// version mock attack---------------------------------------------------------------------------------------------------------------------------------------------
 /*
  export async function attack(selectedAttackCards) {
      const payload = {
@@ -439,7 +439,7 @@ export async function endTurn(selectedAttackCards, setGameData, gameData) {
   };
 
   try {
-    const response = await fetch('http://localhost:3000/api/endTurn', {
+    const response = await fetch('http://localhost:3000/api/attack', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -550,7 +550,7 @@ export async function endTurn(selectedAttackCards, setGameData, gameData) {
 
 
 
-// version mock defense
+// version mock defense---------------------------------------------------------------------------------------------------------------------------------------------------
 /*
 import defenseResponse from '../../../public/mockCalls/defenseResponse.json';
 
@@ -634,7 +634,7 @@ export async function defense(setGameData, gameData) {
    };
 
   try {
-    const response = await fetch('http://localhost:3000/api/defense', {
+    const response = await fetch('http://localhost:3000/api/defend', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
