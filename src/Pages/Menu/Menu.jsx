@@ -1,38 +1,73 @@
-import React, { useEffect, useState } from 'react';
-import Maps from '../../components/MenuComponents/Maps/Maps';
-import UserProfile from '../../components/MenuComponents/UserProfile/UserProfile';
-import ActualMap from '../../components/MenuComponents/ActualMap/ActualMap';
-import Gestion from '../../components/MenuComponents/Gestion/Gestion'
+import { useState, useEffect } from "react";
+import { useMediaQuery, Box, Button, IconButton } from "@mui/material";
+import SportsKabaddiIcon from "@mui/icons-material/SportsKabaddi";
+import StorageIcon from "@mui/icons-material/Storage";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import CollectionsIcon from "@mui/icons-material/Collections";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+
+import ActualMap from "../../components/MenuComponents/ActualMap/ActualMap";
+import Maps from "../../components/MenuComponents/Maps/Maps";
+import UserProfile from "../../components/MenuComponents/UserProfile/UserProfile";
+import Decks from "../../components/MenuComponents/Decks/Decks";
+
+import { cargarPartida, getDecks } from "../../services/Actions/MenuActions";
 import { useNavigate } from 'react-router-dom';
 
-import './Menu.css';
-import { cargarPartida } from '../../services/Actions/MenuActions';
+import "./Menu.css";
 
+function Menu({data}) {
+  const esMovil = useMediaQuery("(max-width:435px)");
 
-import { Navigate } from 'react-router-dom';
+  const botones = [
+    { id: "batalla", icon: <SportsKabaddiIcon />, texto: "Batalla" },
+    { id: "coleccion", icon: <CollectionsIcon />, texto: "Colección" },
+    { id: "perfil", icon: <AccountCircleIcon />, texto: "Perfil" },
+    { id: "salir", icon: <ExitToAppIcon />, texto: "Salir" },
+    { id: "bbdd", icon: <StorageIcon />, texto: "BBDD" },
+  ];
 
-function Menu({ data }) {
+  const [seccionActiva, setSeccionActiva] = useState("batalla");
   const [showGestion, setShowGestion] = useState(false);
   const [selectedMap, setSelectedMap] = useState(null);
-  const [selectedDeckId, setSelectedDeckId] = useState('');
+  const [selectedDeckId, setSelectedDeckId] = useState("");
+  const [decks, setDecks] = useState([]);
   const navigate = useNavigate();
 
-    
 
-    useEffect(() => {
-    if (data.rol==="admin") {
+  
+useEffect(() => {
+  const cargarDecks = async () => {
+    try {
+      const data = await getDecks();
+      setDecks(data);
+    } catch (error) {
+      console.error('Error cargando mazos:', error);
+    }
+  };
+
+  cargarDecks();
+}, []);
+  
+
+  useEffect(() => {
+    if (data.rol === "admin") {
       setShowGestion(true);
     }
 
     // Seleccionar el primer mapa disponible por defecto
     if (!selectedMap && data?.mapas?.length) {
-      const firstAvailable = data.mapas.find(m => m.available);
+      const firstAvailable = data.mapas.find((m) => m.available);
       if (firstAvailable) {
         setSelectedMap(firstAvailable);
       }
     }
   }, [data, selectedMap]);
 
+  
+    if (!data) {
+      return <div>Cargando datos...</div>;
+    }
 
   const handleMapSelect = (mapa) => {
     if (mapa.available) {
@@ -40,65 +75,100 @@ function Menu({ data }) {
     }
   };
 
- const handlePlay = async () => {
-  if (selectedMap && selectedDeckId) {
-  
-          console.log(`Iniciar juego en: ${selectedMap.nombre} con el mazo ID: ${selectedDeckId}`);
-    try {
-      const resultado = await cargarPartida(selectedDeckId, selectedMap);
-      console.log('Partida iniciada con éxito:', resultado);
-      navigate('/game');
-    } catch (error) {
-      console.error('Error al iniciar la partida desde el menú'+ error);
+  const handlePlay = async () => {
+    if (selectedMap && selectedDeckId) {
+      console.log(
+        `Iniciar juego en: ${selectedMap.nombre} con el mazo ID: ${selectedDeckId}`
+      );
+      try {
+        const resultado = await cargarPartida(selectedDeckId, selectedMap);
+        console.log("Partida iniciada con éxito:", resultado);
+        navigate("/game");
+      } catch (error) {
+        console.error("Error al iniciar la partida desde el menú" + error);
+      }
     }
-  
-    
-  }
-};
+  };
 
 
-  if (!data) {
-      return <div>Cargando datos...</div>;
-    }
-    
-  return (
-    <div className="menu-container">
-      <div className="menu-header">
-        <img className='menu-tittle' src="/public/LOGO.png" alt="" />
-      </div>
-      <div className="menu-main">
-        <div className="perfil-area">
+    const renderContenido = () => {
+      switch (seccionActiva) {
+        case "batalla":
+          return (
+            <>
+              <ActualMap
+                mapa={selectedMap}
+                onPlay={handlePlay}
+                decks={decks}
+                selectedDeckId={selectedDeckId}
+                onSelectDeck={setSelectedDeckId}
+              />
+              <Maps mapas={data.mapas} onSelect={handleMapSelect} />
+            </>
+          );
+        case "coleccion":
+          console.log("Decks:", decks);
+          return (
+            <>
+              <Decks
+                decks={decks}
+              />
+            </>
+          );
+        case "perfil":
+          return ( 
           <UserProfile
             className="user-profile"
             avatar={data.playerAvatar}
+            nickName={data.nickName}
             name={data.playerName}
             level={data.playerLevel}
             experience={data.playerExperience}
           />
-        </div>
+        );
+        case "bbdd":
+          return <div className="section-placeholder">[Herramientas BBDD]</div>;
+        case "salir":
+          return <div className="section-placeholder">[Cerrar sesión]</div>;
+        default:
+          return null;
+      }
+    };
 
-        <div className="middle-area">
-          <ActualMap
-            mapa={selectedMap}
-            onPlay={handlePlay}
-            decks={data.decks}
-            selectedDeckId={selectedDeckId}
-            onSelectDeck={setSelectedDeckId}
-          />
-        </div>
-
-        <div className="maps-area">
-          <Maps mapas={data.mapas} onSelect={handleMapSelect} />
-        </div>
-      </div>
-
-        <div className="menu-footer">
-          {showGestion && <Gestion />}
-        </div>
-
-    </div>
+  return (
+    <>
+    <img src="/public/LOGO.png" alt="Logo DeskLords" className="menu-logo" />
+      <Box className="main-content">{renderContenido()}</Box>
+      {esMovil ? (
+        <Box className="bottom-nav">
+          {botones.map((btn) => (
+            <Box key={btn.id} className="bottom-nav-item">
+              <IconButton
+                className="bottom-nav-btn"
+                onClick={() => setSeccionActiva(btn.id)}
+              >
+                {btn.icon}
+              </IconButton>
+            </Box>
+          ))}
+        </Box>
+      ) : (
+        <Box className="gestion-container">
+          <Box className="gestion-buttons">
+            {botones.map((btn) => (
+              <button
+                key={btn.id}
+                className="custom-btn"
+                onClick={() => setSeccionActiva(btn.id)}
+              >
+                {btn.texto}
+              </button>
+            ))}
+          </Box>
+        </Box>
+      )}
+    </>
   );
 }
 
 export default Menu;
-

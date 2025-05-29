@@ -25,8 +25,10 @@ const App = () => {
             </div>
           </div>;
   }
+  console.log(data);
 
   return (
+    
     <Router>
       <Routes>
         <Route path="/login" element={<Auth />} />
