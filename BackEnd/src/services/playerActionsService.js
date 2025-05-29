@@ -8,14 +8,16 @@ const { placeCardsAndAttack } = require('./IAService');
 async function useCard(req, res) {
   try {
     const ObjectId = Types.ObjectId;
+    console.log(req.body.gameId);
     const gameObjectId = new ObjectId(req.body.gameId);
-    const playerObjectId = new ObjectId(req.body.playerId);
+    // const playerObjectId = new ObjectId(req.body.playerId);
 
     const game = await Game.findById(gameObjectId);
-    const player = await Player.findById(playerObjectId);
+    console.log(game);
+    // const player = await Player.findById(playerObjectId);
 
-    if (!player) return req.response.error('Jugador no encontrado');
-    if (game.idPlayer !== player._id.toString()) return req.response.error('El id del jugador no coincide con el de la partida');
+    // if (!player) return req.response.error('Jugador no encontrado');
+    // if (game.idPlayer !== player._id.toString()) return req.response.error('El id del jugador no coincide con el de la partida');
 
     const usedCard = game.playerHand.find(card => card._id.toString() === req.body.cardId);
     const targetedCard = game.playerTable.find(card => card._id.toString() === req.body.action?.target?.id) ||

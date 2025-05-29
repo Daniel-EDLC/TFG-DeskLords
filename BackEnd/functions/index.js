@@ -20,7 +20,7 @@ exports.api = onRequest({
     memory: "512MiB",
     maxInstances: 10,
     allowUnauthenticated: true,
-    region: "europe-southwest1",
+    region: "europe-west1",
     enviromentsVariables: {
         MONGODB_URI: process.env.MONGODB_URI,
         APPLICATION_CREDENTIALS: process.env.APPLICATION_CREDENTIALS,
