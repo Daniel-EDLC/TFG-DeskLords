@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const cardSchema = new mongoose.Schema({
     // Campos obligatorios
     name: {type: String, required: true},
-    type: {type: String, required: true},
+    type: {type: String, required: true, enum: ['creature', 'spell', 'equipement']},
     description: {type: String, required: true},
     element: {type: String, required: true},
     atk: {type: Number, required: true},

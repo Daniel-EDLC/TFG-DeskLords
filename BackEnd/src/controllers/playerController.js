@@ -11,7 +11,17 @@ async function createPlayer(req, res) {
         const newPlayer = new Player({
             _id: id,
             name: req.body.name,
-            state: req.body.state
+            surname: req.body.surnames,
+            displayName: req.body.displayName,
+            owned_decks: [
+                "default-deck-id-1", // Reemplaza con un ID de mazo por defecto
+            ],
+            maps_unlocked: [
+                "default-map-id-1", // Reemplaza con un ID de mapa desbloqueado por defecto
+            ],
+            maps_locked: [
+                "default-map-id-2", // Reemplaza con un ID de mapa bloqueado por defecto
+            ],
         });
 
         const playerSaved = await newPlayer.save();
@@ -20,6 +30,24 @@ async function createPlayer(req, res) {
         req.response.success({ user: playerSaved });
     } catch (error) {
         req.response.error(`Error al crear usuario: ${error.message}`);
+    }
+}
+
+async function checkPlayerExists(req, res) {
+    try {
+        const ObjectId = Types.ObjectId;
+        const playerId = req.body.idPlayer;
+        const playerObjectId = new ObjectId(playerId);
+
+        const playerExists = await Player.exists({ _id: playerObjectId });
+
+        if (playerExists) {
+            req.response.success({ exists: true });
+        } else {
+            req.response.success({ exists: false });
+        }
+    } catch (error) {
+        req.response.error(`Error al verificar la existencia del jugador: ${error.message}`);
     }
 }
 
@@ -37,9 +65,10 @@ async function getPlayerInfo(req, res) {
         let allMaps = [];
 
         if (player.maps_unlocked.length > 0) {
-            allMaps = await Promise.all(
+            const unlockedMaps= await Promise.all(
                 player.maps_unlocked.map(async mapId => {
-                    const mapFound = await Map.findById(mapId);
+                    const mapObjectId = new ObjectId(mapId);
+                    const mapFound = await Map.findById(mapObjectId);
                     return {
                         nombre: mapFound.name,
                         id: mapFound._id,
@@ -48,10 +77,12 @@ async function getPlayerInfo(req, res) {
                     };
                 })
             );
+
+            allMaps = allMaps.concat(unlockedMaps);
         }
 
         if (player.maps_locked.length > 0) {
-            allMaps = await Promise.all(
+            const lockedMaps = await Promise.all(
                 player.maps_locked.map(async mapId => {
                     const mapObjectId = new ObjectId(mapId);
                     const mapFound = await Map.findById(mapObjectId);
@@ -63,6 +94,8 @@ async function getPlayerInfo(req, res) {
                     };
                 })
             );
+
+            allMaps = allMaps.concat(lockedMaps);
         }
 
         // Obtener los objetos completos de los decks
@@ -70,7 +103,10 @@ async function getPlayerInfo(req, res) {
             player.owned_decks.map(async deckId => {
                 const deckObjectId = new ObjectId(deckId);
                 const deckFound = await Deck.findById(deckObjectId);
-                return deckFound;
+                return {
+                    name: deckFound.name,
+                    id: deckFound._id,
+                };
             })
         );
 
@@ -90,5 +126,6 @@ async function getPlayerInfo(req, res) {
 
 module.exports = {
     createPlayer,
-    getPlayerInfo
+    getPlayerInfo,
+    checkPlayerExists
 };
