@@ -6,7 +6,8 @@ import './ActualMap.css';
 const ActualMap = ({ mapa, onPlay, decks, selectedDeckId, onSelectDeck }) => {
   
 const isMobile = useMediaQuery("(max-width:435px)");
-  const selectedDeck = decks.find(deck => deck._id === selectedDeckId);
+ const selectedDeck = decks.find(deck => String(deck._id) === String(selectedDeckId));
+
 
   useEffect(() => {
   if (!selectedDeckId && decks.length > 0) {
@@ -41,16 +42,17 @@ if (!mapa) return null;
 
           <div className="deck-select">
             <select
-              id="deck"
-              value={selectedDeckId}
-              onChange={(e) => onSelectDeck(e.target.value)}
-            >
+                id="deck"
+                value={String(selectedDeckId)}
+                onChange={(e) => onSelectDeck(e.target.value)}
+              >
               {decks
                 .filter((deck) => deck.available)
                 .map((deck) => (
-                  <option key={deck._id} value={deck._id}>
+                  <option key={deck._id} value={String(deck._id)}>
                     {deck.name}
                   </option>
+
               ))}
             </select>
           </div>
