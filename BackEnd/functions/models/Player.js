@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const playerSchema = new mongoose.Schema({
+    uid: {type: String, required: true, unique: true}, // Firebase UID
     status: {type: String, enum: ['active', 'suspended', 'banned', 'deleted'], default: 'active'},
     name: {type: String, required: true},
     surname: {type: String, required: true},
