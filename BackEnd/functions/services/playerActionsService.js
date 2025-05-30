@@ -14,7 +14,7 @@ async function useCard(req, res) {
     const player = await Player.findOne({ uid: req.body.playerId });
 
     if (!player) return req.response.error('Jugador no encontrado');
-    if (game.idPlayer !== player._id.toString()) return req.response.error('El id del jugador no coincide con el de la partida');
+    if (game.playerId !== player.uid) return req.response.error('El id del jugador no coincide con el de la partida');
 
     console.log('game', game);
     const usedCard = game.playerHand.find(card => card._id.toString() === req.body.cardId);
@@ -39,9 +39,15 @@ async function useCard(req, res) {
         const updatedGame = await Game.findById(gameObjectId);
 
         return req.response.success({
+          gameId: req.body.gameId,
           action_result: {
             type: 'use',
             card: usedCard
+          },
+          turn: {
+            number: updatedGame.currentTurn,
+            whose: "user",
+            phase: "hand"
           },
           user: {
             hand: updatedGame.playerHand,
@@ -65,16 +71,23 @@ async function useCard(req, res) {
             }
           );
 
+          const updatedGame = await Game.findById(gameObjectId);
+
           return req.response.success({
             gameId: req.body.gameId,
             action_result: {
               type: 'use',
               card: usedCard
             },
+            turn: {
+              number: updatedGame.currentTurn,
+              whose: "user",
+              phase: "hand"
+            },
             user: {
-              hand: game.playerHand,
-              table: game.playerTable,
-              mana: game.playerMana
+              hand: updatedGame.playerHand,
+              table: updatedGame.playerTable,
+              mana: updatedGame.playerMana
             }
           });
         } else {
@@ -97,16 +110,23 @@ async function useCard(req, res) {
               }
             );
 
+            const updatedGame = await Game.findById(gameObjectId);
+
             return req.response.success({
               gameId: req.body.gameId,
               action_result: {
                 type: 'use',
                 card: usedCard
               },
+              turn: {
+                number: updatedGame.currentTurn,
+                whose: "user",
+                phase: "hand"
+              },
               user: {
-                hand: game.playerHand,
-                table: game.playerTable,
-                mana: game.playerMana
+                hand: updatedGame.playerHand,
+                table: updatedGame.playerTable,
+                mana: updatedGame.playerMana
               }
             });
 
@@ -129,19 +149,26 @@ async function useCard(req, res) {
             return req.response.error('Objetivo de hechizo no válido');
           }
 
+          const updatedGame = await Game.findById(gameObjectId);
+
           return req.response.success({
             gameId: req.body.gameId,
             action_result: {
               type: 'use',
               card: usedCard
             },
+            turn: {
+              number: updatedGame.currentTurn,
+              whose: "user",
+              phase: "hand"
+            },
             user: {
-              hand: game.playerHand,
-              table: game.playerTable,
-              mana: game.playerMana
+              hand: updatedGame.playerHand,
+              table: updatedGame.playerTable,
+              mana: updatedGame.playerMana
             },
             rival: {
-              table: game.rivalTable,
+              table: updatedGame.rivalTable,
             }
           });
         }
