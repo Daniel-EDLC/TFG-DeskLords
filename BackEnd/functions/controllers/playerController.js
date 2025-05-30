@@ -5,11 +5,9 @@ const { Types } = require('mongoose');
 
 async function createPlayer(req, res) {
     try {
-        const ObjectId = Types.ObjectId;
-        const id = new ObjectId(req.body.uid); // Genera un nuevo ObjectId para el jugador
-
+        
         const newPlayer = new Player({
-            _id: id,
+            uid: req.body.uid,
             name: req.body.name,
             surname: req.body.surnames,
             displayName: req.body.displayName,
@@ -39,11 +37,8 @@ async function createPlayer(req, res) {
 
 async function checkPlayerExists(req, res) {
     try {
-        const ObjectId = Types.ObjectId;
-        const playerId = req.body.idPlayer;
-        const playerObjectId = new ObjectId(playerId);
 
-        const playerExists = await Player.exists({ _id: playerObjectId });
+        const playerExists = await Player.exists({ uid: req.body.idPlayer });
 
         if (playerExists) {
             req.response.success({ exists: true });
@@ -58,10 +53,8 @@ async function checkPlayerExists(req, res) {
 async function getPlayerInfo(req, res) {
     try {
         const ObjectId = Types.ObjectId;
-        const playerId = req.body.playerId;
-        const playerObjectId = new ObjectId(playerId);
 
-        const player = await Player.findById(playerObjectId);
+        const player = await Player.findOne({ uid: req.body.playerId });
         if (!player) {
             return req.response.error('Jugador no encontrado');
         }

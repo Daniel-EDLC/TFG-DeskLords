@@ -16,11 +16,10 @@ function shuffleCards(array, size) {
 async function startGame(req, res) {
     try {
         const ObjectId = Types.ObjectId;
-        const playerObjectId = new ObjectId(req.body.playerId);
         const deckObjectId = new ObjectId(req.body.user.deck.id);
         const mapObjectId = new ObjectId(req.body.map.id);
 
-        const player = await Player.findById(playerObjectId);
+        const player = await Player.findOne({ uid: req.body.playerId });
         if (!player) {
             return req.response.error('El jugador no existe');
         }
