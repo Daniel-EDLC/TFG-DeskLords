@@ -11,13 +11,20 @@ import Maps from "../../components/MenuComponents/Maps/Maps";
 import UserProfile from "../../components/MenuComponents/UserProfile/UserProfile";
 import Decks from "../../components/MenuComponents/Decks/Decks";
 
-import { cargarPartida } from "../../services/Actions/MenuActions";
+import { cargarPartida, cargaInformacion } from "../../services/Actions/MenuActions";
 import { useNavigate } from 'react-router-dom';
 
 import "./Menu.css";
 
-function Menu({data}) {
+function Menu() {
   const esMovil = useMediaQuery("(max-width:435px)");
+  const navigate = useNavigate();
+
+  const [data, setData] = useState(null);
+  const [seccionActiva, setSeccionActiva] = useState("batalla");
+  const [showGestion, setShowGestion] = useState(false);
+  const [selectedMap, setSelectedMap] = useState(null);
+  const [selectedDeckId, setSelectedDeckId] = useState("");
 
   const botones = [
     { id: "batalla", icon: <SportsKabaddiIcon />, texto: "Batalla" },
@@ -27,37 +34,33 @@ function Menu({data}) {
     { id: "bbdd", icon: <StorageIcon />, texto: "BBDD" },
   ];
 
-  const [seccionActiva, setSeccionActiva] = useState("batalla");
-  const [showGestion, setShowGestion] = useState(false);
-  const [selectedMap, setSelectedMap] = useState(null);
-  const [selectedDeckId, setSelectedDeckId] = useState("");
-  const navigate = useNavigate();
-
- 
-  
-
-    useEffect(() => {
-      if (!data) return;
-
-      console.log('hola2', data);
-
-      if (data.rol === "admin") {
-        setShowGestion(true);
+  useEffect(() => {
+    const cargar = async () => {
+      try {
+        const resultado = await cargaInformacion();
+        console.log("Datos cargados en Menu:", resultado);
+        setData(resultado);
+      } catch (error) {
+        console.error("Error al cargar datos:", error);
       }
+    };
+    cargar();
+  }, []);
 
-      if (!selectedMap && data.maps?.length) {
-        const firstAvailable = data.maps.find((m) => m.available);
-        if (firstAvailable) {
-          setSelectedMap(firstAvailable);
-        }
+  useEffect(() => {
+    if (!data) return;
+
+    if (data.rol === "admin") {
+      setShowGestion(true);
+    }
+
+    if (!selectedMap && data.maps?.length) {
+      const firstAvailable = data.maps.find((m) => m.available);
+      if (firstAvailable) {
+        setSelectedMap(firstAvailable);
       }
-    }, [data, selectedMap]);
-
-    if (!data) {
-          return <div>Cargando datos...</div>;
-        }
-  
-  
+    }
+  }, [data, selectedMap]);
 
   const handleMapSelect = (mapa) => {
     if (mapa.available) {
@@ -80,33 +83,25 @@ function Menu({data}) {
     }
   };
 
-
-    const renderContenido = () => {
-      switch (seccionActiva) {
-        case "batalla":
-          return (
-            <>
-              <ActualMap
-                mapa={selectedMap}
-                onPlay={handlePlay}
-                decks={data.decks}
-                selectedDeckId={selectedDeckId}
-                onSelectDeck={setSelectedDeckId}
-              />
-              <Maps mapas={data.maps} onSelect={handleMapSelect} />
-            </>
-          );
-        case "coleccion":
-          console.log("Decks:", data.decks);
-          return (
-            <>
-              <Decks
-                decks={data.decks}
-              />
-            </>
-          );
-        case "perfil":
-          return ( 
+  const renderContenido = () => {
+    switch (seccionActiva) {
+      case "batalla":
+        return (
+          <>
+            <ActualMap
+              mapa={selectedMap}
+              onPlay={handlePlay}
+              decks={data.decks}
+              selectedDeckId={selectedDeckId}
+              onSelectDeck={setSelectedDeckId}
+            />
+            <Maps mapas={data.maps} onSelect={handleMapSelect} />
+          </>
+        );
+      case "coleccion":
+        return <Decks decks={data.decks} />;
+      case "perfil":
+        return (
           <UserProfile
             className="user-profile"
             avatar={data.playerAvatar}
@@ -116,26 +111,36 @@ function Menu({data}) {
             experience={data.playerExperience}
           />
         );
-        case "bbdd":
-          return <div className="section-placeholder">[Herramientas BBDD]</div>;
-        case "salir":
-          return <div className="section-placeholder">[Cerrar sesión]</div>;
-        default:
-          return null;
-      }
-    };
+      case "bbdd":
+        return <div className="section-placeholder">[Herramientas BBDD]</div>;
+      case "salir":
+        return <div className="section-placeholder">[Cerrar sesión]</div>;
+      default:
+        return null;
+    }
+  };
+
+  if (!data) {
+    return (
+      <div className="loading-container">
+        <div className="loading-box">
+          <p>Espera unos segundos...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
-    <img src="/public/LOGO.png" alt="Logo DeskLords" className="menu-logo" />
+      <img src="/LOGO.png" alt="Logo DeskLords" className="menu-logo" />
       <Box className="main-content">{renderContenido()}</Box>
       {esMovil ? (
         <Box className="bottom-nav">
           {botones.map((btn) => (
-            <Box key={btn._id} className="bottom-nav-item">
+            <Box key={btn.id} className="bottom-nav-item">
               <IconButton
                 className="bottom-nav-btn"
-                onClick={() => setSeccionActiva(btn._id)}
+                onClick={() => setSeccionActiva(btn.id)}
               >
                 {btn.icon}
               </IconButton>
@@ -147,9 +152,9 @@ function Menu({data}) {
           <Box className="gestion-buttons">
             {botones.map((btn) => (
               <button
-                key={btn._id}
+                key={btn.id}
                 className="custom-btn"
-                onClick={() => setSeccionActiva(btn._id)}
+                onClick={() => setSeccionActiva(btn.id)}
               >
                 {btn.texto}
               </button>

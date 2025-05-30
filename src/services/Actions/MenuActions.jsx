@@ -10,30 +10,30 @@ import Informacion from '../../../public/mockCalls/info.json';
 export async function cargaInformacion() {
 
   try {
-    const user = await auth.currentUser;
-    const userToken = await user.getIdToken();
-    console.log(user)
-    const payload = {
-      playerId: user.uid
-    }
-    console.log(payload)
-    const response = await fetch('https://api-meafpnv6bq-ew.a.run.app/api/getPlayerInfo', { 
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${userToken}`
-      },
-      body: JSON.stringify(payload)
-    });
+    // const user = await auth.currentUser;
+    // const userToken = await user.getIdToken();
+    // console.log(user)
+    // const payload = {
+    //   playerId: user.uid
+    // }
+    // console.log(payload)
+    // const response = await fetch('https://api-meafpnv6bq-ew.a.run.app/api/getPlayerInfo', { 
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'Authorization': `Bearer ${userToken}`
+    //   },
+    //   body: JSON.stringify(payload)
+    // });
 
-    if (!response.ok) {
-      throw new Error('No se pudo obtener la información del juego');
-    }
+    // if (!response.ok) {
+    //   throw new Error('No se pudo obtener la información del juego');
+    // }
 
-    // const data = await response.json();
-    const data = response;
-    console.log(Informacion)
-    // return data.data;
+    // // const data = await response.json();
+    // const data = response;
+    // console.log(Informacion)
+    // // return data.data;
     return Informacion;
 
   } catch (error) {

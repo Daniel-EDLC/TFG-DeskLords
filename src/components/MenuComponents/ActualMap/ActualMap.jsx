@@ -1,30 +1,31 @@
 import React from 'react';
 import { useEffect } from 'react';
-
+import { useMediaQuery } from "@mui/material";
 import './ActualMap.css';
 
 const ActualMap = ({ mapa, onPlay, decks, selectedDeckId, onSelectDeck }) => {
   
-
-  const isMobile = window.innerWidth <= 435;
+const isMobile = useMediaQuery("(max-width:435px)");
   const selectedDeck = decks.find(deck => deck._id === selectedDeckId);
 
-    useEffect(() => {
-    if (!selectedDeckId && decks.length > 0) {
-      onSelectDeck(decks[0]._id);
-    }
-  }, [decks, selectedDeckId, onSelectDeck]);
+  useEffect(() => {
+  if (!selectedDeckId && decks.length > 0) {
+    onSelectDeck(decks[0]._id);
+  }
+}, [decks, selectedDeckId, onSelectDeck]);
 
 if (!mapa) return null;
   return (
     <div
-  className={`mapa-actual ${isMobile ? 'mapa-fondo' : ''}`}
-  style={
-  isMobile && selectedDeck?.image
-    ? { backgroundImage: `url(${selectedDeck.image})` }
-    : {}
-}
->
+      key={selectedDeckId}
+      className={`mapa-actual ${isMobile ? 'mapa-fondo' : ''}`} 
+      style={
+        isMobile && selectedDeck?.image
+          ? { backgroundImage: `url(${selectedDeck.image})` }
+          : {}
+      }
+    >
+
       <label className='tittle'>Enfréntate al deck de {mapa.name}</label>
       <div className={`mapa-content ${isMobile ? 'vertical' : ''}`}>
         {!isMobile && selectedDeck && (
