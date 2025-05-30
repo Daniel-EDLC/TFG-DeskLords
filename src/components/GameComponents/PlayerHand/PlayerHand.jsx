@@ -39,7 +39,7 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
       return;
     }
 
-    if (selectedCardId === carta.id) {
+    if (selectedCardId === carta._id) {
       if (carta.type === 'equipement' || carta.type === 'spell') {
         setSelectedCardId(null);
         return;
@@ -53,7 +53,7 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
       onPlayCard(carta);
       setSelectedCardId(null);
     } else {
-      setSelectedCardId(carta.id);
+      setSelectedCardId(carta._id);
 
       if (carta.cost > mana) {
         setFloatingMessage(`Mana insuficiente! Coste: ${carta.cost}, Tienes: ${mana}`);
@@ -75,15 +75,15 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
           const offsetClass = `player-offset-${offset}`;
 
           const isHovered = hoveredIndex === index;
-          const isSelected = selectedCardId === carta.id;
+          const isSelected = selectedCardId === carta._id;
 
           return (
             <div
-              key={carta.id}
-            className={`card-container ${offsetClass} ${longPressCardId === carta.id ? 'long-pressed-container' : ''}`}
+              key={carta._id}
+            className={`card-container ${offsetClass} ${longPressCardId === carta._id ? 'long-pressed-container' : ''}`}
             >
               <Paper
-                className={`card ${isHovered ? 'hovered' : ''} ${isSelected ? 'selectedToUse' : ''} ${longPressCardId === carta.id ? 'long-pressed' : ''}`}
+                className={`card ${isHovered ? 'hovered' : ''} ${isSelected ? 'selectedToUse' : ''} ${longPressCardId === carta._id ? 'long-pressed' : ''}`}
                 elevation={24}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
@@ -95,7 +95,7 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
                       return;
                     }
                     e.dataTransfer.setData('application/json', JSON.stringify({
-                      id: carta.id,
+                      id: carta._id,
                       type: carta.type,
                       cost: carta.cost,
                     }));
@@ -105,7 +105,7 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
                 }}
                 onTouchStart={() => {
                   const timeoutId = setTimeout(() => {
-                    setLongPressCardId(carta.id);
+                    setLongPressCardId(carta._id);
                   }, 500);
                   setLongPressTimeout(timeoutId);
                 }}

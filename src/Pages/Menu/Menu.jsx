@@ -11,7 +11,7 @@ import Maps from "../../components/MenuComponents/Maps/Maps";
 import UserProfile from "../../components/MenuComponents/UserProfile/UserProfile";
 import Decks from "../../components/MenuComponents/Decks/Decks";
 
-import { cargarPartida, getDecks } from "../../services/Actions/MenuActions";
+import { cargarPartida } from "../../services/Actions/MenuActions";
 import { useNavigate } from 'react-router-dom';
 
 import "./Menu.css";
@@ -31,23 +31,9 @@ function Menu({data}) {
   const [showGestion, setShowGestion] = useState(false);
   const [selectedMap, setSelectedMap] = useState(null);
   const [selectedDeckId, setSelectedDeckId] = useState("");
-  const [decks, setDecks] = useState([]);
   const navigate = useNavigate();
 
 
-  
-useEffect(() => {
-  const cargarDecks = async () => {
-    try {
-      const data = await getDecks();
-      setDecks(data);
-    } catch (error) {
-      console.error('Error cargando mazos:', error);
-    }
-  };
-
-  cargarDecks();
-}, []);
   
 
   useEffect(() => {
@@ -99,19 +85,19 @@ useEffect(() => {
               <ActualMap
                 mapa={selectedMap}
                 onPlay={handlePlay}
-                decks={decks}
+                decks={data.decks}
                 selectedDeckId={selectedDeckId}
                 onSelectDeck={setSelectedDeckId}
               />
-              <Maps mapas={data.mapas} onSelect={handleMapSelect} />
+              <Maps mapas={data.maps} onSelect={handleMapSelect} />
             </>
           );
         case "coleccion":
-          console.log("Decks:", decks);
+          console.log("Decks:", data.decks);
           return (
             <>
               <Decks
-                decks={decks}
+                decks={data.decks}
               />
             </>
           );
@@ -142,10 +128,10 @@ useEffect(() => {
       {esMovil ? (
         <Box className="bottom-nav">
           {botones.map((btn) => (
-            <Box key={btn.id} className="bottom-nav-item">
+            <Box key={btn._id} className="bottom-nav-item">
               <IconButton
                 className="bottom-nav-btn"
-                onClick={() => setSeccionActiva(btn.id)}
+                onClick={() => setSeccionActiva(btn._id)}
               >
                 {btn.icon}
               </IconButton>
@@ -157,9 +143,9 @@ useEffect(() => {
           <Box className="gestion-buttons">
             {botones.map((btn) => (
               <button
-                key={btn.id}
+                key={btn._id}
                 className="custom-btn"
-                onClick={() => setSeccionActiva(btn.id)}
+                onClick={() => setSeccionActiva(btn._id)}
               >
                 {btn.texto}
               </button>

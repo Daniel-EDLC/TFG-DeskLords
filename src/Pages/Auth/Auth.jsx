@@ -36,7 +36,6 @@ export default function Auth() {
   }
 
   return (
-    //De esta forma cambiará dependiendo de si vamos a registrarnos o no
     <div className="auth-container">
       <div className="auth-menu-tittle">
         <img className='auth-tittle-tittle' src="/public/LOGO.png" alt="" />

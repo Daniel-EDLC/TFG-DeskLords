@@ -1,17 +1,27 @@
+import { auth } from '../../../firebaseConfig';
+
+
+
 // version mock cargaInformacion
 
 
 import Informacion from '../../../public/mockCalls/info.json';
 
 export async function cargaInformacion() {
+
   try {
-    const response = await fetch('/api/infoUser', {
-      method: 'GET',
+    const user = auth.currentUser;
+    console.log(user)
+    const payload = {
+      playerId: user.uid
+    }
+    const response = await fetch('http://localhost:3000/api/getPlayerInfo', { 
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // Si tu backend requiere autenticación, puedes añadir aquí el token
-        // 'Authorization': `Bearer ${tuToken}`
-      }
+        'Authorization': `Bearer ${user.getIdToken()}`
+      },
+      body: JSON.stringify(payload)
     });
 
     if (!response.ok) {
@@ -45,7 +55,7 @@ export async function cargaInformacion() {
 //       },
 //       body: JSON.stringify({
 //         deckId: deckId,
-//         mapaId: mapa.id,
+//         mapaId: mapa._id,
 //         mapaNombre: mapa.nombre
 //       })
 //     });
@@ -63,14 +73,19 @@ export async function cargaInformacion() {
 
 export const cargarPartida = async (deckId, mapa) => {
   try {
+
+    const user = auth.currentUser;
+
     const response = await fetch('/api/startGame', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${user.getIdToken()}`
       },
       body: JSON.stringify({
+        playerId: user.uid,
         deckId: deckId,
-        mapaId: mapa.id,
+        mapaId: mapa._id,
       }),
     });
 
@@ -113,24 +128,24 @@ export const getDecks = async (userId) => {
   }
 };*/
 
-export const getDecks = async () => {
-  try {
-    const response = await fetch('../../../public/mockCalls/decks.json'); // sin `${userId}` si no filtras
-    if (!response.ok) {
-      throw new Error('Error al obtener los decks');
-    }
+// export const getDecks = async () => {
+//   try {
+//     const response = await fetch('../../../public/mockCalls/decks.json');
+//     if (!response.ok) {
+//       throw new Error('Error al obtener los decks');
+//     }
 
-    const data = await response.json();
+//     const data = await response.json();
 
-    // Si quieres filtrar por userId, puedes hacerlo aquí si el JSON lo soporta
-    // return data.filter(deck => deck.userId === userId);
+//     // Si quieres filtrar por userId, puedes hacerlo aquí si el JSON lo soporta
+//     // return data.filter(deck => deck.userId === userId);
     
-    return data;
-  } catch (error) {
-    console.error('Error en getDecks:', error);
-    throw error;
-  }
-};
+//     return data;
+//   } catch (error) {
+//     console.error('Error en getDecks:', error);
+//     throw error;
+//   }
+// };
 
 
 

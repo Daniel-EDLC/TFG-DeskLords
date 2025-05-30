@@ -23,7 +23,7 @@
          type: "spell",
          action: {
            type: "kill", 
-           target: [{ id: card.id }]
+           target: [{ id: card._id }]
          }
        };
        break;
@@ -33,7 +33,7 @@
        payload = {
         gameId: gameData.gameId,
         idPlayer: "680d1b6f3f11cda356ec54f1",
-         id: card.id,
+         id: card._id,
          type: "equipement",
          action_result: {
            type: "use"
@@ -95,19 +95,19 @@ export async function playCard(setGameData, card) {
 
   switch (card.type) {
     case "criature":
-      body = { id: card.id, type: "criature" };
+      body = { id: card._id, type: "criature" };
       break;
 
     case "spell":
       body = {
         type: "spell",
-        action: { type: "kill", target: [{ id: card.id }] }
+        action: { type: "kill", target: [{ id: card._id }] }
       };
       break;
 
     case "equipement":
       body = {
-        id: card.id,
+        id: card._id,
         type: "equipement",
         action_result: { type: "use" },
         target: { id: card.targetId }
@@ -260,9 +260,9 @@ export function getFight() {
 
 export function addCardToBattle(carta) {
   
-  console.log('Intentando', carta.id);
+  console.log('Intentando', carta._id);
   const fight = getFight();
-  if (fight.atacanteId === carta.id || fight.defensorId === carta.id) {
+  if (fight.atacanteId === carta._id || fight.defensorId === carta._id) {
     console.log('La carta ya estaba seleccionada, selección reiniciada');
     resetPendingFight();
     // if (carta.battle) {
@@ -280,7 +280,7 @@ export function addCardToBattle(carta) {
   }
 
   const activeBattle = battle.some(
-  pelea => pelea.atacanteId === carta.id || pelea.defensorId === carta.id
+  pelea => pelea.atacanteId === carta._id || pelea.defensorId === carta._id
   );
 
   if (activeBattle) {
@@ -300,13 +300,13 @@ export function addCardToBattle(carta) {
   }
 
   if (esAtacante) {
-    pendingFight.atacanteId = carta.id;
+    pendingFight.atacanteId = carta._id;
     carta.battle = true;
-    console.log("Atacante asignado:", carta.id);
+    console.log("Atacante asignado:", carta._id);
   } else if (esDefensor) {
-    pendingFight.defensorId = carta.id;
+    pendingFight.defensorId = carta._id;
     carta.battle = true;
-    console.log("Defensor asignado:", carta.id);
+    console.log("Defensor asignado:", carta._id);
   }
 
   if (pendingFight.atacanteId && pendingFight.defensorId) {
@@ -564,10 +564,10 @@ export async function defense(setGameData, gameData) {
 
   const idsEnBatalla = battle.map(b => b.atacanteId);
 
-  const nuevosAtacantes = attackers.filter(a => !idsEnBatalla.includes(a.id));
+  const nuevosAtacantes = attackers.filter(a => !idsEnBatalla.includes(a._id));
 
   const nuevasEntradas = nuevosAtacantes.map(a => ({
-    atacanteId: a.id,
+    atacanteId: a._id,
     defensorId: '0'
   }));
 
@@ -616,10 +616,10 @@ export async function defense(setGameData, gameData) {
   const attackers = gameData.rival.table.filter(carta => carta.position === 'attack');
 
   const idsEnBatalla = battle.map(b => b.atacanteId);
-  const nuevosAtacantes = attackers.filter(a => !idsEnBatalla.includes(a.id));
+  const nuevosAtacantes = attackers.filter(a => !idsEnBatalla.includes(a._id));
 
   const nuevasEntradas = nuevosAtacantes.map(a => ({
-    atacanteId: a.id,
+    atacanteId: a._id,
     defensorId: '0'
   }));
 
@@ -683,7 +683,7 @@ export async function defense(setGameData, gameData) {
 export async function onSurrender(gameData) {
   try {
     const payload = {
-      idpartida: gameData.idpartida
+      idpartida: gameData._idpartida
     };
 
     const response = await fetch('http://localhost:3000/api/surrender', {

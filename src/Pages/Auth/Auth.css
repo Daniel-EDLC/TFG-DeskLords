@@ -34,6 +34,7 @@
 }
 
 .auth-card {
+  margin-top: 6vh;
   flex: 0 0 70%;
   display: flex;
   justify-content: center;
@@ -49,4 +50,18 @@
   width: 100%;
   max-width: 420px;
   text-align: center;
+}
+
+@media (max-width: 435px) {
+ .auth-tittle-tittle{
+  margin: 4vh;
+  width: 120%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px #cacacaa1);
+ }
+ .auth-card{
+  margin-top: 7vh;
+ }
+
+ 
 }
