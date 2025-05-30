@@ -7,6 +7,7 @@ import RivalHand from '../../components/GameComponents/RivalHand/RivalHand';
 import RivalTable from '../../components/GameComponents/RivalTable/RivalTable';
 import PlayerTable from '../../components/GameComponents/PlayerTable/PlayerTable';
 import Announcement from '../../components/GameComponents/Announcement/Announcement';
+import { useLocation } from 'react-router-dom';
 
 import './Game.css';
 import useLoadMatch from '../../services/LoadMatch/LoadMatch';
@@ -22,7 +23,14 @@ import {
 } from '../../services/Actions/GameActions';
 
 function Game() {
-  const [gameData, setGameData] = useLoadMatch();
+  
+  const location = useLocation();
+  const partida = location.state?.partida;
+
+
+  const [gameData, setGameData] = useState(partida);
+
+  console.log("partida->",gameData)
   const phaseTurn = gameData?.turn?.phase;
   const whoseTurn = gameData?.turn?.whose;
 
@@ -59,6 +67,7 @@ function Game() {
   };
 
   const handlePlayCard = (card) => {
+    console.log("intentando cartra hola daniel", card)
     if (card.type === 'equipement' && !card.targetId) {
       setPendingEquipementCard(card);
       return;

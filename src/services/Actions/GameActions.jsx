@@ -3,6 +3,7 @@ import { auth } from "../../../firebaseConfig";
 //  version real playCard
 
 export async function playCard(setGameData, gameData, card) {
+  console.log("jugando carta ->",card)
   const user = await new Promise((resolve, reject) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       unsubscribe();
@@ -19,7 +20,7 @@ export async function playCard(setGameData, gameData, card) {
       payload = {
         gameId: gameData.gameId,
         playerId: user.uid,
-        id: card._id.toString(),
+        cardId: card._id,
         type: "criature",
       };
       console.log("jugando carta4", card);
@@ -30,6 +31,7 @@ export async function playCard(setGameData, gameData, card) {
       payload = {
         gameId: gameData.gameId,
         playerId: user.uid,
+        cardId: card._id,
         type: "spell",
         action: {
           type: "kill",
@@ -43,7 +45,7 @@ export async function playCard(setGameData, gameData, card) {
       payload = {
         gameId: gameData.gameId,
         playerId: user.uid,
-        id: card._id,
+        cardId: card._id,
         type: "equipement",
         action_result: {
           type: "use",
@@ -59,7 +61,7 @@ export async function playCard(setGameData, gameData, card) {
   }
   console.log(payload);
   try {
-    const response = await fetch("http://localhost:3000/api/useCard", {
+    const response = await fetch("https://api-meafpnv6bq-ew.a.run.app/api/useCard", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -73,12 +75,10 @@ export async function playCard(setGameData, gameData, card) {
     const result = await response.json();
     console.log("Respuesta del servidor:", result);
     setGameData((prev) => ({
-      ...prev,
-      user: {
-        ...prev.user,
-        ...result.user,
-      },
-    }));
+  ...prev,
+  user: result.data.user,
+  turn: result.data.turn
+}));
   } catch (error) {
     console.error("Error al jugar la carta:", error);
   }
@@ -168,7 +168,7 @@ export async function switchPhase(setGameData, gameData) {
   };
 
   try {
-    const response = await fetch("http://localhost:3000/api/switchPhase", {
+    const response = await fetch("https://api-meafpnv6bq-ew.a.run.app/api/switchPhase", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -405,7 +405,7 @@ export async function endTurn(selectedAttackCards, setGameData, gameData) {
   };
 
   try {
-    const response = await fetch("http://localhost:3000/api/attack", {
+    const response = await fetch("https://api-meafpnv6bq-ew.a.run.app/api/attack", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -585,7 +585,7 @@ export async function defense(setGameData, gameData) {
   };
 
   try {
-    const response = await fetch("http://localhost:3000/api/defend", {
+    const response = await fetch("https://api-meafpnv6bq-ew.a.run.app/api/defend", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -642,7 +642,7 @@ export async function onSurrender(gameData) {
       idpartida: gameData._idpartida,
     };
 
-    const response = await fetch("http://localhost:3000/api/surrender", {
+    const response = await fetch("https://api-meafpnv6bq-ew.a.run.app/api/surrender", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

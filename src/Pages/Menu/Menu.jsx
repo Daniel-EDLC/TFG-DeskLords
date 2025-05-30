@@ -68,20 +68,20 @@ function Menu() {
     }
   };
 
-  const handlePlay = async () => {
-    if (selectedMap && selectedDeckId) {
-      console.log(
-        `Iniciar juego en: ${selectedMap.name} con el mazo ID: ${selectedDeckId}`
-      );
-      try {
-        const resultado = await cargarPartida(selectedDeckId, selectedMap);
-        console.log("Partida iniciada con éxito:", resultado);
-        navigate("/game");
-      } catch (error) {
-        console.error("Error al iniciar la partida desde el menú" + error);
-      }
+ const handlePlay = async () => {
+  if (selectedMap && selectedDeckId) {
+    console.log("mapa:",selectedMap)
+    console.log("deck:",selectedDeckId)
+    try {
+      const gameData = await cargarPartida(selectedDeckId, selectedMap.id);
+      
+      // Guardar en memoria, contexto, o pasar por estado
+      navigate("/game", { state: { partida: gameData } });
+    } catch (error) {
+      console.error("Error al iniciar la partida:", error);
     }
-  };
+  }
+};
 
   const renderContenido = () => {
     switch (seccionActiva) {

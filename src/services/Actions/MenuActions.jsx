@@ -1,12 +1,12 @@
 import { auth } from '../../../firebaseConfig';
- import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 
 
 
 // version mock cargaInformacion
 
 
-import Informacion from '../../../public/mockCalls/info.json';
+// import Informacion from '../../../public/mockCalls/info.json';
 
 export async function cargaInformacion() {
 
@@ -37,11 +37,11 @@ export async function cargaInformacion() {
        throw new Error('No se pudo obtener la información del juego');
      }
 
-     // const data = await response.json();
-     const data = response;
-     console.log(Informacion)
-     // return data.data;
-    return Informacion;
+     const data = await response.json();
+    //  const data = response;
+    //  console.log(Informacion)
+     return data.data;
+    // return Informacion;
 
   } catch (error) {
     console.error('Error al cargar la información:', error);
@@ -82,47 +82,53 @@ export async function cargaInformacion() {
 //   }
 // };
 
-export const cargarPartida = async (deckId, mapa) => {
-  try {
+// export async function cargarPartida  (deckId, map) {
 
-    const user = await new Promise((resolve, reject) => {
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
-        unsubscribe();
-        if (user) resolve(user);
-        else reject(new Error('Usuario no autenticado'));
-      });
+// console.log("deckId:", deckId)
+// console.log("mapa:", map)
+
+
+// useLoadMatch(deckId, map._id);
+// };
+
+export async function cargarPartida(deckId, mapId) {
+  const user = await new Promise((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      unsubscribe();
+      if (user) resolve(user);
+      else reject(new Error("Usuario no autenticado"));
     });
-    const userToken = await user.getIdToken();
+  });
 
-    const response = await fetch('https://api-meafpnv6bq-ew.a.run.app/api/startGame', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${userToken}`
-      },
-      body: JSON.stringify({
-        playerId: user.uid,
-        deckId: deckId,
-        mapaId: mapa._id,
-      }),
-    });
+  const userToken = await user.getIdToken();
 
-    if (!response.ok) {
-      throw new Error('No se pudo iniciar la partida');
-    }
+  const payload = {
+    playerId: user.uid,
+    map: { id: mapId },
+    user: { deck: { id: deckId } }
+  };
 
-    const data = await response.json();
-    console.log('Partida iniciada correctamente:', data);
-    return data;
-  } catch (error) {
-    console.error('Error al iniciar partida:', error);
-    throw error;
-  }
-};
+  const response = await fetch("https://api-meafpnv6bq-ew.a.run.app/api/startGame", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${userToken}`
+    },
+    body: JSON.stringify(payload)
+  });
+
+  const data = await response.json();
+  return data.data;
+}
+
+
+
+
 
 
 //version real decks
-import mazos from '../../../public/mockCalls/decks.json';
+// import mazos from '../../../public/mockCalls/decks.json';
+
 
 /*
 export const getDecks = async (userId) => {

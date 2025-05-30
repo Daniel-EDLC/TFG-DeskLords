@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { auth } from '../../../../firebaseConfig';
 import { GoogleAuthProvider, signInWithPopup, signOut, signInWithEmailAndPassword } from 'firebase/auth';
+ import { useNavigate } from 'react-router-dom';
 
 import './Login.css';
 
@@ -16,7 +17,10 @@ function Login({ onSwitch, onGoogleRegister }) {
 
   async function handleLogin() {
     try {
-    const result = await signInWithEmailAndPassword(nombre, contrasena);
+      const result = await signInWithEmailAndPassword(auth, nombre, contrasena);
+      console.log('Usuario autenticado:', result.user);
+      // eslint-disable-next-line no-undef
+      navigate('/menu');
     console.log(result)
     } catch (error) {
       console.error('Error en login:', error);
