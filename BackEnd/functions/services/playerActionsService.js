@@ -17,6 +17,7 @@ async function useCard(req, res) {
     if (!player) return req.response.error('Jugador no encontrado');
     if (game.idPlayer !== player._id.toString()) return req.response.error('El id del jugador no coincide con el de la partida');
 
+    console.log('game', game);
     const usedCard = game.playerHand.find(card => card._id.toString() === req.body.cardId);
     const targetedCard = game.playerTable.find(card => card._id.toString() === req.body.action?.target?.id) ||
       game.rivalTable.find(card => card._id.toString() === req.body.action?.target?.id);
@@ -24,7 +25,7 @@ async function useCard(req, res) {
     if (!usedCard) return req.response.error("Carta no encontrada en la mano del jugador");
 
     switch (usedCard.type) {
-      case 'criature': {
+      case 'creature': {
         // Añadir criatura a la mesa del jugador y quitar de la mano
         await Game.updateOne(
           { _id: gameObjectId },
@@ -35,15 +36,18 @@ async function useCard(req, res) {
           }
         );
 
+        // Leer el estado actualizado del juego
+        const updatedGame = await Game.findById(gameObjectId);
+
         return req.response.success({
           action_result: {
             type: 'use',
             card: usedCard
           },
           user: {
-            hand: game.playerHand,
-            table: game.playerTable,
-            mana: game.playerMana
+            hand: updatedGame.playerHand,
+            table: updatedGame.playerTable,
+            mana: updatedGame.playerMana
           }
         });
       }

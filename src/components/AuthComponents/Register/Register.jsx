@@ -78,14 +78,14 @@ export default function Register({ onSwitch, googleData }) {
         uid = user.uid;
       }
 
-      await createPlayer(uid, email, token);
+      await createPlayer(uid, token, name, surnames, username);
     } catch (err) {
       setError(err.message)
     }
   };
 
   //Funcion para guardarlo en la base de datos:
-  const createPlayer = async (uid, email, token) => {
+  const createPlayer = async (uid, token, name, surnames, username) => {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/registrar-usuario`, {
         method: 'POST',
@@ -94,8 +94,10 @@ export default function Register({ onSwitch, googleData }) {
           'Authorization': `Bearer ${token}` // si tu backend lo requiere
         },
         body: JSON.stringify({
-          uid,
-          email
+          id: uid,
+          name: name,
+          surnames: surnames,
+          displayName: username,
         })
       });
 
