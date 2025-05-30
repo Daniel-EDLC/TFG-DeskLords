@@ -9,14 +9,15 @@ import './App.css';
 const App = () => {
   const [data, setData] = useState(null);
 
-//   useEffect(() => {
-//   const cargar = async () => {
-//     await new Promise((resolve) => setTimeout(resolve, 2000)); // Espera 2 segundos
-//     const resultado = await cargaInformacion();
-//     setData(resultado);
-//   };
-//   cargar();
-// }, []);
+   useEffect(() => {
+   const cargar = async () => {
+     await new Promise((resolve) => setTimeout(resolve, 2000));
+     const resultado = await cargaInformacion();
+     console.log('hola',resultado)
+     setData(resultado);
+   };
+   cargar();
+ }, []);
 
   // if (!data) {
   //   return <div className="loading-container">
@@ -26,6 +27,8 @@ const App = () => {
   //         </div>;
   // }
   console.log(data);
+
+
 
   return (
     

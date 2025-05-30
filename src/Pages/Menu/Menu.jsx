@@ -33,27 +33,31 @@ function Menu({data}) {
   const [selectedDeckId, setSelectedDeckId] = useState("");
   const navigate = useNavigate();
 
-
+ 
   
 
-  useEffect(() => {
-    if (data.rol === "admin") {
-      setShowGestion(true);
-    }
+    useEffect(() => {
+      if (!data) return;
 
-    // Seleccionar el primer mapa disponible por defecto
-    if (!selectedMap && data?.mapas?.length) {
-      const firstAvailable = data.mapas.find((m) => m.available);
-      if (firstAvailable) {
-        setSelectedMap(firstAvailable);
+      console.log('hola2', data);
+
+      if (data.rol === "admin") {
+        setShowGestion(true);
       }
-    }
-  }, [data, selectedMap]);
 
-  
+      if (!selectedMap && data.maps?.length) {
+        const firstAvailable = data.maps.find((m) => m.available);
+        if (firstAvailable) {
+          setSelectedMap(firstAvailable);
+        }
+      }
+    }, [data, selectedMap]);
+
     if (!data) {
-      return <div>Cargando datos...</div>;
-    }
+          return <div>Cargando datos...</div>;
+        }
+  
+  
 
   const handleMapSelect = (mapa) => {
     if (mapa.available) {
@@ -64,7 +68,7 @@ function Menu({data}) {
   const handlePlay = async () => {
     if (selectedMap && selectedDeckId) {
       console.log(
-        `Iniciar juego en: ${selectedMap.nombre} con el mazo ID: ${selectedDeckId}`
+        `Iniciar juego en: ${selectedMap.name} con el mazo ID: ${selectedDeckId}`
       );
       try {
         const resultado = await cargarPartida(selectedDeckId, selectedMap);

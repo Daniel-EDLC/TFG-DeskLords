@@ -84,14 +84,13 @@ export default function Register({ onSwitch, googleData }) {
     }
   };
 
-  //Funcion para guardarlo en la base de datos:
   const createPlayer = async (uid, token, name, surnames, username) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/registrar-usuario`, {
+      const response = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/createPlayer`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` // si tu backend lo requiere
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           id: uid,

@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import { auth } from '../../../../firebaseConfig';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup, signOut, signInWithEmailAndPassword } from 'firebase/auth';
 
 import './Login.css';
 
 function Login({ onSwitch, onGoogleRegister }) {
   const API_URL = import.meta.env.VITE_API_URL;
+
+
+  // signOut(auth);
 
   const provider = new GoogleAuthProvider();
   const [nombre, setNombre] = useState('');
@@ -13,18 +16,8 @@ function Login({ onSwitch, onGoogleRegister }) {
 
   async function handleLogin() {
     try {
-      const response = await fetch('url', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre, contrasena }),
-      });
-
-      const data = await response.json();
-      if (data.exists) {
-        console.log('Usuario encontrado');
-      } else {
-        console.log('Usuario no encontrado');
-      }
+    const result = await signInWithEmailAndPassword(nombre, contrasena);
+    console.log(result)
     } catch (error) {
       console.error('Error en login:', error);
     }
@@ -58,13 +51,15 @@ function Login({ onSwitch, onGoogleRegister }) {
 
   async function isCreated(uid, token) {
     try {
-      const response = await fetch('url', {
+      const response = await fetch('https://api-meafpnv6bq-ew.a.run.app/api/checkPlayerExists', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ uid }),
+        body: JSON.stringify({ 
+          idPlayer: uid 
+        }),
       });
 
       return !!response.result;

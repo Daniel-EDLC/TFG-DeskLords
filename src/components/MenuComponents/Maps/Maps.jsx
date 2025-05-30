@@ -26,8 +26,8 @@ useEffect(() => {
   <div
   className="maps-wrapper"
   style={
-    window.innerWidth <= 435 && selectedMap?.imagen
-      ? { '--mapa-image-url': `url(${selectedMap.imagen})` }
+    window.innerWidth <= 435 && selectedMap?.image
+      ? { '--mapa-image-url': `url(${selectedMap.image})` }
       : {}
   }
 >
@@ -41,14 +41,14 @@ useEffect(() => {
           className={`mapa-card ${!mapa.available ? 'disabled' : ''}`}
           onClick={() => handleSelect(mapa)}
         >
-          {mapa.nombre}
+          {mapa.name}
         </div>
       ))}
     </div>
 
     {selectedMap && (
       <div className="mapa-preview-wrapper">
-        <img src={selectedMap.imagen} alt={selectedMap.nombre} className="mapa-preview-image" />
+        <img src={selectedMap.image} alt={selectedMap.name} className="mapa-preview-image" />
       </div>
     )}
   </div>

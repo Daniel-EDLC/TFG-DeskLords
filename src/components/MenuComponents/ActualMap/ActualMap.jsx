@@ -20,17 +20,17 @@ if (!mapa) return null;
     <div
   className={`mapa-actual ${isMobile ? 'mapa-fondo' : ''}`}
   style={
-  isMobile && selectedDeck?.portada
-    ? { backgroundImage: `url(${selectedDeck.portada})` }
+  isMobile && selectedDeck?.image
+    ? { backgroundImage: `url(${selectedDeck.image})` }
     : {}
 }
 >
-      <label className='tittle'>Enfréntate al deck de {mapa.nombre}</label>
+      <label className='tittle'>Enfréntate al deck de {mapa.name}</label>
       <div className={`mapa-content ${isMobile ? 'vertical' : ''}`}>
         {!isMobile && selectedDeck && (
           <img
-            src={selectedDeck.portada || "https://via.placeholder.com/300x150"}
-            alt={selectedDeck.nombre}
+            src={selectedDeck.image}
+            alt={selectedDeck.name}
             className="mapa-imagen"
           />
         )}
@@ -48,7 +48,7 @@ if (!mapa) return null;
                 .filter((deck) => deck.available)
                 .map((deck) => (
                   <option key={deck._id} value={deck._id}>
-                    {deck.nombre}
+                    {deck.name}
                   </option>
               ))}
             </select>

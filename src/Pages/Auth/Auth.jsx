@@ -18,7 +18,7 @@ export default function Auth() {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         // Si ya hay usuario autenticado, redirigir
-        navigate('/ruta-destino'); 
+        navigate('/menu'); 
       }
     });
 
