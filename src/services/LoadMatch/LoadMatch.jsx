@@ -1,4 +1,8 @@
 import mockData from '../../../public/mockCalls/useLoadMatchMock.json';
+ import { onAuthStateChanged } from 'firebase/auth';
+ import { auth } from '../../../firebaseConfig';
+
+ 
 
 import { useEffect, useState } from 'react';
 
@@ -7,15 +11,28 @@ import { useEffect, useState } from 'react';
 
    useEffect(() => {
      const fetchGameData = async () => {
+
+      const user = await new Promise((resolve, reject) => {
+            const unsubscribe = onAuthStateChanged(auth, (user) => {
+              unsubscribe();
+              if (user) resolve(user);
+              else reject(new Error('Usuario no autenticado'));
+            });
+          });
+      const userToken = await user.getIdToken();
+
        const payload = {
-        playerId: "680d1b6f3f11cda356ec54f1",
+        playerId: user.uid,
         map: { id: "683498b5985f7d2718edf693" },
         user: { deck: { id: "683497e1a61c67ad15a141cf" } }
        };
        try {
          const response = await fetch('http://localhost:3000/api/startGame', {
            method: 'POST',
-           headers: { 'Content-Type': 'application/json' },
+           headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${userToken}`
+            },
            body: JSON.stringify(payload)
          });
 

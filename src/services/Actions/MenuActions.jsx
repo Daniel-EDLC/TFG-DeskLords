@@ -1,4 +1,5 @@
 import { auth } from '../../../firebaseConfig';
+ import { onAuthStateChanged } from 'firebase/auth';
 
 
 
@@ -10,30 +11,36 @@ import Informacion from '../../../public/mockCalls/info.json';
 export async function cargaInformacion() {
 
   try {
-    // const user = await auth.currentUser;
-    // const userToken = await user.getIdToken();
-    // console.log(user)
-    // const payload = {
-    //   playerId: user.uid
-    // }
-    // console.log(payload)
-    // const response = await fetch('https://api-meafpnv6bq-ew.a.run.app/api/getPlayerInfo', { 
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Authorization': `Bearer ${userToken}`
-    //   },
-    //   body: JSON.stringify(payload)
-    // });
+      const user = await new Promise((resolve, reject) => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+          unsubscribe();
+          if (user) resolve(user);
+          else reject(new Error('Usuario no autenticado'));
+        });
+      });
+     const userToken = await user.getIdToken();
+     console.log(user)
+     const payload = {
+       playerId: user.uid
+     }
+     console.log(payload)
+     const response = await fetch('https://api-meafpnv6bq-ew.a.run.app/api/getPlayerInfo', { 
+       method: 'POST',
+       headers: {
+         'Content-Type': 'application/json',
+         'Authorization': `Bearer ${userToken}`
+       },
+       body: JSON.stringify(payload)
+     });
 
-    // if (!response.ok) {
-    //   throw new Error('No se pudo obtener la información del juego');
-    // }
+     if (!response.ok) {
+       throw new Error('No se pudo obtener la información del juego');
+     }
 
-    // // const data = await response.json();
-    // const data = response;
-    // console.log(Informacion)
-    // // return data.data;
+     // const data = await response.json();
+     const data = response;
+     console.log(Informacion)
+     // return data.data;
     return Informacion;
 
   } catch (error) {
@@ -78,7 +85,13 @@ export async function cargaInformacion() {
 export const cargarPartida = async (deckId, mapa) => {
   try {
 
-    const user = auth.currentUser;
+    const user = await new Promise((resolve, reject) => {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        unsubscribe();
+        if (user) resolve(user);
+        else reject(new Error('Usuario no autenticado'));
+      });
+    });
     const userToken = await user.getIdToken();
 
     const response = await fetch('https://api-meafpnv6bq-ew.a.run.app/api/startGame', {
