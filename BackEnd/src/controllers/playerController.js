@@ -67,7 +67,7 @@ async function getPlayerInfo(req, res) {
                     const mapObjectId = new ObjectId(mapId);
                     const mapFound = await Map.findById(mapObjectId);
                     return {
-                        nombre: mapFound.name,
+                        name: mapFound.name,
                         id: mapFound._id,
                         image: mapFound.image,
                         available: true,
@@ -84,7 +84,7 @@ async function getPlayerInfo(req, res) {
                     const mapObjectId = new ObjectId(mapId);
                     const mapFound = await Map.findById(mapObjectId);
                     return {
-                        nombre: mapFound.name,
+                        name: mapFound.name,
                         id: mapFound._id,
                         image: mapFound.image,
                         available: false,
@@ -135,7 +135,7 @@ async function getPlayerInfo(req, res) {
             playerExperience: player.level_progress || 2445456,
             rol: player.rol,
             decks: allDecks,
-            mapas: allMaps,
+            maps: allMaps,
         })
     } catch (error) {
         req.response.error(`Error al obtener información del jugador: ${error.message}`);

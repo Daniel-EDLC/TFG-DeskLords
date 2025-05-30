@@ -53,8 +53,6 @@ async function startGame(req, res) {
 
         const gameSaved = await newGame.save();
 
-        console.log(gameSaved.rivalHand)
-
         req.response.success({
             gameId: gameSaved._id.toString(),
             status: gameSaved.status,
