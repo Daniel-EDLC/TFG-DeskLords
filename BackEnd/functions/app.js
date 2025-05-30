@@ -29,7 +29,7 @@ app.use((req, res, next) => {
 });
 
 // Middleware para validar el token de autenticación
-// app.use(validarTokenJWT);
+app.use(validarTokenJWT);
 
 // Usa las rutas agrupadas bajo /api
 app.use('/api', abilityRoutes);

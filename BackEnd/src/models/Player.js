@@ -8,8 +8,9 @@ const playerSchema = new mongoose.Schema({
     register_date: {type: Date, default: Date.now, immutable: true, required: true},
     profile_img: {type: String, required: false, default: 'https://example.com/default-avatar.png'}, // Default avatar URL
     player_level: {type: Number, default: 0, required: false},
-    player_level_progress: {type: Number, default: 0, required: false},
+    player_level_progress: {type: Number, default: 0, required: false}, // puntos de experiencia exactos
     owned_decks: {type: [String], required: false},
+    locked_decks: {type: [String], required: false},
     maps_unlocked: {type: [String], required: false}, // Assuming you have a Map model
     maps_locked: {type: [String], required: false}, // Assuming you have a Map model
     // actual_map: {type: String, required: false},

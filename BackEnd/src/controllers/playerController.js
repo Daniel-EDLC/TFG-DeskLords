@@ -14,13 +14,17 @@ async function createPlayer(req, res) {
             surname: req.body.surnames,
             displayName: req.body.displayName,
             owned_decks: [
-                "default-deck-id-1", // Reemplaza con un ID de mazo por defecto
+                "68389e882a7841f9396d8e9b",
+            ],
+            locked_decks: [
+                "68389e292a7841f9396d8e7b",
+                "68389ef02a7841f9396d8ebb"
             ],
             maps_unlocked: [
-                "default-map-id-1", // Reemplaza con un ID de mapa desbloqueado por defecto
+                "6838a2bc36599377ad700412",
             ],
             maps_locked: [
-                "default-map-id-2", // Reemplaza con un ID de mapa bloqueado por defecto
+                "6838a30436599377ad700434",
             ],
         });
 
@@ -44,7 +48,7 @@ async function checkPlayerExists(req, res) {
         if (playerExists) {
             req.response.success({ exists: true });
         } else {
-            req.response.success({ exists: false });
+            req.response.error("Usuario no encontrado");
         }
     } catch (error) {
         req.response.error(`Error al verificar la existencia del jugador: ${error.message}`);
@@ -65,7 +69,7 @@ async function getPlayerInfo(req, res) {
         let allMaps = [];
 
         if (player.maps_unlocked.length > 0) {
-            const unlockedMaps= await Promise.all(
+            const unlockedMaps = await Promise.all(
                 player.maps_unlocked.map(async mapId => {
                     const mapObjectId = new ObjectId(mapId);
                     const mapFound = await Map.findById(mapObjectId);
@@ -98,17 +102,38 @@ async function getPlayerInfo(req, res) {
             allMaps = allMaps.concat(lockedMaps);
         }
 
+        let allDecks = [];
+
         // Obtener los objetos completos de los decks
-        const mazos = await Promise.all(
-            player.owned_decks.map(async deckId => {
-                const deckObjectId = new ObjectId(deckId);
-                const deckFound = await Deck.findById(deckObjectId);
-                return {
-                    name: deckFound.name,
-                    id: deckFound._id,
-                };
-            })
-        );
+        if (player.owned_decks.length > 0) {
+            const decks_unlocked = await Promise.all(
+                player.owned_decks.map(async deckId => {
+                    const deckObjectId = new ObjectId(deckId);
+                    const deckFound = await Deck.findById(deckObjectId);
+                    return {
+                        ...deckFound.toObject(),
+                        available: true,
+                    };
+                })
+            );
+
+            allDecks = allDecks.concat(decks_unlocked);
+        }
+
+        if (player.locked_decks.length > 0) {
+            const decks_locked = await Promise.all(
+                player.locked_decks.map(async deckId => {
+                    const deckObjectId = new ObjectId(deckId);
+                    const deckFound = await Deck.findById(deckObjectId);
+                    return {
+                        ...deckFound.toObject(),
+                        available: false,
+                    };
+                })
+            );
+
+            allDecks = allDecks.concat(decks_locked);
+        }
 
         req.response.success({
             playerAvatar: player.profile_img || 'https://example.com/default-avatar.png',
@@ -116,7 +141,7 @@ async function getPlayerInfo(req, res) {
             playerLevel: player.player_level,
             playerExperience: player.level_progress || 2445456,
             rol: player.rol,
-            decks: mazos,
+            decks: allDecks,
             mapas: allMaps,
         })
     } catch (error) {
