@@ -18,9 +18,9 @@ function RivalTable({
 
   useEffect(() => {
     cartas.forEach((carta) => {
-      if (carta.alive === false && !hiddenCards.includes(carta.id)) {
+      if (carta.alive === false && !hiddenCards.includes(carta._id)) {
         setTimeout(() => {
-          setHiddenCards((prev) => [...prev, carta.id]);
+          setHiddenCards((prev) => [...prev, carta._id]);
         }, 3000);
       }
     });
@@ -28,9 +28,9 @@ function RivalTable({
 
   useEffect(() => {
     cartas.forEach((carta) => {
-      if (carta.alive === false && !removedCards.includes(carta.id)) {
+      if (carta.alive === false && !removedCards.includes(carta._id)) {
         setTimeout(() => {
-          setRemovedCards((prev) => [...prev, carta.id]);
+          setRemovedCards((prev) => [...prev, carta._id]);
         }, 4000);
       }
     });
@@ -53,32 +53,32 @@ function RivalTable({
     <>
       <Box className="rival-table-container">
         {cartas.map((carta, index) => {
-          if (removedCards.includes(carta.id)) return null;
+          if (removedCards.includes(carta._id)) return null;
 
           const cardClass = ` ${carta.position === 'attack' ? 'attack-position' : ''}`;
-          const isInRivalBattle = battles.some(b => b.atacanteId === carta.id);
-          const isFadingOut = hiddenCards.includes(carta.id);
+          const isInRivalBattle = battles.some(b => b.atacanteId === carta._id);
+          const isFadingOut = hiddenCards.includes(carta._id);
 
           return (
             <div
-              key={carta.id}
+              key={carta._id}
               className={`rival-card-wrapper ${isFadingOut ? 'rival-card-fade-out' : ''}`}
             >
               <div className={`rival-card-table`}>
                 <Paper
                   className={`${cardClass} 
-                  ${isInRivalBattle ? 'rival-card-in-battle' : hoveredCardId === carta.id ? 'hovered' : ''} 
-                  ${longPressCardId === carta.id ? 'rival-long-pressed' : ''}`}
+                  ${isInRivalBattle ? 'rival-card-in-battle' : hoveredCardId === carta._id ? 'hovered' : ''} 
+                  ${longPressCardId === carta._id ? 'rival-long-pressed' : ''}`}
                   elevation={10}
                   onClick={() => {
                     if (isSelectingTargetForSpell && targetSpellCard) {
-                      targetSpellCard(carta.id);
+                      targetSpellCard(carta._id);
                       return;
                     }
                     if (isSelectingTargetForEquipment && targetEquipmentCard) {
                       if (turn.whose === 'user' && turn.phase === 'hand') {
                         if (window.confirm("¿Estás seguro de que quieres equipar una carta del rival?")) {
-                        targetEquipmentCard(carta.id);
+                        targetEquipmentCard(carta._id);
                         }
                         return;
                       }
@@ -88,7 +88,7 @@ function RivalTable({
                     }
                   }}
                   onDragOver={(e) => e.preventDefault()}
-                  onDragEnter={() => setHoveredCardId(carta.id)}
+                  onDragEnter={() => setHoveredCardId(carta._id)}
                   onDragLeave={() => setHoveredCardId(null)}
                   onDrop={(e) => {
                     e.preventDefault();
@@ -103,22 +103,22 @@ function RivalTable({
 
                     if (data.type === 'equipement') {
                       setPendingCardData(data);
-                      setPendingEquipTarget(carta.id);
+                      setPendingEquipTarget(carta._id);
                       setConfirmDialogOpen(true);
                       return;
                     }
 
                     const cardToSend = {
-                      id: data.id,
+                      id: data._id,
                       type: data.type,
-                      targetId: carta.id
+                      targetId: carta._id
                     };
 
                     onPlayCard(cardToSend);
                   }}
                   onTouchStart={() => {
                     const timeoutId = setTimeout(() => {
-                      setLongPressCardId(carta.id);
+                      setLongPressCardId(carta._id);
                     }, 500);
                     setLongPressTimeout(timeoutId);
                   }}
@@ -143,9 +143,9 @@ function RivalTable({
                       <div className="rival-equipment-preview">
                         {carta.equipements.map((equipo) => (
                           <img
-                            key={equipo.id}
+                            key={equipo._id}
                             src={equipo.front_image}
-                            alt={equipo.id}
+                            alt={equipo._id}
                             className="rival-equipment-image"
                           />
                         ))}

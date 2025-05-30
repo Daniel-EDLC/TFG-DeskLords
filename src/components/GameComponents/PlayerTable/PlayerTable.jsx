@@ -21,24 +21,24 @@ function PlayerTable({
     if (turn.whose === 'user') {
       if (turn.phase === 'hand') {
         if (isSelectingTargetForEquipment && targetEquipmentCard) {
-          targetEquipmentCard(carta.id);
+          targetEquipmentCard(carta._id);
           setPendingCardId(null);
           setShowConfirmDialog(false);
           return;
         }
 
         if (isSelectingTargetForSpell && targetSpellCard) {
-          targetSpellCard(carta.id);
+          targetSpellCard(carta._id);
           setPendingCardId(null);
           setShowConfirmDialog(false);
           return;
         }
 
-        setPendingCardId(carta.id);
+        setPendingCardId(carta._id);
         setShowConfirmDialog(true);
 
       } else if (turn.phase === 'table') {
-        toggleAttackCard(carta.id);
+        toggleAttackCard(carta._id);
       }
     } else if (turn.whose === 'rival') {
       if (turn.phase === 'attack') {
@@ -91,9 +91,9 @@ function PlayerTable({
 
   useEffect(() => {
     cartas.forEach((carta) => {
-      if (carta.alive === false && !hiddenCards.includes(carta.id)) {
+      if (carta.alive === false && !hiddenCards.includes(carta._id)) {
         setTimeout(() => {
-          setHiddenCards((prev) => [...prev, carta.id]);
+          setHiddenCards((prev) => [...prev, carta._id]);
         }, 3000);
       }
     });
@@ -101,9 +101,9 @@ function PlayerTable({
 
   useEffect(() => {
     cartas.forEach((carta) => {
-      if (carta.alive === false && !removedCards.includes(carta.id)) {
+      if (carta.alive === false && !removedCards.includes(carta._id)) {
         setTimeout(() => {
-          setRemovedCards((prev) => [...prev, carta.id]);
+          setRemovedCards((prev) => [...prev, carta._id]);
         }, 4000);
       }
     });
@@ -181,28 +181,28 @@ function PlayerTable({
           //   return;
           // }
           const cardToSend = {
-            id: data.id,
+            id: data._id,
             type: data.type
           };
           onPlayCard(cardToSend);
         }}
       >
         {cartas.map((carta, index) => {
-          if (removedCards.includes(carta.id)) return null;
+          if (removedCards.includes(carta._id)) return null;
 
-          const isSelected = selectedAttackCards.includes(carta.id);
-          const isInPlayerBattle = battles.some(b => b.defensorId === carta.id);
-          const isFadingOut = hiddenCards.includes(carta.id);
+          const isSelected = selectedAttackCards.includes(carta._id);
+          const isInPlayerBattle = battles.some(b => b.defensorId === carta._id);
+          const isFadingOut = hiddenCards.includes(carta._id);
 
           return (
-            <div key={carta.id} className={`player-card-wrapper ${isFadingOut ? 'player-card-fade-out' : ''}`}>
+            <div key={carta._id} className={`player-card-wrapper ${isFadingOut ? 'player-card-fade-out' : ''}`}>
               <div className={`player-card-table ${isSelected ? 'selected' : ''} ${isInPlayerBattle ? 'player-card-in-battle' : ''}`}>
                 <Paper
                   elevation={10}
-                  className={`player-card-inner ${hoveredCardId === carta.id ? 'hovered' : ''} ${longPressCardId === carta.id ? 'player-long-pressed' : ''} `}
+                  className={`player-card-inner ${hoveredCardId === carta._id ? 'hovered' : ''} ${longPressCardId === carta._id ? 'player-long-pressed' : ''} `}
                   onClick={() => handleCardClick(carta)}
                   onDragOver={(e) => e.preventDefault()}
-                  onDragEnter={() => setHoveredCardId(carta.id)}
+                  onDragEnter={() => setHoveredCardId(carta._id)}
                   onDragLeave={() => setHoveredCardId(null)}
                   onDrop={(e) => {
                     e.preventDefault();
@@ -214,9 +214,9 @@ function PlayerTable({
                     // }
                     if (data.type === 'equipement' || data.type === 'spell') {
                       const cardToSend = {
-                        id: data.id,
+                        id: data._id,
                         type: data.type,
-                        targetId: carta.id,
+                        targetId: carta._id,
                       };
                       onPlayCard(cardToSend);
                       return;
@@ -225,7 +225,7 @@ function PlayerTable({
                   }}
                   onTouchStart={() => {
                     const timeoutId = setTimeout(() => {
-                      setLongPressCardId(carta.id);
+                      setLongPressCardId(carta._id);
                     }, 500);
                     setLongPressTimeout(timeoutId);
                   }}
@@ -245,9 +245,9 @@ function PlayerTable({
                       <div className="player-equipment-preview">
                         {carta.equipements.map((equipo) => (
                           <img
-                            key={equipo.id}
+                            key={equipo._id}
                             src={equipo.front_image}
-                            alt={equipo.id}
+                            alt={equipo._id}
                             className="player-equipment-image"
                           />
                         ))}

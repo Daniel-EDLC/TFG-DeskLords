@@ -7,17 +7,17 @@ function Decks({ decks }) {
     <div className="deck-gallery">
       {decks.map((deck) => (
         <div
-          key={deck.id}
+          key={deck._id}
           className={`deck-card ${deck.available ? '' : 'disabled'}`}
-          onClick={() => deck.available && console.log(`Seleccionaste ${deck.nombre}`)}
+          onClick={() => deck.available && console.log(`Seleccionaste ${deck.name}`)}
         >
-          <img src={deck.portada} alt={deck.nombre} className="deck-image" />
+          <img src={deck.image} alt={deck.name} className="deck-image" />
           {!deck.available && (
             <div className="deck-lock-overlay">
               <LockIcon className="lock-icon" />
             </div>
           )}
-          <p className="deck-name">{deck.nombre}</p>
+          <p className="deck-name">{deck.name}</p>
         </div>
       ))}
     </div>
