@@ -3,7 +3,7 @@ const Player = require('../models/Player');
 const Card = require('../models/Card');
 const { resolverCombate, chooseDefenders } = require('./combatService');
 const { nextTurn, drawCard } = require('./turnService');
-const { placeCardsAndAttack } = require('./IAService');
+const { placeCards } = require('./IAService');
 
 async function useCard(req, res) {
   try {
@@ -343,19 +343,23 @@ async function attack(req, res) {
 
     // action de robar carta
     try {
-      await nextTurn({ game, isAi: true });
+      await nextTurn({ game: updatedGameResponse1, isAi: true });
     } catch (error) {
       return req.response.error(`Error al pasar al siguiente turno: ${error.message}`);
     }
 
+    const updatedGameNextTurn = await Game.findById(gameId);
+
     try {
-      await drawCard({ game, isAI: true });
+      await drawCard({ game: updatedGameNextTurn, isAI: true });
     } catch (error) {
       return req.response.error(`Error al robar carta: ${error.message}`);
     }
 
+    const updatedGameAfterDrawing = await Game.findById(gameId);
+
     try {
-      await placeCardsAndAttack(game);
+      await placeCards(updatedGameAfterDrawing);
     } catch (error) {
       return req.response.error(`Error al colocar cartas y atacar: ${error.message}`);
     }

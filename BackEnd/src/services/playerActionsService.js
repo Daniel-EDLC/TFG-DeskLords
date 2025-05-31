@@ -2,7 +2,7 @@ const Game = require('../models/Game');
 const Player = require('../models/Player');
 const { resolverCombate, chooseDefenders } = require('./combatService');
 const { nextTurn, drawCard } = require('./turnService');
-const { placeCardsAndAttack } = require('./IAService');
+const { placeCards } = require('./IAService');
 
 async function useCard(req, res) {
   try {
@@ -288,7 +288,7 @@ async function attack(req, res) {
 
     await drawCard({ game, isAI: true });
 
-    const result = await placeCardsAndAttack(game);
+    const result = await placeCards(game);
 
     const updatedGameResponse2y3 = await Game.findById(gameId);
 

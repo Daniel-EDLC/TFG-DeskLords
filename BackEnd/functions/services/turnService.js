@@ -17,6 +17,7 @@ async function nextTurn({ game, isAi }) {
   const updatedPlayerTable = cleanEquipements(game.playerTable);
   const updatedRivalTable = cleanEquipements(game.rivalTable);
 
+  // 1. Limpiar temporaryAbilities de todas las cartas
   await Game.updateOne(
     { _id: game._id },
     {
@@ -27,13 +28,20 @@ async function nextTurn({ game, isAi }) {
         rivalMana: newActualMana,
         'playerTable.$[].temporaryAbilities': [],
         'rivalTable.$[].temporaryAbilities': [],
+      },
+    }
+  );
+
+  // 2. Actualizar los equipements filtrados (sin spells)
+  await Game.updateOne(
+    { _id: game._id },
+    {
+      $set: {
         playerTable: updatedPlayerTable,
         rivalTable: updatedRivalTable
       },
     }
   );
-
-  await drawCard({ game, isAI: isAi });
 }
 
 async function drawCard({ game, isAI }) {

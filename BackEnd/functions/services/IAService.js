@@ -1,10 +1,9 @@
 const Game = require('../models/Game');
 
-async function placeCardsAndAttack(game) {
+async function placeCards(game) {
   let rivalHand = [...game.rivalHand];
   let rivalTable = [...game.rivalTable];
   let playerTable = [...game.playerTable];
-  let playerGraveyard = [...game.playerGraveyard];
   let rivalMana = game.rivalMana;
   let usedCards = [];
   let spellUsed = false;
@@ -100,13 +99,10 @@ async function placeCardsAndAttack(game) {
         rivalHand,
         rivalTable,
         playerTable,
-        playerGraveyard,
         rivalMana,
       },
     }
   );
-
-  // Ya no devolvemos nada ni marcamos cartas como new
 }
 
-module.exports = { placeCardsAndAttack };
+module.exports = { placeCards };
