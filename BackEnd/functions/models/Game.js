@@ -16,7 +16,7 @@ const gameSchema = new mongoose.Schema({
     playerTable: {type: [cardSchema], required: false},
     playerGraveyard: {type: [cardSchema], required: false},
     playerPendingDeck: {type: [cardSchema], required: false},
-    playerMana: {type: Number, required: true, default: 0},
+    playerMana: {type: Number, required: true, default: 20},
     rivalDeck: {type: deckSchema, required: false},
     rivalHand: {type: [cardSchema], required: false},
     rivalTable: {type: [cardSchema], required: false},
