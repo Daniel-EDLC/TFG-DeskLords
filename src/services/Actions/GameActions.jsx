@@ -21,7 +21,7 @@ export async function playCard(setGameData, gameData, card) {
         gameId: gameData.gameId,
         playerId: user.uid,
         cardId: card._id,
-        type: "criature",
+        type: "creature",
       };
       console.log("jugando carta4", card);
       break;
@@ -33,10 +33,7 @@ export async function playCard(setGameData, gameData, card) {
         playerId: user.uid,
         cardId: card._id,
         type: "spell",
-        action: {
-          type: "kill",
-          target: [{ id: card._id }],
-        },
+        target: { id: card.targetId },
       };
       break;
 
@@ -47,12 +44,7 @@ export async function playCard(setGameData, gameData, card) {
         playerId: user.uid,
         cardId: card._id,
         type: "equipement",
-        action_result: {
-          type: "use",
-        },
-        target: {
-          id: card.targetId,
-        },
+        target: { id: card.targetId },
       };
       break;
 
@@ -165,7 +157,9 @@ export async function switchPhase(setGameData, gameData) {
   const payload = {
     playerId: user.uid,
     gameId: gameData.gameId,
+    turn:{ phase: gameData.turn.phase}
   };
+  console.log("0.5",payload)
 
   try {
     const response = await fetch("https://api-meafpnv6bq-ew.a.run.app/api/switchPhase", {
@@ -181,13 +175,15 @@ export async function switchPhase(setGameData, gameData) {
 
     const result = await response.json();
 
+    console.log("1->",gameData)
     setGameData((prev) => ({
       ...prev,
       turn: {
         ...prev.turn,
-        ...result.turn,
+        ...result.data.turn,
       },
     }));
+     console.log("2->",gameData)
   } catch (error) {
     console.error("Error al cambiar phase:", error);
   }
@@ -419,39 +415,40 @@ export async function endTurn(selectedAttackCards, setGameData, gameData) {
     }
 
     const data = await response.json();
+    
+    console.log(data);
 
     console.log("defensa del rival");
     setGameData((prev) => ({
       ...prev,
       turn: {
         ...prev.turn,
-        ...data.action1.turn,
+        ...data.data.action1.turn,
       },
       user: {
         ...prev.user,
-        ...data.action1.user,
+        ...data.data.action1.user,
       },
       rival: {
         ...prev.rival,
-        ...data.action1.rival,
+        ...data.data.action1.rival,
       },
     }));
-
     setTimeout(() => {
       console.log("mano del rival");
       setGameData((prev) => ({
         ...prev,
         turn: {
           ...prev.turn,
-          ...data.action2.turn,
+          ...data.data.action2.turn,
         },
         user: {
           ...prev.user,
-          ...data.action2.user,
+          ...data.data.action2.user,
         },
         rival: {
           ...prev.rival,
-          ...data.action2.rival,
+          ...data.data.action2.rival,
         },
       }));
     }, 5000);
@@ -463,15 +460,15 @@ export async function endTurn(selectedAttackCards, setGameData, gameData) {
         ...prev,
         turn: {
           ...prev.turn,
-          ...data.action3.turn,
+          ...data.data.action3.turn,
         },
         user: {
           ...prev.user,
-          ...data.action3.user,
+          ...data.data.action3.user,
         },
         rival: {
           ...prev.rival,
-          ...data.action3.rival,
+          ...data.data.action3.rival,
         },
       }));
     }, 10000);
@@ -572,12 +569,6 @@ export async function defense(setGameData, gameData) {
   });
   const userToken = await user.getIdToken();
 
-  
-
-  
-
-
-
   const payload = {
     playerId: user.uid,
     gameId: gameData.gameId,
@@ -605,15 +596,15 @@ export async function defense(setGameData, gameData) {
       ...prev,
       turn: {
         ...prev.turn,
-        ...data.turn,
+        ...data.data.turn,
       },
       user: {
         ...prev.user,
-        ...data.user,
+        ...data.data.user,
       },
       rival: {
         ...prev.rival,
-        ...data.rival,
+        ...data.data.rival,
       },
     }));
   } catch (error) {

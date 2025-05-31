@@ -27,7 +27,7 @@ function RivalProfile({ name, imageUrl, life, mana, deck }) {
         </Box>
          <Box className="rival-deck-preview">
           <img
-            src="/cards/cardBack.jpg"
+            src="https://storage.googleapis.com/imagenes-desklords/Imagenes_Cartas/Traseras/back_card.jpg"
             alt="Mazo"
             className="rival-deck-card-image"
           />

@@ -101,7 +101,7 @@
 .main-content{
   margin-top: 2vh;
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
 }
 
   .bottom-label {

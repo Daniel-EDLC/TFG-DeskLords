@@ -1,6 +1,5 @@
+import React, { useState, useEffect } from 'react';
 import { Box, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
-import { useState, useEffect } from 'react';
-
 import './RivalTable.css';
 
 function RivalTable({ 
@@ -68,7 +67,8 @@ function RivalTable({
                 <Paper
                   className={`${cardClass} 
                   ${isInRivalBattle ? 'rival-card-in-battle' : hoveredCardId === carta._id ? 'hovered' : ''} 
-                  ${longPressCardId === carta._id ? 'rival-long-pressed' : ''}`}
+                  ${longPressCardId === carta._id ? 'rival-long-pressed' : ''} 
+                  ${carta.new ? 'rival-card-new' : ''}`}
                   elevation={10}
                   onClick={() => {
                     if (isSelectingTargetForSpell && targetSpellCard) {
@@ -161,7 +161,7 @@ function RivalTable({
                             key={equipo._id}
                             src={equipo.front_image}
                             alt={equipo._id}
-                            className="rival-equipment-image"
+                            className={`rival-equipment-image ${equipo.new ? 'rival-card-new' : ''}`}
                           />
                         ))}
                       </div>

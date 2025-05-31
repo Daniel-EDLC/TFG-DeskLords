@@ -4,7 +4,7 @@ import './RivalHand.css';
 
 function RivalHand({ cantidad }) {
   const total = cantidad;
-  const cartas = Array.from({ length: total }, () => '/cards/cardBack.jpg');
+  const cartas = Array.from({ length: total }, () => 'https://storage.googleapis.com/imagenes-desklords/Imagenes_Cartas/Traseras/back_card.jpg');
 
   return (
     <Box className="rival-hand-container">

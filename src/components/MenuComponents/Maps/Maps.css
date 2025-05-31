@@ -98,6 +98,7 @@
 /* MOBILE */
 @media (max-width: 435px) {
   .maps-wrapper {
+    height: 40Vh;
     color: white;
     width: calc(100% - 24px);
     margin: 0 auto; 
@@ -114,6 +115,7 @@
 
   .maps-content {
     flex-direction: column;
+
     
   }
 

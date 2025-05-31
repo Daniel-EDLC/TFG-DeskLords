@@ -86,11 +86,60 @@ a {
   width: 60%;
 }
 
+.deck-selector {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.deck-card {
+  position: relative;
+  width: 120px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border 0.2s;
+  margin: 0.5rem;
+}
+
+.deck-card:hover {
+  border-color: #999;
+}
+
+.deck-card.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.deck-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.deck-name {
+  text-align: center;
+  font-size: 0.9rem;
+  margin-top: 0.3rem;
+}
+
+.deck-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 0.5rem;
+}
+
+.selected-deck {
+  border: 2px solid #333;
+}
+
+
 /* MOBILE */
 @media (max-width: 435px) {
   .mapa-actual {
     width: auto;
-    height: 40vh;
+    height: 50vh;
     padding: 16px;
     margin: 16px;
     border: none;
@@ -131,7 +180,8 @@ a {
   }
 
   .mapa-fondo {
-    height: 30vh;
+    height: 35vh;
+    
     display: flex;
     justify-content: space-evenly;
   }
