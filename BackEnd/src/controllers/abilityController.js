@@ -15,4 +15,30 @@ async function createAbility(req, res) {
     }
 }
 
-module.exports = { createAbility };
+async function getAbilities(req, res) {
+    try {
+        const abilities = await Ability.find();
+        req.response.success({ abilities: abilities });
+    } catch (error) {
+        req.response.error(`Error al obtener las habilidades: ${error.message}`);
+    }
+}
+
+async function updateAbility(req, res) {
+    try {
+        const abilityId = req.body.abilityId;
+        const updatedData = req.body.data;
+
+        const updatedAbility = await Ability.findByIdAndUpdate(abilityId, updatedData, { new: true });
+
+        if (!updatedAbility) {
+            return req.response.error('Habilidad no encontrada');
+        }
+
+        req.response.success({ ability: updatedAbility });
+    } catch (error) {
+        req.response.error(`Error al actualizar la habilidad: ${error.message}`);
+    }
+}
+
+module.exports = { createAbility, getAbilities, updateAbility };

@@ -1,4 +1,3 @@
-const { Types } = require('mongoose');
 const Game = require('../models/Game');
 const Player = require('../models/Player');
 const { resolverCombate, chooseDefenders } = require('./combatService');
@@ -7,10 +6,9 @@ const { placeCardsAndAttack } = require('./IAService');
 
 async function useCard(req, res) {
   try {
-    const ObjectId = Types.ObjectId;
-    const gameObjectId = new ObjectId(req.body.gameId);
+    const gameId = req.body.gameId;
 
-    const game = await Game.findById(gameObjectId);
+    const game = await Game.findById(gameId);
     const player = await Player.findOne({ uid: req.body.playerId });
 
     if (!player) return req.response.error('Jugador no encontrado');
@@ -27,7 +25,7 @@ async function useCard(req, res) {
       case 'creature': {
         // Añadir criatura a la mesa del jugador y quitar de la mano
         await Game.updateOne(
-          { _id: gameObjectId },
+          { _id: gameId },
           {
             $push: { playerTable: usedCard },
             $pull: { playerHand: { _id: usedCard._id } },
@@ -36,7 +34,17 @@ async function useCard(req, res) {
         );
 
         // Leer el estado actualizado del juego
-        const updatedGame = await Game.findById(gameObjectId);
+        const updatedGame = await Game.findById(gameId);
+
+        // Marcar solo la última carta añadida como new: true, el resto no
+        const playerTableupdated = updatedGame.playerTable.map((card, idx, arr) => {
+          if (idx === arr.length - 1) {
+            return { ...card.toObject(), new: true };
+          } else {
+            const { new: _omit, ...rest } = card.toObject();
+            return rest;
+          }
+        });
 
         return req.response.success({
           gameId: req.body.gameId,
@@ -51,7 +59,7 @@ async function useCard(req, res) {
           },
           user: {
             hand: updatedGame.playerHand,
-            table: updatedGame.playerTable,
+            table: playerTableupdated,
             mana: updatedGame.playerMana
           }
         });
@@ -63,7 +71,7 @@ async function useCard(req, res) {
           // Usamos positional operator para actualizar el equipo de la carta objetivo
           usedCard.target = equipTarget;
           await Game.updateOne(
-            { _id: gameObjectId, 'playerTable._id': equipTarget._id },
+            { _id: gameId, 'playerTable._id': equipTarget._id },
             {
               $set: { 'playerTable.$.equipements': usedCard },
               $pull: { playerHand: { _id: usedCard._id } },
@@ -71,7 +79,25 @@ async function useCard(req, res) {
             }
           );
 
-          const updatedGame = await Game.findById(gameObjectId);
+          const updatedGame = await Game.findById(gameId);
+
+          // Marcar solo el último equipement añadido como new: true, el resto no
+          const playerTableupdated = updatedGame.playerTable.map(card => {
+            if (card._id.toString() === equipTarget._id.toString()) {
+              // Si la carta es la objetivo, procesar su array de equipements
+              const equipements = (card.equipements || []).map((eq, idx, arr) => {
+                if (idx === arr.length - 1) {
+                  return { ...eq.toObject?.() || eq, new: true };
+                } else {
+                  const { new: _omit, ...rest } = eq.toObject?.() || eq;
+                  return rest;
+                }
+              });
+              return { ...card.toObject(), equipements };
+            } else {
+              return card.toObject();
+            }
+          });
 
           return req.response.success({
             gameId: req.body.gameId,
@@ -86,12 +112,12 @@ async function useCard(req, res) {
             },
             user: {
               hand: updatedGame.playerHand,
-              table: updatedGame.playerTable,
+              table: playerTableupdated,
               mana: updatedGame.playerMana
             }
           });
         } else {
-          return req.response.error('Objetivo de equipamiento no válido');
+          return req.response.error('Target no encontrado');
         }
       }
       case 'spell': {
@@ -101,7 +127,7 @@ async function useCard(req, res) {
             // Proteger carta aliada
             usedCard.target = targetedCard;
             await Game.updateOne(
-              { _id: gameObjectId, 'playerTable._id': targetedCard._id },
+              { _id: gameId, 'playerTable._id': targetedCard._id },
               {
                 $set: { 'playerTable.$.temporaryAbilities': 'invulnerable' },
                 $pull: { playerHand: { _id: usedCard._id } },
@@ -110,7 +136,7 @@ async function useCard(req, res) {
               }
             );
 
-            const updatedGame = await Game.findById(gameObjectId);
+            const updatedGame = await Game.findById(gameId);
 
             return req.response.success({
               gameId: req.body.gameId,
@@ -138,7 +164,7 @@ async function useCard(req, res) {
             // Eliminar carta rival y pasarla a cementerio
             usedCard.target = targetedCard;
             await Game.updateOne(
-              { _id: gameObjectId },
+              { _id: gameId },
               {
                 $pull: { rivalTable: { _id: targetedCard._id }, playerHand: { _id: usedCard._id } },
                 $push: { rivalGraveyard: targetedCard, playerGraveyard: usedCard },
@@ -149,7 +175,7 @@ async function useCard(req, res) {
             return req.response.error('Objetivo de hechizo no válido');
           }
 
-          const updatedGame = await Game.findById(gameObjectId);
+          const updatedGame = await Game.findById(gameId);
 
           return req.response.success({
             gameId: req.body.gameId,
@@ -183,10 +209,9 @@ async function useCard(req, res) {
 
 async function attack(req, res) {
   try {
-    const ObjectId = Types.ObjectId;
-    const gameObjectId = new ObjectId(req.body.gameId);
+    const gameId = req.body.gameId;
 
-    const game = await Game.findById(gameObjectId);
+    const game = await Game.findById(gameId);
     const player = await Player.findOne({ uid: req.body.playerId });
 
     if (!player) return req.response.error('Jugador no encontrado');
@@ -198,7 +223,7 @@ async function attack(req, res) {
 
     const combates = assignments.map(assignment =>
       resolverCombate({
-        gameId: gameObjectId,
+        gameId: gameId,
         attacker: assignment.attacker,
         defender: assignment.defender,
         isAI: false
@@ -207,10 +232,12 @@ async function attack(req, res) {
 
     await Promise.all(combates);
 
+    const updatedGameResponse1 = await Game.findById(gameId);
+
     // Action 1 response
     const action1Response = {
       turn: {
-        number: game.currentTurn,
+        number: updatedGameResponse1.currentTurn,
         whose: "player",
         phase: "defense"
       },
@@ -219,17 +246,17 @@ async function attack(req, res) {
         defender: a.defender === "player" ? "player" : a.defender._id.toString(),
       })),
       user: {
-        table: game.playerTable,
-        pending_deck: game.playerPendingDeck,
-        health: game.playerHp,
-        mana: game.playerMana // En principio no es necesario
+        table: updatedGameResponse1.playerTable,
+        pending_deck: updatedGameResponse1.playerPendingDeck,
+        health: updatedGameResponse1.playerHp,
+        mana: updatedGameResponse1.playerMana // En principio no es necesario
       },
       rival: {
-        hand: game.rivalHand,
-        table: game.rivalTable,
-        pending_deck: game.rivalPendingDeck,
-        health: game.rivalHp,
-        mana: game.rivalMana
+        hand: updatedGameResponse1.rivalHand,
+        table: updatedGameResponse1.rivalTable,
+        pending_deck: updatedGameResponse1.rivalPendingDeck,
+        health: updatedGameResponse1.rivalHp,
+        mana: updatedGameResponse1.rivalMana
       }
     }
 
@@ -240,10 +267,12 @@ async function attack(req, res) {
 
     const result = await placeCardsAndAttack(game);
 
+    const updatedGameResponse2y3 = await Game.findById(gameId);
+
     // action 2 response
     const action2Response = {
       turn: {
-        number: game.currentTurn,
+        number: updatedGameResponse2y3.currentTurn,
         whose: "rival",
         phase: "hand"
       },
@@ -262,7 +291,7 @@ async function attack(req, res) {
     }
 
     await Game.updateOne(
-      { _id: gameObjectId },
+      { _id: gameId },
       {
         $set: {
           'rivalTable.$[].position': 'attack'
@@ -276,7 +305,7 @@ async function attack(req, res) {
       action2: action2Response,
       action3: {
         turn: {
-          number: game.currentTurn,
+          number: updatedGameResponse2y3.currentTurn,
           whose: "rival",
           phase: "attack"
         },
@@ -296,10 +325,9 @@ async function attack(req, res) {
 
 async function defend(req, res) {
   try {
-    const ObjectId = Types.ObjectId;
-    const gameObjectId = new ObjectId(req.body.gameId);
+    const gameId = req.body.gameId;
 
-    const game = await Game.findById(gameObjectId);
+    const game = await Game.findById(gameId);
     const player = await Player.findOne({ uid: req.body.playerId });
 
     if (!player) return req.response.error('Jugador no encontrado');
@@ -319,7 +347,7 @@ async function defend(req, res) {
 
     const resolvedCombats = combats.map(combat =>
       resolverCombate({
-        gameId: gameObjectId,
+        gameId: gameId,
         attacker: combat.attacker,
         defender: combat.defender,
         isAI: true
@@ -328,6 +356,7 @@ async function defend(req, res) {
 
     await Promise.all(resolvedCombats);
 
+    const updatedGame = await Game.findById(gameId);
 
     return req.response.success({
       gameId: req.body.gameId,
@@ -341,17 +370,17 @@ async function defend(req, res) {
         phase: "hand"
       },
       user: {
-        table: game.playerTable,
-        pending_deck: game.playerPendingDeck,
-        health: game.playerHp,
-        mana: game.playerMana
+        table: updatedGame.playerTable,
+        pending_deck: updatedGame.playerPendingDeck,
+        health: updatedGame.playerHp,
+        mana: updatedGame.playerMana
       },
       rival: {
-        hand: game.rivalHand,
-        table: game.rivalTable,
-        pending_deck: game.rivalPendingDeck,
-        health: game.rivalHp,
-        mana: game.rivalMana
+        hand: updatedGame.rivalHand,
+        table: updatedGame.rivalTable,
+        pending_deck: updatedGame.rivalPendingDeck,
+        health: updatedGame.rivalHp,
+        mana: updatedGame.rivalMana
       }
     });
   } catch (error) {
@@ -361,10 +390,9 @@ async function defend(req, res) {
 
 async function switchPhase(req, res) {
   try {
-    const ObjectId = Types.ObjectId;
-    const gameObjectId = new ObjectId(req.body.gameId);
+    const gameId = req.body.gameId;
 
-    const game = await Game.findById(gameObjectId);
+    const game = await Game.findById(gameId);
     if (!game) return req.response.error('Partida no encontrada');
 
     const player = await Player.findOne({ uid: req.body.playerId });

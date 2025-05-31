@@ -21,6 +21,51 @@ async function createCard(req, res) {
     }
 }
 
+async function getCards(req, res) {
+    try {
+        const cards = await Card.find();
+        req.response.success({ cards: cards });
+    } catch (error) {
+        req.response.error(`Error al obtener las cartas: ${error.message}`);
+    }
+}
+
+async function updateCard(req, res) {
+    try {
+        const cardId = req.body.idCard;
+        const updatedData = req.body.data;
+
+        const updatedCard = await Card.findByIdAndUpdate(cardId, updatedData, { new: true });
+
+        if (!updatedCard) {
+            return req.response.error('Carta no encontrada');
+        }
+
+        req.response.success({ card: updatedCard });
+    } catch (error) {
+        req.response.error(`Error al actualizar la carta: ${error.message}`);
+    }
+}
+
+async function deleteCard(req, res) {
+    try {
+        const cardId = req.body.idCard;
+
+        const deletedCard = await Card.findByIdAndDelete(cardId);
+
+        if (!deletedCard) {
+            return req.response.error('Carta no encontrada');
+        }
+
+        req.response.success({ message: 'Carta eliminada correctamente' });
+    } catch (error) {
+        req.response.error(`Error al eliminar la carta: ${error.message}`);
+    }
+}
+
 module.exports = {
     createCard,
+    getCards,
+    updateCard,
+    deleteCard
 };

@@ -1,7 +1,6 @@
 const Player = require('../models/Player');
 const Deck = require('../models/Deck');
 const Map = require('../models/Map');
-const { Types } = require('mongoose');
 
 async function createPlayer(req, res) {
     try {
@@ -52,7 +51,6 @@ async function checkPlayerExists(req, res) {
 
 async function getPlayerInfo(req, res) {
     try {
-        const ObjectId = Types.ObjectId;
 
         const player = await Player.findOne({ uid: req.body.playerId });
         if (!player) {
@@ -64,8 +62,7 @@ async function getPlayerInfo(req, res) {
         if (player.maps_unlocked.length > 0) {
             const unlockedMaps = await Promise.all(
                 player.maps_unlocked.map(async mapId => {
-                    const mapObjectId = new ObjectId(mapId);
-                    const mapFound = await Map.findById(mapObjectId);
+                    const mapFound = await Map.findById(mapId);
                     return {
                         name: mapFound.name,
                         id: mapFound._id,
@@ -81,8 +78,7 @@ async function getPlayerInfo(req, res) {
         if (player.maps_locked.length > 0) {
             const lockedMaps = await Promise.all(
                 player.maps_locked.map(async mapId => {
-                    const mapObjectId = new ObjectId(mapId);
-                    const mapFound = await Map.findById(mapObjectId);
+                    const mapFound = await Map.findById(mapId);
                     return {
                         name: mapFound.name,
                         id: mapFound._id,
@@ -101,8 +97,7 @@ async function getPlayerInfo(req, res) {
         if (player.owned_decks.length > 0) {
             const decks_unlocked = await Promise.all(
                 player.owned_decks.map(async deckId => {
-                    const deckObjectId = new ObjectId(deckId);
-                    const deckFound = await Deck.findById(deckObjectId);
+                    const deckFound = await Deck.findById(deckId);
                     return {
                         ...deckFound.toObject(),
                         available: true,
@@ -116,8 +111,7 @@ async function getPlayerInfo(req, res) {
         if (player.locked_decks.length > 0) {
             const decks_locked = await Promise.all(
                 player.locked_decks.map(async deckId => {
-                    const deckObjectId = new ObjectId(deckId);
-                    const deckFound = await Deck.findById(deckObjectId);
+                    const deckFound = await Deck.findById(deckId);
                     return {
                         ...deckFound.toObject(),
                         available: false,
@@ -142,8 +136,51 @@ async function getPlayerInfo(req, res) {
     }
 }
 
+async function getPlayers(req, res) {
+    try {
+        const players = await Player.find().select('uid displayName player_level level_progress profile_img rol');
+        req.response.success({ players: players });
+    } catch (error) {
+        req.response.error(`Error al obtener los jugadores: ${error.message}`);
+    }
+}
+
+async function updatePlayer(req, res) {
+    try {
+        const playerId = req.body.idPlayer;
+        const updatedData = req.body.data;
+
+        const updatedPlayer = await Player.findByIdAndUpdate(playerId, updatedData, { new: true });
+        if (!updatedPlayer) {
+            return req.response.error('Jugador no encontrado');
+        }
+
+        req.response.success({ player: updatedPlayer });
+    } catch (error) {
+        req.response.error(`Error al actualizar el jugador: ${error.message}`);
+    }
+}
+
+async function deletePlayer(req, res) {
+    try {
+        const playerId = req.body.idPlayer;
+
+        const deletedPlayer = await Player.findByIdAndDelete(playerId);
+        if (!deletedPlayer) {
+            return req.response.error('Jugador no encontrado');
+        }
+
+        req.response.success({ message: 'Jugador eliminado correctamente' });
+    } catch (error) {
+        req.response.error(`Error al eliminar el jugador: ${error.message}`);
+    }
+}
+
 module.exports = {
     createPlayer,
     getPlayerInfo,
-    checkPlayerExists
+    checkPlayerExists,
+    getPlayers,
+    updatePlayer,
+    deletePlayer
 };
