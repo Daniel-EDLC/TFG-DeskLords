@@ -22,7 +22,7 @@ const gameSchema = new mongoose.Schema({
     rivalTable: {type: [cardSchema], required: false},
     rivalGraveyard: {type: [cardSchema], required: false},
     rivalPendingDeck: {type: [cardSchema], required: false},
-    rivalMana: {type: Number, required: true, default: 0},
+    rivalMana: {type: Number, required: true, default: 20},
     mapId: {type: String, required: true},
     manaPerTurn: {type: Number, required: true, default: 1},
     actualMana: {type: Number, required: true, default: 1}

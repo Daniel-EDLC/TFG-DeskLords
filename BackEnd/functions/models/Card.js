@@ -6,8 +6,8 @@ const cardSchema = new mongoose.Schema({
     type: {type: String, required: true, enum: ['creature', 'spell', 'equipement']},
     description: {type: String, required: true},
     element: {type: String, required: true},
-    atk: {type: Number, required: true},
-    hp: {type: Number, required: true},
+    atk: {type: Number, required: false},
+    hp: {type: Number, required: false},
     cost: {type: Number, required: true},
     front_image: {type: String, required: false}, // Cambiar a true cuando tengamos las imágenes
     back_image: {type: String, required: false}, // Cambiar a true cuando tengamos las imágenes
@@ -18,7 +18,8 @@ const cardSchema = new mongoose.Schema({
     effect: {type: String, required: false},
     target: {type: mongoose.Schema.Types.Mixed, required: false}, // Evita referencia circular
     set: {type: String, required: false},
-    position: {type: String, required: false}
+    position: {type: String, required: false},
+    alive: {type: Boolean, default: true, required: false}, // Indica si la carta está viva o no
     // secret_front_image: {type: String, required: false}  DEPENDEDIENO DE COMO VAYAMOS MIRAMOS SI LO HACEMOS O NO
 });
 

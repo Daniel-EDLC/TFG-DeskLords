@@ -37,7 +37,8 @@ function chooseDefenders(attackingCards, rivalTable) {
 
 async function resolverCombate({ gameId, attacker, defender, isAI }) {
   const hpField = defender === "player" ? (isAI ? "playerHp" : "rivalHp") : null;
-  const dmg = attacker.atk;
+  // Asegurar que dmg siempre es un número
+  const dmg = typeof attacker.atk === 'number' && !isNaN(attacker.atk) ? attacker.atk : 0;
 
   const gameDoc = await Game.findById(gameId);
   if (!gameDoc) return;
@@ -76,8 +77,6 @@ async function resolverCombate({ gameId, attacker, defender, isAI }) {
 
   const attackerTable = isAI ? "rivalTable" : "playerTable";
   const defenderTable = isAI ? "playerTable" : "rivalTable";
-  const attackerGraveyard = isAI ? "rivalGraveyard" : "playerGraveyard";
-  const defenderGraveyard = isAI ? "playerGraveyard" : "rivalGraveyard";
 
   if (result.attacker.hp > 0) {
     await Game.updateOne(
@@ -86,15 +85,15 @@ async function resolverCombate({ gameId, attacker, defender, isAI }) {
         $set: {
           [`${attackerTable}.$.hp`]: result.attacker.hp,
           [`${attackerTable}.$.temporaryAbilities`]: [],
+          [`${attackerTable}.$.alive`]: true,
         },
       }
     );
   } else {
     await Game.updateOne(
-      { _id: gameId },
+      { _id: gameId, [`${attackerTable}._id`]: result.attacker._id },
       {
-        $pull: { [attackerTable]: { _id: result.attacker._id } },
-        $push: { [attackerGraveyard]: result.attacker },
+        $set: { [`${attackerTable}.$.alive`]: false }
       }
     );
   }
@@ -107,15 +106,15 @@ async function resolverCombate({ gameId, attacker, defender, isAI }) {
           [`${defenderTable}.$.hp`]: result.defender.hp,
           [`${defenderTable}.$.effect`]: result.defender.effect,
           [`${defenderTable}.$.temporaryAbilities`]: [],
+          [`${defenderTable}.$.alive`]: true,
         },
       }
     );
   } else {
     await Game.updateOne(
-      { _id: gameId },
+      { _id: gameId, [`${defenderTable}._id`]: result.defender._id },
       {
-        $pull: { [defenderTable]: { _id: result.defender._id } },
-        $push: { [defenderGraveyard]: result.defender },
+        $set: { [`${defenderTable}.$.alive`]: false }
       }
     );
   }

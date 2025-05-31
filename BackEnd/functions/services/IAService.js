@@ -9,16 +9,8 @@ async function placeCardsAndAttack(game) {
   let usedCards = [];
   let spellUsed = false;
   let equipementUsed = false;
-
-  let actionSpell = {
-    spell: null, // Spell to use
-    target: null, // Target for the spell
-  }
-
-  let actionEquipement = {
-    equipement: null, // Equipement to use
-    target: null, // Target for the equipement
-  }
+  let actionSpell = {};
+  let actionEquipement = {};
 
 
   // 1. Spell
@@ -26,13 +18,23 @@ async function placeCardsAndAttack(game) {
   if (spellIdx !== -1 && !spellUsed) {
     const spell = rivalHand[spellIdx];
     if (spell.effect === 'kill' && playerTable.length > 0) {
+      // Encuentra la carta objetivo
       const idx = playerTable.reduce((maxIdx, c, i, arr) => c.cost > arr[maxIdx].cost ? i : maxIdx, 0);
-      playerGraveyard.push(playerTable[idx]);
-      playerTable.splice(idx, 1);
+      const targetCard = playerTable[idx];
+      // Actualiza alive a false y añade el spell a equipements
+      await Game.updateOne(
+        { _id: game._id, 'playerTable._id': targetCard._id },
+        {
+          $set: { 'playerTable.$.alive': false },
+          $push: { 'playerTable.$.equipements': spell }
+        }
+      );
+      // Elimina la carta de la mesa solo si es necesario (si quieres que siga visible, no la elimines)
+      // playerTable.splice(idx, 1); // <-- Elimina si quieres quitarla de la mesa
       rivalMana -= spell.cost;
       usedCards.push(spell._id);
       spellUsed = true;
-      actionSpell.target = playerTable[idx];
+      actionSpell.target = targetCard;
     } else if (spell.effect === 'protect' && rivalTable.length > 0) {
       const idx = rivalTable.reduce((minIdx, c, i, arr) => c.hp < arr[minIdx].hp ? i : minIdx, 0);
       rivalTable[idx].temporaryAbilities = [...(rivalTable[idx].temporaryAbilities || []), 'invulnerable'];
@@ -104,7 +106,7 @@ async function placeCardsAndAttack(game) {
     }
   );
 
-  return {spell: actionSpell, equipement: actionEquipement, rivalTable: game.rivalTable};
+  // Ya no devolvemos nada ni marcamos cartas como new
 }
 
 module.exports = { placeCardsAndAttack };

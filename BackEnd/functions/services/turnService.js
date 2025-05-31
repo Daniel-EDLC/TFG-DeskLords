@@ -1,10 +1,21 @@
 const Game = require('../models/Game');
 
+// quitar las cartas de spell que estan dentro del array de equipamientos
 async function nextTurn({ game, isAi }) {
   if (!game) throw new Error('Juego no encontrado');
 
   const newTurn = game.currentTurn + 1;
   const newActualMana = game.manaPerTurn + game.actualMana;
+
+  // Limpiar spells de los equipements de cada carta en ambas mesas
+  const cleanEquipements = table =>
+    table.map(card => ({
+      ...card.toObject?.() || card,
+      equipements: (card.equipements || []).filter(eq => eq.type !== 'spell')
+    }));
+
+  const updatedPlayerTable = cleanEquipements(game.playerTable);
+  const updatedRivalTable = cleanEquipements(game.rivalTable);
 
   await Game.updateOne(
     { _id: game._id },
@@ -16,6 +27,8 @@ async function nextTurn({ game, isAi }) {
         rivalMana: newActualMana,
         'playerTable.$[].temporaryAbilities': [],
         'rivalTable.$[].temporaryAbilities': [],
+        playerTable: updatedPlayerTable,
+        rivalTable: updatedRivalTable
       },
     }
   );
