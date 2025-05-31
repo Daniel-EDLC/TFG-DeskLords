@@ -72,50 +72,65 @@ function RivalTable({
                   elevation={10}
                   onClick={() => {
                     if (isSelectingTargetForSpell && targetSpellCard) {
-                      targetSpellCard(carta._id);
+                      if (turn.whose === 'user' && turn.phase === 'hand') {
+                        targetSpellCard(carta._id);
+                      } else {
+                        alert("Solo puedes lanzar hechizos durante tu fase de mano.");
+                      }
                       return;
                     }
+
                     if (isSelectingTargetForEquipment && targetEquipmentCard) {
                       if (turn.whose === 'user' && turn.phase === 'hand') {
                         if (window.confirm("¿Estás seguro de que quieres equipar una carta del rival?")) {
-                        targetEquipmentCard(carta._id);
+                          targetEquipmentCard(carta._id);
                         }
-                        return;
+                      } else {
+                        alert("Solo puedes lanzar equipamientos durante tu fase de mano.");
                       }
+                      return;
                     }
+
                     if ((turn.whose === 'rival' && turn.phase === 'attack') && onCardClick) {
                       onCardClick(carta);
                     }
                   }}
+
                   onDragOver={(e) => e.preventDefault()}
                   onDragEnter={() => setHoveredCardId(carta._id)}
                   onDragLeave={() => setHoveredCardId(null)}
                   onDrop={(e) => {
-                    e.preventDefault();
-                    setHoveredCardId(null);
+                      e.preventDefault();
+                      setHoveredCardId(null);
 
-                    const data = JSON.parse(e.dataTransfer.getData('application/json'));
-                    // revisar
-                    if ((data.type !== 'spell' && data.type !== 'equipement')) {
-                      alert(`no puedes lanzar una criatura sobre una carta rival!!`);
-                      return;
-                    }
+                      const data = JSON.parse(e.dataTransfer.getData('application/json'));
 
-                    if (data.type === 'equipement') {
-                      setPendingCardData(data);
-                      setPendingEquipTarget(carta._id);
-                      setConfirmDialogOpen(true);
-                      return;
-                    }
+                      if (turn.whose !== 'user' || turn.phase !== 'hand') {
+                        alert("Solo puedes lanzar cartas durante tu fase de mano");
+                        return;
+                      }
 
-                    const cardToSend = {
-                      id: data._id,
-                      type: data.type,
-                      targetId: carta._id
-                    };
+                      if (data.type === 'creature') {
+                        alert("No puedes lanzar una criatura sobre una carta rival");
+                        return;
+                      }
 
-                    onPlayCard(cardToSend);
-                  }}
+                      if (data.type === 'equipement') {
+                        setPendingCardData(data);
+                        setPendingEquipTarget(carta._id);
+                        setConfirmDialogOpen(true);
+                        return;
+                      }
+
+                      if (data.type === 'spell') {
+                        onPlayCard({
+                          _id: data.id,
+                          type: data.type,
+                          cost: data.cost,
+                          targetId: carta._id,
+                        });
+                      }
+                    }}
                   onTouchStart={() => {
                     const timeoutId = setTimeout(() => {
                       setLongPressCardId(carta._id);

@@ -173,19 +173,32 @@ function PlayerTable({
         className="player-table-container"
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => {
-          e.preventDefault();
-          const data = JSON.parse(e.dataTransfer.getData('application/json'));
-          // revisar
-          // if ((data.type !== 'spell' && data.type !== 'equipement')) {
-          //   alert(`no puedes lanzar una criatura sobre una carta rival!!`);
-          //   return;
-          // }
-          const cardToSend = {
-            id: data._id,
-            type: data.type
-          };
-          onPlayCard(cardToSend);
-        }}
+            e.preventDefault();
+            const data = JSON.parse(e.dataTransfer.getData('application/json'));
+
+            if (turn.whose !== 'user' || turn.phase !== 'hand') {
+              alert("Solo puedes jugar cartas durante tu fase de mano");
+              return;
+            }
+
+            if (data.type !== 'creature') {
+              alert("Solo puedes soltar criaturas en la mesa.");
+              return;
+            }
+
+            if (data.cost > mana) {
+              alert(`Mana insuficiente! Coste: ${data.cost}, Tienes: ${mana}`);
+              return;
+            }
+
+            onPlayCard({
+              _id: data.id,
+              type: 'creature',
+              cost: data.cost,
+            });
+          }}
+
+
       >
         {cartas.map((carta, index) => {
           if (removedCards.includes(carta._id)) return null;
@@ -205,24 +218,22 @@ function PlayerTable({
                   onDragEnter={() => setHoveredCardId(carta._id)}
                   onDragLeave={() => setHoveredCardId(null)}
                   onDrop={(e) => {
-                    e.preventDefault();
-                    const data = JSON.parse(e.dataTransfer.getData('application/json'));
-                    // revisar
-                    // if ((data.type !== 'spell' && data.type !== 'equipement')) {
-                    //   alert(`no puedes lanzar una criatura sobre una carta rival!!`);
-                    //   return;
-                    // }
-                    if (data.type === 'equipement' || data.type === 'spell') {
-                      const cardToSend = {
-                        id: data._id,
-                        type: data.type,
-                        targetId: carta._id,
-                      };
-                      onPlayCard(cardToSend);
-                      return;
-                    }
-                    // alert("Solo puedes lanzar hechizos o equipamientos sobre cartas de la mesa.");
-                  }}
+                        e.preventDefault();
+                        const data = JSON.parse(e.dataTransfer.getData('application/json'));
+
+                        if (data.type !== 'equipement' && data.type !== 'spell') {
+                          alert("Solo puedes lanzar hechizos o equipamientos sobre cartas.");
+                          return;
+                        }
+
+                        onPlayCard({
+                          _id: data.id,
+                          type: data.type,
+                          cost: data.cost,
+                          targetId: carta._id,
+                        });
+                      }}
+
                   onTouchStart={() => {
                     const timeoutId = setTimeout(() => {
                       setLongPressCardId(carta._id);
