@@ -9,13 +9,31 @@ function PlayerTable({
   const [selectedAttackCards, setselectedAttackCards] = useState([]);
   const [pendingCardId, setPendingCardId] = useState(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  
   const [hiddenCards, setHiddenCards] = useState([]);
   const [removedCards, setRemovedCards] = useState([]);
   const [hoveredCardId, setHoveredCardId] = useState(null);
-
   const [longPressCardId, setLongPressCardId] = useState(null);
   const [longPressTimeout, setLongPressTimeout] = useState(null);
+
+  useEffect(() => {
+    cartas.forEach((carta) => {
+      if (carta.alive === false && !hiddenCards.includes(carta._id)) {
+        setTimeout(() => {
+          setHiddenCards((prev) => [...prev, carta._id]);
+        }, 3000);
+      }
+    });
+  }, [cartas]);
+
+  useEffect(() => {
+    cartas.forEach((carta) => {
+      if (carta.alive === false && !removedCards.includes(carta._id)) {
+        setTimeout(() => {
+          setRemovedCards((prev) => [...prev, carta._id]);
+        }, 4000);
+      }
+    });
+  }, [cartas]);
 
   const handleCardClick = (carta) => {
     if (turn.whose === 'user') {
@@ -72,132 +90,96 @@ function PlayerTable({
       console.error('Error al defender:', error);
     }
   };
-
-  const confirmPhaseChange = () => {
-    if (onRequestPhaseChange) {
-      onRequestPhaseChange('table');
-    }
-    setShowConfirmDialog(false);
-    if (pendingCardId !== null) {
-      toggleAttackCard(pendingCardId);
-      setPendingCardId(null);
-    }
-  };
+      const confirmPhaseChange = () => {
+        if (handleSwitchPhase) {
+          handleSwitchPhase(); // Cambio real de fase
+        }
+        setShowConfirmDialog(false);
+        if (pendingCardId !== null) {
+          toggleAttackCard(pendingCardId); // Ya que quería atacar
+          setPendingCardId(null);
+        }
+      };
 
   const cancelPhaseChange = () => {
     setShowConfirmDialog(false);
     setPendingCardId(null);
   };
 
-  useEffect(() => {
-    cartas.forEach((carta) => {
-      if (carta.alive === false && !hiddenCards.includes(carta._id)) {
-        setTimeout(() => {
-          setHiddenCards((prev) => [...prev, carta._id]);
-        }, 3000);
-      }
-    });
-  }, [cartas]);
-
-  useEffect(() => {
-    cartas.forEach((carta) => {
-      if (carta.alive === false && !removedCards.includes(carta._id)) {
-        setTimeout(() => {
-          setRemovedCards((prev) => [...prev, carta._id]);
-        }, 4000);
-      }
-    });
-  }, [cartas]);
-
-  const renderPhaseButtons = (turn) => {
-    if (turn.whose === 'user'){
-      switch (turn.phase) {
-        case 'hand':
-          return (
-             <Box className="phase-buttons-inner">
-              <Button variant="contained" className="phase-button" onClick={handleSwitchPhase}>
-                Fase mesa
-              </Button>
-              <Button variant="contained" className="end-turn-button" onClick={handleEndTurnClick}>
-                Pasar turno
-              </Button>
-            </Box>
-          );
-        case 'table':
-          return (
-             <Box className="phase-buttons-inner">
-              {selectedAttackCards.length > 0 ? (
-                <Button variant="contained" className="phase-button" color="primary" onClick={handleEndTurnClick}>
-                  Atacar y finalizar
-                </Button>
-              ) : (
-                <Button variant="contained" className="end-turn-button" onClick={handleEndTurnClick}>
-                  Finalizar
-                </Button>
-              )}
-            </Box>
-          );
-        default:
-          return null;
-      }
-    } else if(turn.whose === 'rival' && turn.phase === 'attack' ){
-      return (
-        <>
-          {battles.length > 0 ? (
-             <Box className="phase-buttons-inner">
-              <Button variant="contained" className="resetBattle-button" color="primary" onClick={onResetBattle}>
-                Reiniciar batallas
-              </Button>
-              <Button variant="contained" className="phase-button" color="primary" onClick={handleDefenseClick}>
-                Defender y empezar turno
-              </Button>
-            </Box>
-          ) : (
-            <Box className="phase-buttons-inner">
-            <Button variant="contained" className="noDefense-button" color="primary" onClick={handleDefenseClick}>
-              Empezar turno sin defender
-            </Button>
-            </Box>
-          )}
-        </>
-      );
-    }
-  };
-
   return (
     <>
       <Box className="phase-buttons">
-        {renderPhaseButtons(turn)}
+        {(() => {
+          if (turn.whose === 'user') {
+            switch (turn.phase) {
+              case 'hand':
+                return (
+                  <Box className="phase-buttons-inner">
+                    <Button variant="contained" className="phase-button" onClick={handleSwitchPhase}>Fase mesa</Button>
+                    <Button variant="contained" className="end-turn-button" onClick={handleEndTurnClick}>Pasar turno</Button>
+                  </Box>
+                );
+              case 'table':
+                return (
+                  <Box className="phase-buttons-inner">
+                    {selectedAttackCards.length > 0 ? (
+                      <Button variant="contained" className="phase-button" color="primary" onClick={handleEndTurnClick}>Atacar y finalizar</Button>
+                    ) : (
+                      <Button variant="contained" className="end-turn-button" onClick={handleEndTurnClick}>Finalizar</Button>
+                    )}
+                  </Box>
+                );
+              default:
+                return null;
+            }
+          } else if (turn.whose === 'rival' && turn.phase === 'attack') {
+            return (
+              <Box className="phase-buttons-inner">
+                {battles.length > 0 ? (
+                  <>
+                    <Button variant="contained" className="resetBattle-button" color="primary" onClick={onResetBattle}>Reiniciar batallas</Button>
+                    <Button variant="contained" className="phase-button" color="primary" onClick={handleDefenseClick}>Defender y empezar turno</Button>
+                  </>
+                ) : (
+                  <Button variant="contained" className="noDefense-button" color="primary" onClick={handleDefenseClick}>Empezar turno sin defender</Button>
+                )}
+              </Box>
+            );
+          }
+        })()}
       </Box>
       <Box
         className="player-table-container"
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => {
-            e.preventDefault();
-            const data = JSON.parse(e.dataTransfer.getData('application/json'));
+          e.preventDefault();
+          const raw = e.dataTransfer.getData('application/json');
+          if (!raw) return;
 
-            if (turn.whose !== 'user' || turn.phase !== 'hand') {
-              alert("Solo puedes jugar cartas durante tu fase de mano");
-              return;
-            }
+          const data = JSON.parse(raw);
+          console.log("Drop sobre mesa", data);
 
-            if (data.type !== 'creature') {
-              alert("Solo puedes soltar criaturas en la mesa.");
-              return;
-            }
+          if (turn.whose !== 'user' || turn.phase !== 'hand') {
+            alert("Solo puedes jugar cartas durante tu fase de mano");
+            return;
+          }
 
-            if (data.cost > mana) {
-              alert(`Mana insuficiente! Coste: ${data.cost}, Tienes: ${mana}`);
-              return;
-            }
+          if (data.type !== 'creature') {
+            alert("Solo puedes soltar criaturas en la mesa.");
+            return;
+          }
 
-            onPlayCard({
-              _id: data.id,
-              type: 'creature',
-              cost: data.cost,
-            });
-          }}
+          if (data.cost > mana) {
+            alert(`Mana insuficiente! Coste: ${data.cost}, Tienes: ${mana}`);
+            return;
+          }
 
+          onPlayCard({
+            _id: data.id,
+            type: 'creature',
+            cost: data.cost,
+          });
+        }}
 
       >
         {cartas.map((carta, index) => {
@@ -208,31 +190,47 @@ function PlayerTable({
           const isFadingOut = hiddenCards.includes(carta._id);
 
           return (
-            <div key={carta._id} className={`player-card-wrapper ${isFadingOut ? 'player-card-fade-out' : ''}`}>
+            <div key={carta._id} className={`player-card-wrapper ${isFadingOut ? 'player-card-fade-out' : ''} `}>
               <div className={`player-card-table ${isSelected ? 'selected' : ''} ${isInPlayerBattle ? 'player-card-in-battle' : ''}`}>
                 <Paper
                   elevation={10}
-                  className={`player-card-inner ${hoveredCardId === carta._id ? 'hovered' : ''} ${longPressCardId === carta._id ? 'player-long-pressed' : ''} `}
+                  className={`player-card-inner ${hoveredCardId === carta._id ? 'hovered' : ''} ${longPressCardId === carta._id ? 'player-long-pressed' : ''} ${carta.new ? 'player-card-new' : ''} ${isSelected ? 'selected' : ''} `}
                   onClick={() => handleCardClick(carta)}
                   onDragOver={(e) => e.preventDefault()}
                   onDragEnter={() => setHoveredCardId(carta._id)}
                   onDragLeave={() => setHoveredCardId(null)}
                   onDrop={(e) => {
-                        e.preventDefault();
-                        const data = JSON.parse(e.dataTransfer.getData('application/json'));
+                    e.preventDefault();
+                    e.stopPropagation(); // <-- evita que llegue al contenedor
+                    const raw = e.dataTransfer.getData('application/json');
+                    if (!raw) return;
 
-                        if (data.type !== 'equipement' && data.type !== 'spell') {
-                          alert("Solo puedes lanzar hechizos o equipamientos sobre cartas.");
-                          return;
-                        }
+                    const data = JSON.parse(raw);
+                    console.log("Drop sobre carta", data);
 
-                        onPlayCard({
-                          _id: data.id,
-                          type: data.type,
-                          cost: data.cost,
-                          targetId: carta._id,
-                        });
-                      }}
+                    if (turn.whose !== 'user' || turn.phase !== 'hand') {
+                      alert("Solo puedes usar cartas durante tu fase de mano");
+                      return;
+                    }
+
+                    if (data.type === 'creature') {
+                      alert("No puedes lanzar criaturas sobre otras cartas.");
+                      return;
+                    }
+
+                    if (data.cost > mana) {
+                      alert(`Mana insuficiente! Coste: ${data.cost}, Tienes: ${mana}`);
+                      return;
+                    }
+
+                    onPlayCard({
+                      _id: data.id,
+                      type: data.type,
+                      cost: data.cost,
+                      targetId: carta._id,
+                    });
+                  }}
+
 
                   onTouchStart={() => {
                     const timeoutId = setTimeout(() => {
@@ -259,7 +257,7 @@ function PlayerTable({
                             key={equipo._id}
                             src={equipo.front_image}
                             alt={equipo._id}
-                            className="player-equipment-image"
+                            className={`player-equipment-image ${equipo.new ? 'player-card-new' : ''}`}
                           />
                         ))}
                       </div>

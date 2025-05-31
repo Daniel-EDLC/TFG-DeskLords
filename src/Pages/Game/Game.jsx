@@ -30,7 +30,7 @@ function Game() {
 
   const [gameData, setGameData] = useState(partida);
 
-  console.log("partida->",gameData)
+  
   const phaseTurn = gameData?.turn?.phase;
   const whoseTurn = gameData?.turn?.whose;
 
@@ -186,7 +186,7 @@ function Game() {
       </div>
     );
   }
-
+console.log("partida->",gameData.user.hand)
   return (
     <div className="app-container">
       <RivalProfile
@@ -218,7 +218,7 @@ function Game() {
           cartas={gameData.user.table}
           turn={gameData.turn}
           onRequestPhaseChange={setPhase}
-          switchPhase={handleSwitchPhase}
+          handleSwitchPhase={handleSwitchPhase}
           handleEndTurn={handleEndTurn}
           handleDefense={handleDefense}
           targetEquipmentCard={setSelectedTableCardIdForEquipment}

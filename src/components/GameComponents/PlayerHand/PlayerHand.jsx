@@ -78,7 +78,8 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
           const offset = Math.round(index - centerIndex);
           const offsetClass = `player-offset-${offset}`;
 
-          const isHovered = hoveredIndex === index;
+          const isHovered = hoveredIndex === index && longPressCardId !== carta._id;
+
           const isSelected = selectedCardId === carta._id;
 
           return (
@@ -93,6 +94,7 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
                 onMouseLeave={() => setHoveredIndex(null)}
                 draggable={turn.whose === 'user' && turn.phase === 'hand'}
                 onDragStart={(e) => {
+                  setHoveredIndex(null);
                   if (turn.whose === 'user' && turn.phase === 'hand') {
                     if (carta.cost > mana) {
                       setFloatingMessage(`Mana insuficiente! Coste: ${carta.cost}, Tienes: ${mana}`);
@@ -108,6 +110,7 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
                   }
                 }}
                 onTouchStart={() => {
+                  setHoveredIndex(null);
                   const timeoutId = setTimeout(() => {
                     setLongPressCardId(carta._id);
                   }, 500);

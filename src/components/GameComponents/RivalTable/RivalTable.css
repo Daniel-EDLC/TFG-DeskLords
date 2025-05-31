@@ -294,6 +294,26 @@ border: 2px solid rgba(255, 0, 0, 0.8);
 }
 
 
+@keyframes rival-card-enter-from-center {
+  0% {
+    transform: translate(-50%, -150%) scale(4);
+    opacity: 0;
+  }
+  70% {
+    opacity: 1;
+    transform: translate(-50%, -150%) scale(4);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+.rival-card-new {
+  position: relative;
+  animation: rival-card-enter-from-center 1.5s ease-out;
+  z-index: 1000000;
+}
+
 
 
 
