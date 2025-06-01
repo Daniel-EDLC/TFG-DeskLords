@@ -33,13 +33,24 @@ async function startGame(req, res) {
         }
 
         // Barajar el mazo del jugador y del rival
-        const playerDeckShuffled = shuffleCards(playerDeck.cards, 15);
-        const rivalDeckShuffled = shuffleCards(map.deck.cards, 15);
+        let playerDeckShuffled = [];
+        
+        try {
+            playerDeckShuffled = shuffleCards(playerDeck.cards, 15);
+        } catch (error) {
+            return req.response.error(`Error al barajar el mazo del jugador: ${error.message}`);
+        }
+
+        let rivalDeckShuffled = [];
+        try {
+            rivalDeckShuffled = shuffleCards(map.deck.cards, 15);
+        } catch (error) {
+            return req.response.error(`Error al barajar el mazo del rival: ${error.message}`);
+        }
 
         // Seleccionar la mano inicial del jugador: máximo 3 cartas, mínimo 2 creatures
         let playerStarterHand = [];
         let creatures = playerDeckShuffled.filter(card => card.type === 'creature');
-        let nonCreatures = playerDeckShuffled.filter(card => card.type !== 'creature');
 
         // Añadir mínimo 2 creatures
         playerStarterHand = creatures.slice(0, 2);
@@ -53,6 +64,22 @@ async function startGame(req, res) {
         // El resto de cartas para el pending deck
         const playerPendingDeck = playerDeckShuffled.filter(card => !playerStarterHand.includes(card));
 
+        
+        
+        // Seleccionar la mano inicial del rival igual que la del jugador
+        let rivalStarterHand = [];
+        let rivalCreatures = rivalDeckShuffled.filter(card => card.type === 'creature');
+        // Añadir mínimo 2 creatures
+        rivalStarterHand = rivalCreatures.slice(0, 2);
+        // Añadir hasta 1 carta más (de cualquier tipo)
+        const rivalRemaining = rivalDeckShuffled.filter(card => !rivalStarterHand.includes(card));
+        if (rivalStarterHand.length < 3 && rivalRemaining.length > 0) {
+            rivalStarterHand.push(rivalRemaining[0]);
+        }
+        rivalStarterHand = rivalStarterHand.slice(0, 3);
+        // El resto de cartas para el pending deck del rival
+        const rivalPendingDeck = rivalDeckShuffled.filter(card => !rivalStarterHand.includes(card));
+
         const newGame = new Game({
             status: 'in-progress',
             startTime: new Date(),
@@ -61,8 +88,8 @@ async function startGame(req, res) {
             playerHand: playerStarterHand,
             playerPendingDeck: playerPendingDeck,
             rivalDeck: map.deck,
-            rivalHand: rivalDeckShuffled.slice(0, 3),
-            rivalPendingDeck: rivalDeckShuffled.slice(3, 15),
+            rivalHand: rivalStarterHand,
+            rivalPendingDeck: rivalPendingDeck,
             mapId: map._id,
             manaPerTurn: 1,
         });

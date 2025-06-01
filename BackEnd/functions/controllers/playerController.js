@@ -1,6 +1,7 @@
 const Player = require('../models/Player');
 const Deck = require('../models/Deck');
 const Map = require('../models/Map');
+const News = require('../models/News');
 
 async function createPlayer(req, res) {
     try {
@@ -122,6 +123,8 @@ async function getPlayerInfo(req, res) {
             allDecks = allDecks.concat(decks_locked);
         }
 
+        const newsFound = await News.find().sort({ fecha: -1 })
+
         req.response.success({
             playerAvatar: player.profile_img || 'https://example.com/default-avatar.png',
             playerName: player.displayName || 'Jugador Anónimo',
@@ -130,6 +133,7 @@ async function getPlayerInfo(req, res) {
             rol: player.rol,
             decks: allDecks,
             maps: allMaps,
+            news: newsFound || [],
         })
     } catch (error) {
         req.response.error(`Error al obtener información del jugador: ${error.message}`);
