@@ -137,16 +137,32 @@ async function changeCardsPositionToAttack(game) {
     throw new Error('Game not found');
   }
 
-  const rivalTable = gameUpdated.rivalTable.map(card => ({
-    ...card.toObject?.() || card,
-    position: 'attack'
-  }));
+  let rivalTable = null;
+  if (gameUpdated.rivalTable.length > 0) {
+    rivalTable = gameUpdated.rivalTable.map(card => ({
+      ...card.toObject() || card,
+      position: 'attack'
+    }));
+  } else {
+    rivalTable = [];
+  }
+
+  let playerTable = null;
+  if (gameUpdated.playerTable.length > 0) {
+    playerTable = gameUpdated.playerTable.map(card => ({
+      ...card.toObject() || card,
+      position: 'defense'
+    }));
+  } else {
+    playerTable = [];
+  }
 
   await Game.updateOne(
     { _id: gameUpdated._id },
     {
       $set: {
-        rivalTable
+        rivalTable,
+        playerTable
       }
     }
   );
