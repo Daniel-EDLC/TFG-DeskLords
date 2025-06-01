@@ -1,4 +1,5 @@
 const Game = require('../models/Game');
+const Player = require('../models/Player');
 
 // quitar las cartas de spell que estan dentro del array de equipamientos
 async function nextTurn({ game }) {
@@ -76,4 +77,39 @@ async function drawCard({ game, isAI }) {
   }
 }
 
-module.exports = { nextTurn, drawCard };
+async function checkForGameOver(game) {
+  if (game.playerHp <= 0 || game.rivalHp <= 0) {
+    const winner = game.playerHp > 0 ? 'player' : 'rival';
+    await Game.updateOne(
+      { _id: game._id },
+      { $set: { winner } }
+    );
+
+    // Experiencia y nivelado
+    const player = await Player.findOne({ uid: game.playerId });
+    if (player) {
+      let expToAdd = winner === 'player' ? 200 : 100;
+      let newProgress = (player.player_level_progress || 0) + expToAdd;
+      let newLevel = player.player_level || 0;
+      // Sube de nivel si llega a 1000 o más
+      if (newProgress >= 1000) {
+        const levelsToAdd = Math.floor(newProgress / 1000);
+        newLevel += levelsToAdd;
+        newProgress = newProgress % 1000;
+      }
+      await Player.updateOne(
+        { uid: game.playerId },
+        {
+          $set: {
+            player_level: newLevel,
+            player_level_progress: newProgress
+          }
+        }
+      );
+    }
+    return true; // El juego ha terminado
+  }
+  return false; // El juego sigue activo
+}
+
+module.exports = { nextTurn, drawCard, checkForGameOver };
