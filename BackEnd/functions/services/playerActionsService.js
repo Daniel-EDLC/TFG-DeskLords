@@ -2,7 +2,7 @@ const Game = require('../models/Game');
 const Player = require('../models/Player');
 const Card = require('../models/Card');
 const { resolverCombate, chooseDefenders } = require('./combatService');
-const { nextTurn, drawCard } = require('./turnService');
+const { nextTurn, drawCard, checkForGameOver } = require('./turnService');
 const { placeCards, changeCardsPositionToAttack } = require('./IAService');
 
 async function useCard(req, res) {
@@ -434,6 +434,9 @@ async function attack(req, res) {
           pending_deck: updatedGameResponse3.rivalPendingDeck.length,
           health: updatedGameResponse3.rivalHp,
           mana: updatedGameResponse3.rivalMana
+        },
+        user: {
+          table: updatedGameResponse3.playerTable,
         }
       }
     });
@@ -454,13 +457,21 @@ async function defend(req, res) {
     if (game.playerId !== player.uid) return req.response.error('El id del jugador no coincide con el de la partida');
 
     const combats = [];
-    for (const combat of req.body.battle) {
+    for (const combat of req.body.battles) {
+      // Buscar el atacante en la mesa del rival
       const attacker = game.rivalTable.find(card => card._id.toString() === combat.attacker);
       if (!attacker) return req.response.error(`Atacante no encontrado: ${combat.attacker}`);
 
-      const defender = combat.defender === "player" ? "player" : game.playerTable.find(card => card._id.toString() === combat.defender);
-      if (!defender) return req.response.error(`Defensor no encontrado: ${combat.defender}`);
+      // Si el defensor es "player", lo dejamos como string, si no, buscamos la carta en la mesa del player
+      let defender;
+      if (combat.defender === "player") {
+        defender = "player";
+      } else {
+        defender = game.playerTable.find(card => card._id.toString() === combat.defender);
+        if (!defender) return req.response.error(`Defensor no encontrado: ${combat.defender}`);
+      }
 
+      // Pushear los objetos de carta ya convertidos
       combats.push({ attacker, defender });
     }
 
@@ -477,6 +488,22 @@ async function defend(req, res) {
 
     const updatedGame = await Game.findById(gameId);
 
+    try {
+      await nextTurn({ game: updatedGame });
+    } catch (error) {
+      return req.response.error(`Error al pasar al siguiente turno: ${error.message}`);
+    }
+
+    const updatedGameNextTurn = await Game.findById(gameId);
+
+    try {
+      await drawCard({ game: updatedGameNextTurn, isAI: false });
+    } catch (error) {
+      return req.response.error(`Error al robar carta: ${error.message}`);
+    }
+
+    const updatedGameAfterDrawing = await Game.findById(gameId);
+
     return req.response.success({
       gameId: req.body.gameId,
       battle: combats.map(combat => ({
@@ -484,22 +511,22 @@ async function defend(req, res) {
         defender: combat.defender
       })),
       turn: {
-        number: 2,
+        number: updatedGameAfterDrawing.currentTurn,
         whose: "user",
         phase: "hand"
       },
       user: {
-        table: updatedGame.playerTable,
-        pending_deck: updatedGame.playerPendingDeck,
-        health: updatedGame.playerHp,
-        mana: updatedGame.playerMana
+        table: updatedGameAfterDrawing.playerTable,
+        pending_deck: updatedGameAfterDrawing.playerPendingDeck,
+        health: updatedGameAfterDrawing.playerHp,
+        mana: updatedGameAfterDrawing.playerMana
       },
       rival: {
-        hand: updatedGame.rivalHand,
-        table: updatedGame.rivalTable,
-        pending_deck: updatedGame.rivalPendingDeck,
-        health: updatedGame.rivalHp,
-        mana: updatedGame.rivalMana
+        hand: updatedGameAfterDrawing.rivalHand,
+        table: updatedGameAfterDrawing.rivalTable,
+        pending_deck: updatedGameAfterDrawing.rivalPendingDeck,
+        health: updatedGameAfterDrawing.rivalHp,
+        mana: updatedGameAfterDrawing.rivalMana
       }
     });
   } catch (error) {
