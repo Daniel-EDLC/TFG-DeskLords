@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { auth } from '../../../../firebaseConfig';
 import { GoogleAuthProvider, signInWithPopup, signOut, signInWithEmailAndPassword } from 'firebase/auth';
- import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import './Login.css';
 
 function Login({ onSwitch, onGoogleRegister }) {
   const API_URL = import.meta.env.VITE_API_URL;
-
 
   // signOut(auth);
 
@@ -18,10 +17,25 @@ function Login({ onSwitch, onGoogleRegister }) {
   async function handleLogin() {
     try {
       const result = await signInWithEmailAndPassword(auth, nombre, contrasena);
-      console.log('Usuario autenticado:', result.user);
-      // eslint-disable-next-line no-undef
-      navigate('/menu');
-    console.log(result)
+
+      const user = result.user;
+      const userExists = await isCreated(user.uid, user.getIdToken());
+
+      if (userExists) {
+        console.log('usuario encontrado');
+        navigate('/menu');
+      } else {
+        console.log('usuario no encontrado');
+
+        const [firstName, ...lastNames] = user.displayName.split(' ');
+        const data = {
+          uid: user.uid,
+          email: user.email,
+          name: firstName,
+          surnames: lastNames.join(' '),
+        };
+
+      }
     } catch (error) {
       console.error('Error en login:', error);
     }
@@ -31,10 +45,12 @@ function Login({ onSwitch, onGoogleRegister }) {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      const userExists = await isCreated(user.uid, user.getIdToken());
+      const token = await user.getIdToken()
+      const userExists = await isCreated(user.uid, token);
 
       if (userExists) {
         console.log('usuario encontrado');
+        navigate('/menu');
       } else {
         console.log('usuario no encontrado');
 
@@ -55,15 +71,16 @@ function Login({ onSwitch, onGoogleRegister }) {
 
   async function isCreated(uid, token) {
     try {
+      const payload = {
+        idPlayer: uid
+      }
       const response = await fetch('https://api-meafpnv6bq-ew.a.run.app/api/checkPlayerExists', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ 
-          idPlayer: uid 
-        }),
+        body: JSON.stringify(payload),
       });
 
       return !!response.result;

@@ -13,7 +13,7 @@
   
   height: 8vh;
   width: 90%;
-  max-width: 400px;
+  max-width: 30vw;
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
@@ -109,14 +109,15 @@
 }
 
 .deck-gallery {
-  max-height: 60vh; /* NUEVO: limita altura del contenedor */
-  overflow-y: auto;  /* Scroll si se pasa */
+  
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); 
+  max-height: 75vh; 
+  overflow-y: auto;
   width: 100%;
-  display: flex;
-  flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
-  padding: 20px;
+  padding: 2vw 13vw;
 }
 
 .deck-gallery::-webkit-scrollbar {
@@ -197,8 +198,14 @@
   max-width: 90vw;
   max-height: 80vh;
   overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none; 
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   color: white;
+}
+
+.deck-modal-box::-webkit-scrollbar {
+  display: none;
 }
 
 .deck-cards {
@@ -223,6 +230,8 @@
 
 @media (max-width: 435px) {
   .deck-gallery {
+      display: grid;
+  grid-template-columns: repeat(3, 1fr); 
     width: 100%;
     overflow-y: auto;
     max-height: 68vh;
@@ -234,6 +243,10 @@
     padding: 8px;
   }
 
+  .deck-controls{
+      max-width: 80vw;
+      max-height: 50vh;
+  }
   
 .deck-cards {
   display: grid;

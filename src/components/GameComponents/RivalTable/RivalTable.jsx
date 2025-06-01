@@ -58,6 +58,9 @@ function RivalTable({
           const isInRivalBattle = battles.some(b => b.atacanteId === carta._id);
           const isFadingOut = hiddenCards.includes(carta._id);
 
+          const totalAtk = carta.equipements?.reduce((sum, eq) => sum + (eq.atk || 0), 0) || 0;
+          const totalHp = carta.equipements?.reduce((sum, eq) => sum + (eq.hp || 0), 0) || 0;
+
           return (
             <div
               key={carta._id}
@@ -151,6 +154,12 @@ function RivalTable({
                     alt={`Carta ${index + 1}`}
                     className="rival-card-image"
                   />
+
+                  {carta.equipements?.length > 0 && (
+                    <div className="rival-equipment-bonus-overlay">
+                      +{totalAtk} / +{totalHp}
+                    </div>
+                  )}
 
                   {carta.equipements?.length > 0 && (
                     <>

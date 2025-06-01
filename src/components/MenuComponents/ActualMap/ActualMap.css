@@ -150,7 +150,7 @@
 /* Móvil */
 @media (max-width: 435px) {
   .mapa-actual {
-    width: auto;
+    width: 90vw;
     height: auto;
     padding: 16px;
     margin: 16px;

@@ -1,0 +1,48 @@
+.missions-container {
+  padding: 2rem;
+  color: #f0f0f0;
+  font-family: 'Georgia', serif;
+  text-align: center;
+}
+
+.missions-container h2 {
+  color: #ffd700;
+  margin-bottom: 1rem;
+}
+
+.missions-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.mission-item {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  text-align: left;
+}
+
+.mission-item h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #ffd700;
+}
+
+.mission-item p {
+  margin: 0.5rem 0;
+}
+
+.mission-reward {
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.missions-empty {
+  color: #aaa;
+  font-style: italic;
+  margin: 2rem;
+}
