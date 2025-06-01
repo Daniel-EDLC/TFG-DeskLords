@@ -551,7 +551,7 @@ export async function defense(setGameData, gameData) {
 
   const nuevasEntradas = nuevosAtacantes.map((a) => ({
     atacanteId: a._id,
-    defensorId: "0",
+    defensorId: "player",
   }));
 
   const batallaFinal = [...battle, ...nuevasEntradas];

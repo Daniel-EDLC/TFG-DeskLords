@@ -246,6 +246,22 @@ border: 2px solid rgba(255, 0, 0, 0.8);
   animation-delay: 2.5s;
 }
 
+.rival-equipment-bonus-overlay {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  font-weight: bold;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  z-index: 50;
+  pointer-events: none;
+}
+
+
 
 @media (max-width: 435px) {
   .rival-table-container {
