@@ -1,7 +1,5 @@
-import React from "react";
-import { useEffect, useState } from "react";
-import { useMediaQuery } from "@mui/material";
-import LockIcon from "@mui/icons-material/Lock";
+import React, { useEffect, useState } from "react";
+import { useMediaQuery, Modal, Box } from "@mui/material";
 import "./ActualMap.css";
 
 const ActualMap = ({ mapa, onPlay, decks, selectedDeckId, onSelectDeck }) => {
@@ -9,7 +7,7 @@ const ActualMap = ({ mapa, onPlay, decks, selectedDeckId, onSelectDeck }) => {
   const selectedDeck = decks.find(
     (deck) => String(deck._id) === String(selectedDeckId)
   );
-  const [showDeckOptions, setShowDeckOptions] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     if (!selectedDeckId && decks.length > 0) {
@@ -18,6 +16,7 @@ const ActualMap = ({ mapa, onPlay, decks, selectedDeckId, onSelectDeck }) => {
   }, [decks, selectedDeckId, onSelectDeck]);
 
   if (!mapa) return null;
+
   return (
     <div
       key={selectedDeckId}
@@ -30,7 +29,7 @@ const ActualMap = ({ mapa, onPlay, decks, selectedDeckId, onSelectDeck }) => {
     >
       <label className="tittle">Enfréntate al deck de {mapa.name}</label>
       <div className={`mapa-content ${isMobile ? "vertical" : ""}`}>
-        {!isMobile && selectedDeck && (
+        {!isMobile && selectedDeck?.image && (
           <img
             src={selectedDeck.image}
             alt={selectedDeck.name}
@@ -48,39 +47,35 @@ const ActualMap = ({ mapa, onPlay, decks, selectedDeckId, onSelectDeck }) => {
             <div className="deck-selector">
               <div
                 className="deck-card selected-deck"
-                onClick={() => setShowDeckOptions(!showDeckOptions)}
+                onClick={() => setOpenModal(true)}
               >
-                <p className="deck-name">{selectedDeck.name}</p>
+                <p className="deck-name">{selectedDeck?.name}</p>
               </div>
-
-              {showDeckOptions && (
-                <div className="deck-options">
-                  {decks
-                    .filter((deck) => deck.available)
-                    .map((deck) => (
-                      <div
-                        key={deck._id}
-                        className={`deck-card ${
-                          deck.available ? "" : "disabled"
-                        }`}
-                        onClick={() => {
-                          if (!deck.available) return;
-                          onSelectDeck(deck._id);
-                          setShowDeckOptions(false);
-                        }}
-                      >
-                        {!deck.available && (
-                          <div className="deck-lock-overlay">
-                            <LockIcon className="lock-icon" />
-                          </div>
-                        )}
-                        <p className="deck-name">{deck.name}</p>
-                      </div>
-                    ))}
-                </div>
-              )}
             </div>
           </div>
+
+          <Modal open={openModal} onClose={() => setOpenModal(false)}>
+            <Box className="deck-modal-box">
+              <h3>Selecciona tu mazo</h3>
+              <div className="deck-options">
+                {decks
+                  .filter((deck) => deck.available)
+                  .map((deck) => (
+                    <div
+                      key={deck._id}
+                      className="deck-card"
+                      onClick={() => {
+                        onSelectDeck(deck._id);
+                        setOpenModal(false);
+                      }}
+                    >
+                      <p className="deck-name">{deck.name}</p>
+                    </div>
+                  ))}
+              </div>
+            </Box>
+          </Modal>
+
           <button disabled={!selectedDeckId} onClick={onPlay}>
             Comenzar batalla
           </button>

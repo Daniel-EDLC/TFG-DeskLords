@@ -11,8 +11,11 @@ import Maps from "../../components/MenuComponents/Maps/Maps";
 import UserProfile from "../../components/MenuComponents/UserProfile/UserProfile";
 import Decks from "../../components/MenuComponents/Decks/Decks";
 
-import { cargarPartida, cargaInformacion } from "../../services/Actions/MenuActions";
-import { useNavigate } from 'react-router-dom';
+import {
+  cargarPartida,
+  cargaInformacion,
+} from "../../services/Actions/MenuActions";
+import { useNavigate } from "react-router-dom";
 
 import "./Menu.css";
 
@@ -68,20 +71,20 @@ function Menu() {
     }
   };
 
- const handlePlay = async () => {
-  if (selectedMap && selectedDeckId) {
-    console.log("mapa:",selectedMap)
-    console.log("deck:",selectedDeckId)
-    try {
-      const gameData = await cargarPartida(selectedDeckId, selectedMap.id);
-      
-      // Guardar en memoria, contexto, o pasar por estado
-      navigate("/game", { state: { partida: gameData } });
-    } catch (error) {
-      console.error("Error al iniciar la partida:", error);
+  const handlePlay = async () => {
+    if (selectedMap && selectedDeckId) {
+      console.log("mapa:", selectedMap);
+      console.log("deck:", selectedDeckId);
+      try {
+        const gameData = await cargarPartida(selectedDeckId, selectedMap.id);
+
+        // Guardar en memoria, contexto, o pasar por estado
+        navigate("/game", { state: { partida: gameData } });
+      } catch (error) {
+        console.error("Error al iniciar la partida:", error);
+      }
     }
-  }
-};
+  };
 
   const renderContenido = () => {
     switch (seccionActiva) {
@@ -133,7 +136,9 @@ function Menu() {
   return (
     <>
       <img src="/LOGO.png" alt="Logo DeskLords" className="menu-logo" />
-      <Box className="main-content">{renderContenido()}</Box>
+      <Box className="main-content">
+        <Box className="menu-scroll-content">{renderContenido()}</Box>
+      </Box>
       {esMovil ? (
         <Box className="bottom-nav">
           {botones.map((btn) => (
