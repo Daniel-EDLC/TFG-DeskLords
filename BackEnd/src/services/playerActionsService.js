@@ -2,7 +2,7 @@ const Game = require('../models/Game');
 const Player = require('../models/Player');
 const { resolverCombate, chooseDefenders } = require('./combatService');
 const { nextTurn, drawCard } = require('./turnService');
-const { placeCardsAndAttack } = require('./IAService');
+const { placeCards } = require('./IAService');
 
 async function useCard(req, res) {
   try {
@@ -14,10 +14,12 @@ async function useCard(req, res) {
     if (!player) return req.response.error('Jugador no encontrado');
     if (game.playerId !== player.uid) return req.response.error('El id del jugador no coincide con el de la partida');
 
-    console.log('game', game);
     const usedCard = game.playerHand.find(card => card._id.toString() === req.body.cardId);
-    const targetedCard = game.playerTable.find(card => card._id.toString() === req.body.action?.target?.id) ||
-      game.rivalTable.find(card => card._id.toString() === req.body.action?.target?.id);
+    let targetedCard = null;
+    if (req.body.target && req.body.target.id) {
+      targetedCard = game.playerTable.find(card => card._id.toString() === req.body.target.id) ||
+        game.rivalTable.find(card => card._id.toString() === req.body.target.id);
+    }
 
     if (!usedCard) return req.response.error("Carta no encontrada en la mano del jugador");
 
@@ -33,21 +35,18 @@ async function useCard(req, res) {
           }
         );
 
-        if (game.playerTable.length > 0) {
-          game.playerTable.forEach(card => {
-            if (card.new) { card.new = false; }
-          })
-        }
-
         // Leer el estado actualizado del juego
         const updatedGame = await Game.findById(gameId);
 
-        let playerTableupdated = updatedGame.playerTable.map(card => {
-          return {
-            ...card.toObject(),
-            new: true
+        // Marcar solo la última carta añadida como new: true, el resto no
+        const playerTableupdated = updatedGame.playerTable.map((card, idx, arr) => {
+          if (idx === arr.length - 1) {
+            return { ...card.toObject(), new: true };
+          } else {
+            const { new: _omit, ...rest } = card.toObject();
+            return rest;
           }
-        })
+        });
 
         return req.response.success({
           gameId: req.body.gameId,
@@ -62,7 +61,7 @@ async function useCard(req, res) {
           },
           user: {
             hand: updatedGame.playerHand,
-            table: updatedGame,
+            table: playerTableupdated,
             mana: updatedGame.playerMana
           }
         });
@@ -84,6 +83,24 @@ async function useCard(req, res) {
 
           const updatedGame = await Game.findById(gameId);
 
+          // Marcar solo el último equipement añadido como new: true, el resto no
+          const playerTableupdated = updatedGame.playerTable.map(card => {
+            if (card._id.toString() === equipTarget._id.toString()) {
+              // Si la carta es la objetivo, procesar su array de equipements
+              const equipements = (card.equipements || []).map((eq, idx, arr) => {
+                if (idx === arr.length - 1) {
+                  return { ...eq.toObject?.() || eq, new: true };
+                } else {
+                  const { new: _omit, ...rest } = eq.toObject?.() || eq;
+                  return rest;
+                }
+              });
+              return { ...card.toObject(), equipements };
+            } else {
+              return card.toObject();
+            }
+          });
+
           return req.response.success({
             gameId: req.body.gameId,
             action_result: {
@@ -97,12 +114,12 @@ async function useCard(req, res) {
             },
             user: {
               hand: updatedGame.playerHand,
-              table: updatedGame.playerTable,
+              table: playerTableupdated,
               mana: updatedGame.playerMana
             }
           });
         } else {
-          return req.response.error('Objetivo de equipamiento no válido');
+          return req.response.error('Target no encontrado');
         }
       }
       case 'spell': {
@@ -117,11 +134,21 @@ async function useCard(req, res) {
                 $set: { 'playerTable.$.temporaryAbilities': 'invulnerable' },
                 $pull: { playerHand: { _id: usedCard._id } },
                 $inc: { playerMana: -usedCard.cost },
-                $push: { playerGraveyard: usedCard }
+                $push: { playerGraveyard: { ...usedCard.toObject(), new: true } }
               }
             );
 
             const updatedGame = await Game.findById(gameId);
+
+            // Marcar solo el último spell añadido a playerGraveyard como new: true, el resto no
+            const playerGraveyardUpdated = (updatedGame.playerGraveyard || []).map((card, idx, arr) => {
+              if (idx === arr.length - 1) {
+                return { ...card.toObject?.() || card, new: true };
+              } else {
+                const { new: _omit, ...rest } = card.toObject?.() || card;
+                return rest;
+              }
+            });
 
             return req.response.success({
               gameId: req.body.gameId,
@@ -137,10 +164,10 @@ async function useCard(req, res) {
               user: {
                 hand: updatedGame.playerHand,
                 table: updatedGame.playerTable,
-                mana: updatedGame.playerMana
+                mana: updatedGame.playerMana,
+                graveyard: playerGraveyardUpdated
               }
             });
-
           } else {
             return req.response.error('Objetivo de hechizo no válido');
           }
@@ -152,7 +179,7 @@ async function useCard(req, res) {
               { _id: gameId },
               {
                 $pull: { rivalTable: { _id: targetedCard._id }, playerHand: { _id: usedCard._id } },
-                $push: { rivalGraveyard: targetedCard, playerGraveyard: usedCard },
+                $push: { rivalGraveyard: targetedCard, playerGraveyard: { ...usedCard.toObject(), new: true } },
                 $inc: { playerMana: -usedCard.cost }
               }
             );
@@ -161,6 +188,16 @@ async function useCard(req, res) {
           }
 
           const updatedGame = await Game.findById(gameId);
+
+          // Marcar solo el último spell añadido a playerGraveyard como new: true, el resto no
+          const playerGraveyardUpdated = (updatedGame.playerGraveyard || []).map((card, idx, arr) => {
+            if (idx === arr.length - 1) {
+              return { ...card.toObject?.() || card, new: true };
+            } else {
+              const { new: _omit, ...rest } = card.toObject?.() || card;
+              return rest;
+            }
+          });
 
           return req.response.success({
             gameId: req.body.gameId,
@@ -176,7 +213,8 @@ async function useCard(req, res) {
             user: {
               hand: updatedGame.playerHand,
               table: updatedGame.playerTable,
-              mana: updatedGame.playerMana
+              mana: updatedGame.playerMana,
+              graveyard: playerGraveyardUpdated
             },
             rival: {
               table: updatedGame.rivalTable,
@@ -250,7 +288,7 @@ async function attack(req, res) {
 
     await drawCard({ game, isAI: true });
 
-    const result = await placeCardsAndAttack(game);
+    const result = await placeCards(game);
 
     const updatedGameResponse2y3 = await Game.findById(gameId);
 

@@ -6,8 +6,8 @@ const cardSchema = new mongoose.Schema({
     type: {type: String, required: true, enum: ['creature', 'spell', 'equipement']},
     description: {type: String, required: true},
     element: {type: String, required: true},
-    atk: {type: Number, required: true},
-    hp: {type: Number, required: true},
+    atk: {type: Number, required: false},
+    hp: {type: Number, required: false},
     cost: {type: Number, required: true},
     front_image: {type: String, required: false}, // Cambiar a true cuando tengamos las imágenes
     back_image: {type: String, required: false}, // Cambiar a true cuando tengamos las imágenes

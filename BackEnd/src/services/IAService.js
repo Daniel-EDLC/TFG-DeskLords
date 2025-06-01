@@ -1,6 +1,6 @@
 const Game = require('../models/Game');
 
-async function placeCardsAndAttack(game) {
+async function placeCards(game) {
   let rivalHand = [...game.rivalHand];
   let rivalTable = [...game.rivalTable];
   let playerTable = [...game.playerTable];
@@ -107,4 +107,4 @@ async function placeCardsAndAttack(game) {
   return {spell: actionSpell, equipement: actionEquipement, rivalTable: game.rivalTable};
 }
 
-module.exports = { placeCardsAndAttack };
+module.exports = { placeCards };

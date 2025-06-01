@@ -83,14 +83,14 @@ async function startGame(req, res) {
                 table: [],
                 pending_deck: gameSaved.playerPendingDeck.length,
                 health: gameSaved.playerHp,
-                mana: gameSaved.manaPerTurn
+                mana: gameSaved.playerMana
             },
             rival: {
                 hand: gameSaved.rivalHand.length,
                 table: [],
                 pending_deck: gameSaved.rivalPendingDeck.length,
                 health: gameSaved.rivalHp,
-                mana: gameSaved.manaPerTurn
+                mana: gameSaved.rivalMana
             }
         });
     } catch (error) {
