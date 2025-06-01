@@ -75,7 +75,7 @@ async function useCard(req, res) {
           await Game.updateOne(
             { _id: gameId, 'playerTable._id': equipTarget._id },
             {
-              $set: { 'playerTable.$.equipements': usedCard },
+              $push: { 'playerTable.$.equipements': usedCard },
               $pull: { playerHand: { _id: usedCard._id } },
               $inc: { playerMana: -usedCard.cost }
             }
@@ -459,16 +459,16 @@ async function defend(req, res) {
     const combats = [];
     for (const combat of req.body.battles) {
       // Buscar el atacante en la mesa del rival
-      const attacker = game.rivalTable.find(card => card._id.toString() === combat.attacker);
-      if (!attacker) return req.response.error(`Atacante no encontrado: ${combat.attacker}`);
+      const attacker = game.rivalTable.find(card => card._id.toString() === combat.atacanteId);
+      if (!attacker) return req.response.error(`Atacante no encontrado: ${combat.atacanteId}`);
 
       // Si el defensor es "player", lo dejamos como string, si no, buscamos la carta en la mesa del player
       let defender;
-      if (combat.defender === "player") {
+      if (combat.defensorId === "player") {
         defender = "player";
       } else {
-        defender = game.playerTable.find(card => card._id.toString() === combat.defender);
-        if (!defender) return req.response.error(`Defensor no encontrado: ${combat.defender}`);
+        defender = game.playerTable.find(card => card._id.toString() === combat.defensorId);
+        if (!defender) return req.response.error(`Defensor no encontrado: ${combat.defensorId}`);
       }
 
       // Pushear los objetos de carta ya convertidos
@@ -504,6 +504,33 @@ async function defend(req, res) {
 
     const updatedGameAfterDrawing = await Game.findById(gameId);
 
+    try {
+      // Cambiar el campo position de todas las cartas de la mesa del player y del rival a 'waiting'
+      const updatedPlayerTable = updatedGameAfterDrawing.playerTable.map(card => ({
+        ...card.toObject() || card,
+        position: 'waiting'
+      }));
+      const updatedRivalTable = updatedGameAfterDrawing.rivalTable.map(card => ({
+        ...card.toObject() || card,
+        position: 'waiting'
+      }));
+      await Game.updateOne(
+        { _id: gameId },
+        {
+          $set: {
+            playerTable: updatedPlayerTable,
+            rivalTable: updatedRivalTable
+          }
+        }
+      );
+    } catch (error) {
+      return req.response.error(`Error al cambiar posición de cartas a 'waiting': ${error.message}`);
+    }
+
+    const updatedGameAfterChangingPositions = await Game.findById(gameId);
+
+    console.log("Updated game after changing positions:", updatedGameAfterChangingPositions);
+
     return req.response.success({
       gameId: req.body.gameId,
       battle: combats.map(combat => ({
@@ -511,22 +538,23 @@ async function defend(req, res) {
         defender: combat.defender
       })),
       turn: {
-        number: updatedGameAfterDrawing.currentTurn,
+        number: updatedGameAfterChangingPositions.currentTurn,
         whose: "user",
         phase: "hand"
       },
       user: {
-        table: updatedGameAfterDrawing.playerTable,
-        pending_deck: updatedGameAfterDrawing.playerPendingDeck,
-        health: updatedGameAfterDrawing.playerHp,
-        mana: updatedGameAfterDrawing.playerMana
+        hand: updatedGameAfterChangingPositions.playerHand,
+        table: updatedGameAfterChangingPositions.playerTable,
+        pending_deck: updatedGameAfterChangingPositions.playerPendingDeck.length,
+        health: updatedGameAfterChangingPositions.playerHp,
+        mana: updatedGameAfterChangingPositions.playerMana
       },
       rival: {
-        hand: updatedGameAfterDrawing.rivalHand,
-        table: updatedGameAfterDrawing.rivalTable,
-        pending_deck: updatedGameAfterDrawing.rivalPendingDeck,
-        health: updatedGameAfterDrawing.rivalHp,
-        mana: updatedGameAfterDrawing.rivalMana
+        hand: updatedGameAfterChangingPositions.rivalHand.length,
+        table: updatedGameAfterChangingPositions.rivalTable,
+        pending_deck: updatedGameAfterChangingPositions.rivalPendingDeck.length,
+        health: updatedGameAfterChangingPositions.rivalHp,
+        mana: updatedGameAfterChangingPositions.rivalMana
       }
     });
   } catch (error) {

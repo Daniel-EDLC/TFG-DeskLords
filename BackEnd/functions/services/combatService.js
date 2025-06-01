@@ -36,6 +36,21 @@ function chooseDefenders(attackingCards, rivalTable) {
 }
 
 async function resolverCombate({ gameId, attacker, defender, isAI }) {
+  // Sumar equipements al atacante
+  if (Array.isArray(attacker.equipements) && attacker.equipements.length > 0) {
+    for (const eq of attacker.equipements) {
+      attacker.atk += eq.atk || 0;
+      attacker.hp += eq.hp || 0;
+    }
+  }
+  // Sumar equipements al defensor
+  if (Array.isArray(defender.equipements) && defender.equipements.length > 0) {
+    for (const eq of defender.equipements) {
+      defender.atk += eq.atk || 0;
+      defender.hp += eq.hp || 0;
+    }
+  }
+
   const hpField = defender === "player" ? (isAI ? "playerHp" : "rivalHp") : null;
   // Asegurar que dmg siempre es un número
   const dmg = typeof attacker.atk === 'number' && !isNaN(attacker.atk) ? attacker.atk : 0;
@@ -57,18 +72,28 @@ async function resolverCombate({ gameId, attacker, defender, isAI }) {
   const attackerToqueMortal = attackerHabs.has("mortal touch");
   const attackerBruteForce = attackerHabs.has("brute force");
 
-  const result = { attacker: { ...attacker }, defender: { ...defender }, dmgToPlayer: 0 };
+  console.log("\nAttacker ==> ", attacker);
+  console.log("\nDefender ==> ", defender);
+
+  // Usar los valores sumados
+  const result = {
+    attacker: attacker.toObject() ? attacker.toObject() : attacker,
+    defender: defender.toObject() ? defender.toObject() : defender,
+    dmgToPlayer: 0
+  };
+
+  console.log("\nCartas guardadas en el combate:", result);
 
   if (!defenderInvulnerable) {
-    result.defender.hp = attackerToqueMortal ? 0 : result.defender.hp - attacker.atk;
+    result.defender.hp = attackerToqueMortal ? 0 : result.defender.hp - result.attacker.atk;
   }
   if (!attackerHabs.has("invulnerable")) {
     const defenderToqueMortal = defenderHabs.has("mortal touch");
-    result.attacker.hp = defenderToqueMortal ? 0 : result.attacker.hp - defender.atk;
+    result.attacker.hp = defenderToqueMortal ? 0 : result.attacker.hp - result.defender.atk;
   }
 
   if (attackerBruteForce && result.defender.hp <= 0 && !defenderInvulnerable) {
-    const excess = attacker.atk - defender.hp;
+    const excess = result.attacker.atk - result.defender.hp;
     if (excess > 0) result.dmgToPlayer = excess;
   }
 
@@ -78,9 +103,11 @@ async function resolverCombate({ gameId, attacker, defender, isAI }) {
   const attackerTable = isAI ? "rivalTable" : "playerTable";
   const defenderTable = isAI ? "playerTable" : "rivalTable";
 
+  const gameUpdated = await Game.findById(gameId);
+
   if (result.attacker.hp > 0) {
     await Game.updateOne(
-      { _id: gameId, [`${attackerTable}._id`]: result.attacker._id },
+      { _id: gameUpdated._id, [`${attackerTable}._id`]: result.attacker._id },
       {
         $set: {
           [`${attackerTable}.$.hp`]: result.attacker.hp,
@@ -91,16 +118,23 @@ async function resolverCombate({ gameId, attacker, defender, isAI }) {
     );
   } else {
     await Game.updateOne(
-      { _id: gameId, [`${attackerTable}._id`]: result.attacker._id },
+      { _id: gameUpdated._id, [`${attackerTable}._id`]: result.attacker._id },
       {
-        $set: { [`${attackerTable}.$.alive`]: false }
+        $set: {
+          [`${attackerTable}.$.alive`]: false,
+          [`${attackerTable}.$.hp`]: 0,
+        }
       }
     );
   }
 
+  const gamelatestUpdated = await Game.findById(gameId);
+
+  console.log("\nGame updated:", gamelatestUpdated);
+
   if (result.defender.hp > 0) {
     await Game.updateOne(
-      { _id: gameId, [`${defenderTable}._id`]: result.defender._id },
+      { _id: gamelatestUpdated._id, [`${defenderTable}._id`]: result.defender._id },
       {
         $set: {
           [`${defenderTable}.$.hp`]: result.defender.hp,
@@ -112,9 +146,12 @@ async function resolverCombate({ gameId, attacker, defender, isAI }) {
     );
   } else {
     await Game.updateOne(
-      { _id: gameId, [`${defenderTable}._id`]: result.defender._id },
+      { _id: gamelatestUpdated._id, [`${defenderTable}._id`]: result.defender._id },
       {
-        $set: { [`${defenderTable}.$.alive`]: false }
+        $set: { 
+          [`${defenderTable}.$.alive`]: false,
+          [`${defenderTable}.$.hp`]: 0,
+        }
       }
     );
   }
