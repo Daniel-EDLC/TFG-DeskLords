@@ -7,6 +7,7 @@ import RivalHand from '../../components/GameComponents/RivalHand/RivalHand';
 import RivalTable from '../../components/GameComponents/RivalTable/RivalTable';
 import PlayerTable from '../../components/GameComponents/PlayerTable/PlayerTable';
 import Announcement from '../../components/GameComponents/Announcement/Announcement';
+import TurnIndicator from '../../components/GameComponents/TurnIndicator/TurnIndicator';
 import { useLocation } from 'react-router-dom';
 
 import './Game.css';
@@ -67,7 +68,6 @@ function Game() {
   };
 
   const handlePlayCard = (card) => {
-    console.log("intentando cartra hola daniel", card)
     if (card.type === 'equipement' && !card.targetId) {
       setPendingEquipementCard(card);
       return;
@@ -76,13 +76,21 @@ function Game() {
       setPendingSpellCard(card);
       return;
     }
-    console.log('Jugando carta2:', card);
     playCard(setGameData, gameData, card);
   };
 
   const handleSwitchPhase = () => switchPhase(setGameData, gameData);
   const handleEndTurn = async (selectedAttackCards) => await endTurn(selectedAttackCards, setGameData, gameData);
-  const handleDefense = async () => await defense(setGameData, gameData);
+  const handleDefense = async () => {
+  try {
+    await defense(setGameData, gameData);
+    resetBattle();
+    setBattles([]);
+  } catch (error) {
+    console.error('Error al ejecutar defense:', error);
+    // Aquí puedes manejar errores si quieres mostrar un mensaje al usuario
+  }
+};
 
   const setPhase = (nuevaFase) => {
     setGameData((prevData) => ({
@@ -252,7 +260,12 @@ console.log("partida->",gameData.user.hand)
         onSurrender={handleSurrenderClick}
       />
 
-      {showAnnouncement && (
+      <TurnIndicator turn={gameData.turn} />
+
+
+
+
+      {/* {showAnnouncement && (
         <Announcement
           link={announcementLink}
           duration={2000}
@@ -281,7 +294,7 @@ console.log("partida->",gameData.user.hand)
             </div>
           )}
         </div>
-      )}
+      )} */}
     </div>
     
   );

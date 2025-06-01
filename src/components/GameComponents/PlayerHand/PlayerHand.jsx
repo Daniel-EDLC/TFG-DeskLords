@@ -38,10 +38,7 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
       setFloatingMessage('Solo puedes jugar cartas durante tu fase de mano!');
       return;
     }
-    console.log("intentnado juagar carta1:05->", carta)
-    console.log("intentnado juagar carta1:06->", selectedCardId)
     if (selectedCardId === carta._id) {
-      console.log("avanzando")
       if (carta.type === 'equipement' || carta.type === 'spell') {
         setSelectedCardId(null);
         return;
@@ -52,8 +49,6 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
         console.log("no mana")
         return;
       }
-      console.log("intentnado juagar carta de criatura->", selectedCardId)
-      console.log("intentnado juagar carta de criatura->", carta)
       onPlayCard(carta);
       setSelectedCardId(null);
     } else {

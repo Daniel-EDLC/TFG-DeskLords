@@ -54,7 +54,8 @@ function RivalTable({
         {cartas.map((carta, index) => {
           if (removedCards.includes(carta._id)) return null;
 
-          const cardClass = ` ${carta.position === 'attack' ? 'attack-position' : ''}`;
+          const cardClass = (turn.whose === 'rival' && turn.phase === 'attack' && carta.position === 'attack') ? 'attack-position' : '';
+
           const isInRivalBattle = battles.some(b => b.atacanteId === carta._id);
           const isFadingOut = hiddenCards.includes(carta._id);
 
