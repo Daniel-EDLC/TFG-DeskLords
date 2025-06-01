@@ -1,7 +1,7 @@
 const Game = require('../models/Game');
 
 // quitar las cartas de spell que estan dentro del array de equipamientos
-async function nextTurn({ game, isAi }) {
+async function nextTurn({ game }) {
   if (!game) throw new Error('Juego no encontrado');
 
   const newTurn = game.currentTurn + 1;

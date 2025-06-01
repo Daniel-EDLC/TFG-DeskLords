@@ -3,7 +3,7 @@ const Player = require('../models/Player');
 const Card = require('../models/Card');
 const { resolverCombate, chooseDefenders } = require('./combatService');
 const { nextTurn, drawCard } = require('./turnService');
-const { placeCards } = require('./IAService');
+const { placeCards, changeCardsPositionToAttack } = require('./IAService');
 
 async function useCard(req, res) {
   try {
@@ -60,6 +60,7 @@ async function useCard(req, res) {
           },
           user: {
             hand: updatedGame.playerHand,
+            pending_deck: updatedGame.playerPendingDeck.length,
             table: playerTableupdated,
             mana: updatedGame.playerMana
           }
@@ -113,6 +114,7 @@ async function useCard(req, res) {
             },
             user: {
               hand: updatedGame.playerHand,
+              pending_deck: updatedGame.playerPendingDeck.length,
               table: playerTableupdated,
               mana: updatedGame.playerMana
             }
@@ -169,6 +171,7 @@ async function useCard(req, res) {
               },
               user: {
                 hand: updatedGame.playerHand,
+                pending_deck: updatedGame.playerPendingDeck.length,
                 table: playerTableupdated,
                 mana: updatedGame.playerMana
               }
@@ -343,7 +346,7 @@ async function attack(req, res) {
 
     // action de robar carta
     try {
-      await nextTurn({ game: updatedGameResponse1, isAi: true });
+      await nextTurn({ game: updatedGameResponse1 });
     } catch (error) {
       return req.response.error(`Error al pasar al siguiente turno: ${error.message}`);
     }
@@ -364,30 +367,30 @@ async function attack(req, res) {
       return req.response.error(`Error al colocar cartas y atacar: ${error.message}`);
     }
 
-    const updatedGameResponse2y3 = await Game.findById(gameId);
+    const updatedGameResponse2 = await Game.findById(gameId);
 
     // action 2 response
     const action2Response = {
       turn: {
-        number: updatedGameResponse2y3.currentTurn,
+        number: updatedGameResponse2.currentTurn,
         whose: "rival",
         phase: "hand"
       },
       user: {
-        table: updatedGameResponse2y3.playerTable,
+        table: updatedGameResponse2.playerTable,
       },
       rival: {
-        hand: updatedGameResponse2y3.rivalHand.length,
-        table: updatedGameResponse2y3.rivalTable,
-        pending_deck: updatedGameResponse2y3.rivalPendingDeck.length,
-        health: updatedGameResponse2y3.rivalHp,
-        mana: updatedGameResponse2y3.rivalMana
+        hand: updatedGameResponse2.rivalHand.length,
+        table: updatedGameResponse2.rivalTable,
+        pending_deck: updatedGameResponse2.rivalPendingDeck.length,
+        health: updatedGameResponse2.rivalHp,
+        mana: updatedGameResponse2.rivalMana
       }
     }
 
     try {
       // Mover cartas muertas al graveyard después de crear la respuesta
-      const deadCards = updatedGameResponse2y3.playerTable.filter(card => card.alive === false);
+      const deadCards = updatedGameResponse2.playerTable.filter(card => card.alive === false);
       if (deadCards.length > 0) {
         await Game.updateOne(
           { _id: gameId },
@@ -397,20 +400,23 @@ async function attack(req, res) {
           }
         );
         // Refrescar el estado actualizado para siguientes respuestas
-        Object.assign(updatedGameResponse2y3, await Game.findById(gameId));
+        Object.assign(updatedGameResponse2, await Game.findById(gameId));
       }
-
-      await Game.updateOne(
-        { _id: gameId },
-        {
-          $set: {
-            'rivalTable.$[].position': 'attack'
-          }
-        }
-      )
     } catch (error) {
       return req.response.error(`Error al mover cartas muertas al graveyard: ${error.message}`);
     }
+
+    const updatedGameAfterPlacingCards = await Game.findById(gameId);
+
+    try {
+      if (updatedGameAfterPlacingCards.rivalTable.length > 0) {
+        await changeCardsPositionToAttack(updatedGameAfterPlacingCards);
+      }
+    } catch (error) {
+      return req.response.error(`Error al cambiar posición de cartas a ataque: ${error.message}`);
+    }
+
+    const updatedGameResponse3 = await Game.findById(gameId);
 
     return req.response.success({
       gameId: req.body.gameId,
@@ -418,16 +424,16 @@ async function attack(req, res) {
       action2: action2Response,
       action3: {
         turn: {
-          number: updatedGameResponse2y3.currentTurn,
+          number: updatedGameResponse3.currentTurn,
           whose: "rival",
           phase: "attack"
         },
         rival: {
-          hand: updatedGameResponse2y3.rivalHand.length,
-          table: updatedGameResponse2y3.rivalTable,
-          pending_deck: updatedGameResponse2y3.rivalPendingDeck.length,
-          health: updatedGameResponse2y3.rivalHp,
-          mana: updatedGameResponse2y3.rivalMana
+          hand: updatedGameResponse3.rivalHand.length,
+          table: updatedGameResponse3.rivalTable,
+          pending_deck: updatedGameResponse3.rivalPendingDeck.length,
+          health: updatedGameResponse3.rivalHp,
+          mana: updatedGameResponse3.rivalMana
         }
       }
     });
