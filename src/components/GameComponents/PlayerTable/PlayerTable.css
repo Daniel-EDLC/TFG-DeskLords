@@ -56,6 +56,13 @@
   z-index: 20;
 }
 
+.player-card-table.selected:hover {
+  transform: scale(2.3);
+  border: 2px solid rgba(19, 128, 0, 0.8);
+  border-radius: 6px;
+  z-index: 100;
+}
+
 .player-card-inner.selected::after {
   content: '';
   position: absolute;

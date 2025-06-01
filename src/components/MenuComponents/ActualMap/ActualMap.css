@@ -1,3 +1,4 @@
+/* Estilo principal para la vista del mapa */
 .mapa-actual {
   width: 30vw;
   height: 60vh;
@@ -46,7 +47,8 @@
   text-align: center;
 }
 
-.mapa-info button {
+.mapa-info button,
+.deck-card.selected-deck {
   margin-top: 10px;
   padding: 10px 20px;
   background-color: rgba(255, 255, 255, 0.1);
@@ -56,18 +58,22 @@
   border-radius: 10px;
   cursor: pointer;
   transition: 0.3s;
+  text-align: center;
+  width: auto;
 }
 
-a {
-  text-decoration: none;
-  color: white;
-}
-
-.mapa-info button:hover {
+.mapa-info button:hover,
+.deck-card.selected-deck:hover {
   color: rgb(24, 91, 0);
-  background-color: #dcdcdca8;
+  background-color: #dcdcdc85;
+  border-color: rgb(0, 70, 0);
 }
 
+.deck-card.selected-deck:hover .deck-name {
+  color: rgb(24, 91, 0);
+}
+
+/* Selector de mazos */
 .deck-select {
   margin: 15px 0;
   display: flex;
@@ -75,71 +81,77 @@ a {
   width: 100%;
 }
 
-.deck-select select {
-  padding: 8px;
-  background-color: #222;
-  color: white;
-  border: 1px solid white;
-  border-radius: 5px;
-  text-align: center;
-  text-align-last: center;
-  width: 60%;
-}
-
 .deck-selector {
   position: relative;
   margin-bottom: 1rem;
 }
 
-.deck-card {
-  position: relative;
-  width: 120px;
-  cursor: pointer;
-  border: 2px solid transparent;
-  border-radius: 8px;
+/* Estilo del modal */
+.deck-modal-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(121, 121, 121, 0.89);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  width: auto;
+  height: 60vh;
+  text-align: center;
+  max-height: 80vh; /* Altura máxima del modal */
   overflow: hidden;
-  transition: border 0.2s;
-  margin: 0.5rem;
+  
+  display: flex;
+  flex-direction: column;
+}
+
+.deck-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+  justify-items: center;
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  padding-right: 6px; /* espacio para scrollbar */
+  flex: 1; /* permite que este contenedor use el espacio sobrante */
+}
+
+.deck-card {
+  background-color: #2f2f2f;
+  border: 2px solid rgb(0, 70, 0);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 90%;
+  margin: 0 auto;
 }
 
 .deck-card:hover {
-  border-color: #999;
+  background-color: #e4e4e493;
+  border-color: rgb(0, 70, 0);
 }
 
-.deck-card.disabled {
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-.deck-image {
-  width: 100%;
-  height: auto;
-  display: block;
+.deck-card:hover .deck-name {
+  color: rgb(0, 70, 0);
 }
 
 .deck-name {
   text-align: center;
   font-size: 0.9rem;
-  margin-top: 0.3rem;
 }
 
-.deck-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 0.5rem;
-}
-
-.selected-deck {
-  border: 2px solid #333;
-}
-
-
-/* MOBILE */
+/* Móvil */
 @media (max-width: 435px) {
   .mapa-actual {
     width: auto;
-    height: 50vh;
+    height: auto;
     padding: 16px;
     margin: 16px;
     border: none;
@@ -148,17 +160,11 @@ a {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    position: relative;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-blend-mode: darken;
-    background-color: rgba(0, 0, 0, 0.589); /* overlay negro por mezcla */
-    /* Alternativa con pseudooverlay:
-    background-image:
-      linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-      url('...'); ← esto se pasa por inline style
-    */
+    background-color: rgba(0, 0, 0, 0.911);
   }
 
   .mapa-content.vertical {
@@ -176,24 +182,14 @@ a {
     width: 100%;
     padding: 0;
     display: flex;
+    flex-direction: column;
     justify-content: space-evenly;
-  }
-
-  .mapa-fondo {
-    height: 35vh;
-    
-    display: flex;
-    justify-content: space-evenly;
+    align-items: center;
   }
 
   .mapa-info p {
     font-size: 0.9rem;
     margin: 0 0 8px 0;
-  }
-
-  .deck-select select {
-    width: 90%;
-    font-size: 0.95rem;
   }
 
   .mapa-info button {

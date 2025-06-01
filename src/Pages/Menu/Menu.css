@@ -1,4 +1,6 @@
-
+body {
+  overflow: hidden;
+}
 
 .menu-logo {
   width: 40vw;
@@ -8,10 +10,18 @@
 }
 
 .main-content{
-  margin-top: 7vh;
+  margin-top: 8vh;
+      scrollbar-width: none;         /* Firefox */
+  -ms-overflow-style: none; 
+}
+
+.main-content::-webkit-scrollbar {    /* WebKit (Chrome, Safari) */
+  display: none;
+}
+.menu-scroll-content {
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: space-around;
 }
 
 .bottom-nav {
@@ -31,7 +41,7 @@
 
 .gestion-container {
   position: absolute;
-  top: 25vh;
+  top: 24vh;
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
@@ -85,8 +95,11 @@
   color: #000000;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 435px) {
+
+  
   .mapa-container{
+  
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -98,8 +111,16 @@
   filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
 }
 
-.main-content{
-  margin-top: 2vh;
+.main-content {
+  margin-top: 3vh;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.menu-scroll-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  max-height: calc(100vh - 150px); 
   display: flex;
   flex-direction: column-reverse;
 }
