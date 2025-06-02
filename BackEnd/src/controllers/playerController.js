@@ -104,7 +104,7 @@ async function getPlayerInfo(req, res) {
                     const deckObjectId = new ObjectId(deckId);
                     const deckFound = await Deck.findById(deckObjectId);
                     return {
-                        ...deckFound.toObject(),
+                        ...deckFound.toObject?.(),
                         available: true,
                     };
                 })
@@ -119,7 +119,7 @@ async function getPlayerInfo(req, res) {
                     const deckObjectId = new ObjectId(deckId);
                     const deckFound = await Deck.findById(deckObjectId);
                     return {
-                        ...deckFound.toObject(),
+                        ...deckFound.toObject?.(),
                         available: false,
                     };
                 })

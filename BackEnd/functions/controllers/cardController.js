@@ -8,8 +8,8 @@ async function createCard(req, res) {
             element: req.body.element,
             description: req.body.description,
             cost: req.body.manaCost,
-            atk: req.body.attack,
-            def: req.body.defense
+            atk: req.body.atk,
+            hp: req.body.hp
         });
 
         const cardSaved = await newCard.save();
