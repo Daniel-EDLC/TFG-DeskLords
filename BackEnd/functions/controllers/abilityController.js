@@ -27,7 +27,7 @@ async function getAbilities(req, res) {
 async function updateAbility(req, res) {
     try {
         const abilityId = req.body.idAbility;
-        const updatedData = req.body;
+        const updatedData = req.body.data;
 
         const updatedAbility = await Ability.findByIdAndUpdate(abilityId, updatedData, { new: true });
 

@@ -142,11 +142,17 @@ async function changeCardsPositionToAttack(game) {
     position: 'attack'
   }));
 
+  const playerTable = gameUpdated.playerTable.map(card => ({
+    ...card.toObject?.() || card,
+    position: 'defense'
+  }));
+
   await Game.updateOne(
     { _id: gameUpdated._id },
     {
       $set: {
-        rivalTable
+        rivalTable,
+        playerTable,
       }
     }
   );
