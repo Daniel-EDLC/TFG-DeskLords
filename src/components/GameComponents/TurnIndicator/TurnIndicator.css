@@ -3,7 +3,7 @@
 .turn-indicator {
   position: fixed;
   width: 40vw;
-  top: 50%;
+  top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 0;
@@ -34,7 +34,6 @@
 
 .turn-indicator .icons {
   display: flex;
-  
   gap: 15rem;
   font-size: 3rem;
   transition: opacity 0.3s ease;
@@ -55,4 +54,15 @@
 .turn-indicator.rival {
   opacity: 0.4;
   pointer-events: none;
+}
+
+
+
+@media (max-width: 435px) {
+.turn-indicator .icons {
+  display: flex;
+  gap: 2rem;
+  font-size: 3rem;
+  transition: opacity 0.3s ease;
+}
 }

@@ -63,6 +63,7 @@ export async function playCard(setGameData, gameData, card) {
     console.log("Respuesta del servidor:", result);
     setGameData((prev) => ({
   ...prev,
+  rival: result.data.rival,
   user: result.data.user,
   turn: result.data.turn
 }));

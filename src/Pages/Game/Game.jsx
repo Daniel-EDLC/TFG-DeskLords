@@ -41,10 +41,16 @@ function Game() {
   const [pendingEquipementCard, setPendingEquipementCard] = useState(null);
   const [pendingSpellCard, setPendingSpellCard] = useState(null);
   const [attackers, setAttackers] = useState([]);
+  const [pendingCard, setPendingCard] = useState(null); // { id, type }
+
   const [announcementLink, setAnnouncementLink] = useState('');
   const [showAnnouncement, setShowAnnouncement] = useState(false);
   const [gameEnded, setGameEnded] = useState(false);
   const [isWinner, setIsWinner] = useState(null);
+
+
+  const [draggingType, setDraggingType] = useState(null);
+
 
 
 
@@ -92,15 +98,15 @@ function Game() {
   }
 };
 
-  const setPhase = (nuevaFase) => {
-    setGameData((prevData) => ({
-      ...prevData,
-      turn: {
-        ...prevData.turn,
-        phase: nuevaFase
-      }
-    }));
-  };
+  // const setPhase = (nuevaFase) => {
+  //   setGameData((prevData) => ({
+  //     ...prevData,
+  //     turn: {
+  //       ...prevData.turn,
+  //       phase: nuevaFase
+  //     }
+  //   }));
+  // };
 
   useEffect(() => {
     if (pendingEquipementCard && selectedTableCardIdForEquipment) {
@@ -220,12 +226,15 @@ console.log("partida->",gameData.user.hand)
           mana={gameData.user.mana}
           onCardClick={handleRivalCardClick}
           onPlayCard={handlePlayCard}
+          draggingType={draggingType}
+          pendingCard={pendingCard}
+           setPendingCard={setPendingCard}
         />
 
         <PlayerTable
           cartas={gameData.user.table}
           turn={gameData.turn}
-          onRequestPhaseChange={setPhase}
+          // onRequestPhaseChange={setPhase}
           handleSwitchPhase={handleSwitchPhase}
           handleEndTurn={handleEndTurn}
           handleDefense={handleDefense}
@@ -238,6 +247,9 @@ console.log("partida->",gameData.user.hand)
           onResetBattle={handleResetBattle}
           mana={gameData.user.mana}
           onPlayCard={handlePlayCard}
+          draggingType={draggingType}
+          pendingCard={pendingCard}
+           setPendingCard={setPendingCard}
         />
       </div>
 
@@ -248,6 +260,8 @@ console.log("partida->",gameData.user.hand)
         onPlayCard={handlePlayCard}
         selectedTableCardIdForEquipment={selectedTableCardIdForEquipment}
         selectedTableCardIdForSpell={selectedTableCardIdforSpell}
+        setDraggingType={setDraggingType}
+         setPendingCard={setPendingCard}
       />
 
       <PlayerProfile

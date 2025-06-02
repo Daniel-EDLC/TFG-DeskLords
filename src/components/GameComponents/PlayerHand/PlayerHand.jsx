@@ -2,16 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Paper } from '@mui/material';
 import './PlayerHand.css';
 
-function PlayerHand({ cartas, mana, turn, onPlayCard }) {
+function PlayerHand({ cartas, mana, turn, onPlayCard, setDraggingType, setPendingCard  }) {
   const [selectedCardId, setSelectedCardId] = useState(null);
   const [floatingMessage, setFloatingMessage] = useState('');
   const [isFading, setIsFading] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [longPressCardId, setLongPressCardId] = useState(null);
   const [longPressTimeout, setLongPressTimeout] = useState(null);
-  
-
-  
 
   useEffect(() => {
     if (turn.phase !== 'hand') {
@@ -33,37 +30,47 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
 
   const total = cartas.length;
 
-  const handleClick = (carta) => {
-    if (turn.whose !== 'user' || turn.phase !== 'hand') {
-      setFloatingMessage('Solo puedes jugar cartas durante tu fase de mano!');
+ const handleClick = (carta) => {
+  if (turn.whose !== 'user' || turn.phase !== 'hand') {
+    setFloatingMessage('Solo puedes jugar cartas durante tu fase de mano!');
+    return;
+  }
+
+  if (selectedCardId === carta._id) {
+    if (carta.type === 'equipement' || carta.type === 'spell') {
+      setSelectedCardId(null);
+      setPendingCard(null); // Limpia si haces doble clic
       return;
     }
-    if (selectedCardId === carta._id) {
-      if (carta.type === 'equipement' || carta.type === 'spell') {
-        setSelectedCardId(null);
-        return;
-      }
 
-      if (carta.cost > mana) {
-        setFloatingMessage(`Mana insuficiente! Coste: ${carta.cost}, Tienes: ${mana}`);
-        console.log("no mana")
-        return;
-      }
-      onPlayCard(carta);
-      setSelectedCardId(null);
-    } else {
-      setSelectedCardId(carta._id);
-
-      if (carta.cost > mana) {
-        setFloatingMessage(`Mana insuficiente! Coste: ${carta.cost}, Tienes: ${mana}`);
-        return;
-      }
-
-      if (carta.type === 'equipement' || carta.type === 'spell') {
-        onPlayCard(carta);
-      }
+    if (carta.cost > mana) {
+      setFloatingMessage(`Mana insuficiente! Coste: ${carta.cost}, Tienes: ${mana}`);
+      return;
     }
-  };
+
+    onPlayCard(carta);
+    setSelectedCardId(null);
+    setPendingCard(null);
+  } else {
+    setSelectedCardId(carta._id);
+
+    if (carta.cost > mana) {
+      setFloatingMessage(`Mana insuficiente! Coste: ${carta.cost}, Tienes: ${mana}`);
+      return;
+    }
+
+    if (carta.type === 'equipement' || carta.type === 'spell') {
+      setPendingCard({ id: carta._id, type: carta.type, cost: carta.cost });
+      return;
+    }
+
+    // Si es criatura, la jugamos directamente
+    onPlayCard(carta);
+    setSelectedCardId(null);
+    setPendingCard(null);
+  }
+};
+
 
   return (
     <>
@@ -72,15 +79,13 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
           const centerIndex = (total - 1) / 2;
           const offset = Math.round(index - centerIndex);
           const offsetClass = `player-offset-${offset}`;
-
           const isHovered = hoveredIndex === index && longPressCardId !== carta._id;
-
           const isSelected = selectedCardId === carta._id;
 
           return (
             <div
               key={carta._id}
-            className={`card-container ${offsetClass} ${longPressCardId === carta._id ? 'long-pressed-container' : ''}`}
+              className={`card-container ${offsetClass} ${longPressCardId === carta._id ? 'long-pressed-container' : ''}`}
             >
               <Paper
                 className={`card ${isHovered ? 'hovered' : ''} ${isSelected ? 'selectedToUse' : ''} ${longPressCardId === carta._id ? 'long-pressed' : ''}`}
@@ -95,6 +100,8 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
                       setFloatingMessage(`Mana insuficiente! Coste: ${carta.cost}, Tienes: ${mana}`);
                       return;
                     }
+
+                    setDraggingType(carta.type); // ✅ se registra el tipo arrastrado
                     e.dataTransfer.setData('application/json', JSON.stringify({
                       id: carta._id,
                       type: carta.type,
@@ -104,6 +111,7 @@ function PlayerHand({ cartas, mana, turn, onPlayCard }) {
                     setFloatingMessage('No puedes jugar cartas fuera de tu fase de mano!!');
                   }
                 }}
+                onDragEnd={() => setDraggingType(null)} // ✅ se limpia al soltar
                 onTouchStart={() => {
                   setHoveredIndex(null);
                   const timeoutId = setTimeout(() => {
