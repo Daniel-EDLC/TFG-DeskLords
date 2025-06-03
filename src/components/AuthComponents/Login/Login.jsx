@@ -98,25 +98,27 @@ function Login({ onSwitch, onGoogleRegister }) {
   }
 
   async function isCreated(uid, token) {
-    try {
-      const payload = {
-        idPlayer: uid
-      }
-      const response = await fetch('https://api-meafpnv6bq-ew.a.run.app/api/checkPlayerExists', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });      
+  try {
+    const payload = {
+      idPlayer: uid
+    };
 
-      return !!response.result;
-    } catch (error) {
-      console.error('Error:', error);
-      return false;
-    }
+    const response = await fetch('https://api-meafpnv6bq-ew.a.run.app/api/checkPlayerExists', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+    return data.result;
+  } catch (error) {
+    console.error('Error:', error);
+    return false;
   }
+}
 
   return (
     <form className="login-form" onSubmit={e => e.preventDefault()}>
