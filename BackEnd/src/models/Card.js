@@ -20,6 +20,7 @@ const cardSchema = new mongoose.Schema({
     set: {type: String, required: false},
     position: {type: String, required: false},
     alive: {type: Boolean, required: false, default: true},
+    new : {type: Boolean, required: false, default: true},
     // secret_front_image: {type: String, required: false}  DEPENDEDIENO DE COMO VAYAMOS MIRAMOS SI LO HACEMOS O NO
 });
 

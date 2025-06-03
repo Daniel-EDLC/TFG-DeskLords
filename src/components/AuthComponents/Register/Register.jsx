@@ -93,7 +93,7 @@ export default function Register({ onSwitch, googleData }) {
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          id: uid,
+          uid: uid,
           name: name,
           surnames: surnames,
           displayName: username,
