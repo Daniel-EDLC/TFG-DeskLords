@@ -213,28 +213,97 @@ body {
   justify-content: space-around;
   width: 70vw;
   height: 40vw;
-  background-color: #050000a8;
 }
 .modal-maps-container{
   background-color: #050000ab;
 }
 
 
+.splash-screen {
+  position: fixed;
+  inset: 0;
+  background-color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeOut 1s ease 5.5s forwards;
+  pointer-events: none;
+}
+
+/* .splash-wrapper {
+  filter: drop-shadow(0 0 4px rgba(255, 217, 0, 0.877));
+  animation: blinkShadow 1s ease-in-out 1s infinite;
+} */
+
+.splash-logo {
+  width: 800px;
+  height: auto;
+  opacity: 0;
+  animation:
+    logoFadeIn 2s ease 1s forwards,
+    logoFadeOut 1s ease 5s forwards; /* 👈 se desvanece en el segundo 6 */
+}
+
+@keyframes logoFadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes logoFadeOut {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* @keyframes blinkShadow {
+  0%, 100% {
+    filter: drop-shadow(0 0 4px rgba(255, 217, 0, 0.877));
+  }
+  50% {
+    filter: drop-shadow(0 0 7px rgb(233, 208, 71));
+  }
+} */
 
 
 
-/* -------------------- SOLO MÓVIL -------------------- */
+
+
+
+
+
+
+
 @media (max-width: 435px) {
+
+.splash-logo {
+  width: 300px;
+  height: auto;
+  opacity: 0;
+    animation:
+    logoFadeIn 2s ease 1s forwards,
+    logoFadeOut 1s ease 5s forwards;
+}
+
   body {
     overflow: auto;
   }
+ 
 
   .menu-logo { 
     padding-top: 4vh;
     width: 80vw;
     margin: 1rem auto 0.5rem;
     display: block;
-    filter: drop-shadow(0 0 5px rgba(255, 217, 0, 0.877));
+    filter: drop-shadow(0 0 3px rgba(255, 217, 0, 0.877));
   }
 
   .main-content {
@@ -316,6 +385,7 @@ body {
   }
 
   .inicio-layout {
+    bottom: 0;
     flex-direction: column;
     width: 100%;
     gap: 1.5rem;
@@ -327,7 +397,17 @@ body {
     gap: 1rem;
   }
 
+  .inicio-missions{
+    position: absolute;
+    margin-top: 55vh;
+    align-items: center;
+  }
+  
+
   .play-card {
+    display: none;
+    right: 0;
+    top: 0;
     margin: 0;
     width: 100%;
     height: auto;

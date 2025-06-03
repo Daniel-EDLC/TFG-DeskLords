@@ -46,3 +46,20 @@
   font-style: italic;
   margin: 2rem;
 }
+
+
+@media (max-width: 435px) {
+.missions-container {
+  position: absolute;
+  top: 80vh;
+  right: 15vw;
+  width: 4vw;
+  height: 10vh;
+  padding: 2rem;
+  text-align: center;
+  color: #f0f0f0;
+  font-family: 'Georgia', serif;
+  /* background-color: #09ff00; */
+}
+
+}

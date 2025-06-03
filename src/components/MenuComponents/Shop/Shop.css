@@ -65,3 +65,45 @@
   font-style: italic;
   margin: 2rem;
 }
+
+
+@media (max-width: 435px) {
+
+.tienda-container {
+  text-align: center;
+  color: #f0f0f0;
+  font-family: 'Georgia', serif;
+}
+
+
+
+.flecha {
+display: none;
+}
+
+.mazo-card img {
+  width: 30vw;
+  height: 6vh;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 0.8rem;
+}
+
+.tienda-container h2 {
+  color: #ffd700;
+  margin-bottom: rem;
+}
+
+.mazo-card h3 {
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+  color: #ffd700;
+}
+
+.mazo-card p {
+  font-size: 0.7rem;
+  color: #ddd;
+}
+
+}
