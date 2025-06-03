@@ -7,13 +7,13 @@
   min-width: 400px;
   height: 180px;
   border-radius: 25px;
-  background: linear-gradient(
+  /* background: linear-gradient(
     to top,
     rgba(21, 255, 0, 0.315) 0%,
     rgba(30, 255, 0, 0.226) 10%,
     rgba(255, 255, 255, 0.616) 50%,
     rgba(255, 255, 255, 0) 85%
-  );
+  ); */
 }
 
 .player-table-container:hover {
@@ -107,7 +107,7 @@
 .player-card-in-battle::after {
   content: '';
   position: absolute;
-  top: 0;
+  top: 0%;
   left: 50%;
   transform: translateX(-50%);
   border-left: 15px solid transparent;
@@ -118,7 +118,7 @@
 .player-card-in-battle::before {
   content: 'BATALLA';
   position: absolute;
-  bottom: 120px;
+  bottom: 0%;
   left: 50%;
   transform: translateX(-50%);
   background-color: rgb(220, 20, 203);
@@ -179,6 +179,43 @@
   z-index: 100;
 }
 
+.player-ability-tags {
+  position: absolute;
+  top: 6vh;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4px;
+  z-index: 3;
+  justify-content: flex-start;
+  max-width: 90%;
+  overflow-x: auto;
+  padding: 2px 4px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 6px;
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Oculta la scrollbar en Chrome/Safari */
+.player-ability-tags::-webkit-scrollbar {
+  display: none;
+}
+
+
+.ability-tag {
+  background-color: #2e7d32; /* verde permanente */
+  color: white;
+  font-size: 10px;
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.ability-tag.temp {
+  background-color: #b71c1c83; /* rojo temporal */
+}
+
+
 /* Animaciones */
 .player-card-fade-out {
   opacity: 0;
@@ -234,7 +271,7 @@
 
 .player-card-center-stats {
   position: absolute;
-  top: 80%;
+  bottom: 1vh;
   left: 50%;
   transform: translate(-50%, -50%);
   display: flex;
@@ -246,7 +283,7 @@
 }
 
 .player-card-center-stats .atk {
-  color: #ff4c4c;
+  color: #f80000;
   font-weight: bold;
 }
 .player-card-center-stats .blnc {
@@ -255,7 +292,7 @@
 }
 
 .player-card-center-stats .hp {
-  color: #4caaff;
+  color: #15ff00;
   font-weight: bold;
 }
 
@@ -282,6 +319,10 @@
 }
 
 
+.player-drop-hover {
+  box-shadow: 0 0 10px 4px #2196f3 !important;
+  transition: box-shadow 0.2s ease;
+}
 
 
 

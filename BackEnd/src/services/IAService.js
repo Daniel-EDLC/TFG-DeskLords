@@ -56,11 +56,15 @@ async function placeCards(game) {
     const equip = rivalHand[equipementIdx];
 
     if (rivalTable.length > 0) {
+      const idx = equip.atk > equip.hp
+        ? rivalTable.reduce((minIdx, c, i, arr) => c.atk < arr[minIdx].atk ? i : minIdx, 0)
+        : rivalTable.reduce((minIdx, c, i, arr) => c.hp < arr[minIdx].hp ? i : minIdx, 0);
 
-      const idx = equip.atk > equip.hp ?
-        rivalTable.reduce((minIdx, c, i, arr) => c.atk < arr[minIdx].atk ? i : minIdx, 0) :
-        rivalTable.reduce((minIdx, c, i, arr) => c.hp < arr[minIdx].hp ? i : minIdx, 0);
+      // Sumar stats del equipamiento a la carta objetivo
+      rivalTable[idx].atk = (rivalTable[idx].atk || 0) + (equip.atk || 0);
+      rivalTable[idx].hp = (rivalTable[idx].hp || 0) + (equip.hp || 0);
 
+      // Añadir el equipamiento a la carta
       rivalTable[idx].equipements = [...(rivalTable[idx].equipements || []), equip];
       console.log('\nEquipement guardado en la carta ==> ', rivalTable[idx]);
 
@@ -96,11 +100,11 @@ async function placeCards(game) {
 
     if (idx !== -1 && criatureHand[idx].cost <= rivalMana) {
       rivalTable.push(criatureHand[idx]);
-      
+
       console.log(`\nMana antes de restar: ${rivalMana}, coste de la carta: ${criatureHand[idx].cost}`);
       rivalMana = rivalMana - criatureHand[idx].cost;
       console.log(`\nMana después de restar: ${rivalMana}`);
-      
+
       console.log('\nCriatura colocada en la mesa ==> ', criatureHand[idx]);
       usedCards.push(criatureHand[idx]._id);
       criatureHand.splice(idx, 1);
@@ -114,8 +118,40 @@ async function placeCards(game) {
 
   console.log('\nCartas utilizadas:', usedCards);
   console.log('\nMesa del rival actualizada:', rivalTable);
-  console.log('\nMesa del jugador actualizada:', playerTable);
   console.log('\nMana del rival actualizado:', rivalMana);
+
+  // Actualizar las cartas en la mesa para que sean nuevas
+  playerTable = playerTable.map(card => {
+    const base = card.toObject?.() || card;
+    const equipements = (base.equipements || []).map(eq => {
+      const eqBase = eq.toObject?.() || eq;
+      return {
+        ...eqBase,
+        new: usedCards.includes(eqBase._id) // true solo para los recién jugados, false para el resto
+      };
+    });
+    return {
+      ...base,
+      equipements,
+      new: usedCards.includes(card._id) // true solo para las recién jugadas, false para el resto
+    };
+  });
+
+  rivalTable = rivalTable.map(card => {
+    const base = card.toObject?.() || card;
+    const equipements = (base.equipements || []).map(eq => {
+      const eqBase = eq.toObject?.() || eq;
+      return {
+        ...eqBase,
+        new: usedCards.includes(eqBase._id) // true solo para los recién jugados, false para el resto
+      };
+    });
+    return {
+      ...base,
+      equipements,
+      new: usedCards.includes(card._id) // true solo para las recién jugadas, false para el resto
+    };
+  });
 
   await Game.updateOne(
     { _id: game._id },
@@ -142,11 +178,17 @@ async function changeCardsPositionToAttack(game) {
     position: 'attack'
   }));
 
+  const playerTable = gameUpdated.playerTable.map(card => ({
+    ...card.toObject?.() || card,
+    position: 'defense'
+  }));
+
   await Game.updateOne(
     { _id: gameUpdated._id },
     {
       $set: {
-        rivalTable
+        rivalTable,
+        playerTable,
       }
     }
   );

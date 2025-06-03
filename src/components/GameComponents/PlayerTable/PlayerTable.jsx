@@ -3,8 +3,9 @@ import { Box, Paper, Dialog, DialogTitle, DialogActions, Button } from '@mui/mat
 import './PlayerTable.css';
 
 function PlayerTable({ 
-  cartas, turn, onRequestPhaseChange, handleSwitchPhase, handleEndTurn, handleDefense, targetEquipmentCard, targetSpellCard, 
-  isSelectingTargetForEquipment, isSelectingTargetForSpell,  onCardClick, battles, onResetBattle , mana , onPlayCard }) {
+  cartas, turn, handleSwitchPhase, handleEndTurn, handleDefense, targetEquipmentCard, targetSpellCard, 
+  isSelectingTargetForEquipment, isSelectingTargetForSpell,  onCardClick, battles, onResetBattle , mana , onPlayCard, draggingType,
+  pendingCard, setPendingCard }) {
 
   const [selectedAttackCards, setselectedAttackCards] = useState([]);
   const [pendingCardId, setPendingCardId] = useState(null);
@@ -36,34 +37,53 @@ function PlayerTable({
   }, [cartas]);
 
   const handleCardClick = (carta) => {
-    if (turn.whose === 'user') {
-      if (turn.phase === 'hand') {
-        if (isSelectingTargetForEquipment && targetEquipmentCard) {
-          targetEquipmentCard(carta._id);
-          setPendingCardId(null);
-          setShowConfirmDialog(false);
-          return;
-        }
+  if (turn.whose === 'user' && turn.phase === 'hand') {
 
-        if (isSelectingTargetForSpell && targetSpellCard) {
-          targetSpellCard(carta._id);
-          setPendingCardId(null);
-          setShowConfirmDialog(false);
-          return;
-        }
+    // ✅ 1. Si tienes una carta pendiente para lanzar (por clic previo)
+    if (pendingCard && (pendingCard.type === 'spell' || pendingCard.type === 'equipement')) {
+      onPlayCard({
+        _id: pendingCard.id,
+        type: pendingCard.type,
+        cost: pendingCard.cost,
+        targetId: carta._id,
+      });
 
-        setPendingCardId(carta._id);
-        setShowConfirmDialog(true);
-
-      } else if (turn.phase === 'table') {
-        toggleAttackCard(carta._id);
-      }
-    } else if (turn.whose === 'rival') {
-      if (turn.phase === 'attack') {
-        onCardClick(carta);
-      }
+      setPendingCard(null);
+      return;
     }
-  };
+
+    // 🔁 2. Resto de lógica de selección de objetivos con drag & drop
+    if (isSelectingTargetForEquipment && targetEquipmentCard) {
+      targetEquipmentCard(carta._id);
+      setPendingCardId(null);
+      setShowConfirmDialog(false);
+      return;
+    }
+
+    if (isSelectingTargetForSpell && targetSpellCard) {
+      targetSpellCard(carta._id);
+      setPendingCardId(null);
+      setShowConfirmDialog(false);
+      return;
+    }
+
+    // 🔁 3. Selección de criatura para atacar
+    setPendingCardId(carta._id);
+    setShowConfirmDialog(true);
+    return;
+  }
+
+  if (turn.whose === 'user' && turn.phase === 'table') {
+    toggleAttackCard(carta._id);
+    return;
+  }
+
+  if (turn.whose === 'rival' && turn.phase === 'attack') {
+    onCardClick(carta);
+    return;
+  }
+};
+
 
   const toggleAttackCard = (id) => {
     setselectedAttackCards((prevSelected) =>
@@ -149,10 +169,41 @@ function PlayerTable({
           }
         })()}
       </Box>
-      <Box className="player-table-container">
+      <Box 
+      className={`player-table-container ${draggingType === 'creature' ? 'player-drop-hover' : ''}`}
+       onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => {
+          e.preventDefault();
+          const raw = e.dataTransfer.getData('application/json');
+          if (!raw) return;
+
+          const data = JSON.parse(raw);
+          console.log("Drop sobre mesa", data);
+
+          if (turn.whose !== 'user' || turn.phase !== 'hand') {
+            alert("Solo puedes jugar cartas durante tu fase de mano");
+            return;
+          }
+
+          if (data.type !== 'creature') {
+            alert("Solo puedes soltar criaturas en la mesa.");
+            return;
+          }
+
+          if (data.cost > mana) {
+            alert(`Mana insuficiente! Coste: ${data.cost}, Tienes: ${mana}`);
+            return;
+          }
+
+          onPlayCard({
+            _id: data.id,
+            type: 'creature',
+            cost: data.cost,
+          });
+        }}
+      >
         {cartas.map((carta, index) => {
           if (removedCards.includes(carta._id)) return null;
-
           const isSelected = selectedAttackCards.includes(carta._id);
           const isInPlayerBattle = battles.some(b => b.defensorId === carta._id);
           const isFadingOut = hiddenCards.includes(carta._id);
@@ -162,8 +213,65 @@ function PlayerTable({
               <div className={`player-card-table ${isSelected ? 'selected' : ''} ${isInPlayerBattle ? 'player-card-in-battle' : ''}`}>
                 <Paper
                   elevation={10}
-                  className={`player-card-inner ${hoveredCardId === carta._id ? 'hovered' : ''} ${longPressCardId === carta._id ? 'player-long-pressed' : ''} ${carta.new ? 'player-card-new' : ''} ${isSelected ? 'selected' : ''} `}
+                  className={`player-card-inner 
+                    ${hoveredCardId === carta._id ? 'hovered' : ''} 
+                    ${longPressCardId === carta._id ? 'player-long-pressed' : ''} 
+                    ${carta.new ? 'player-card-new' : ''} 
+                    ${isSelected ? 'selected' : ''}
+                    ${draggingType === 'spell' || draggingType === 'equipement' ? 'player-drop-hover' : ''}
+                    ${['spell', 'equipement'].includes(pendingCard?.type) ? 'player-drop-hover' : ''}
+                    
+                  `}
                   onClick={() => handleCardClick(carta)}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDragEnter={() => setHoveredCardId(carta._id)}
+                  onDragLeave={() => setHoveredCardId(null)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const raw = e.dataTransfer.getData('application/json');
+                    if (!raw) return;
+
+                    const data = JSON.parse(raw);
+                    console.log("Drop sobre carta", data);
+
+                    if (turn.whose !== 'user' || turn.phase !== 'hand') {
+                      alert("Solo puedes usar cartas durante tu fase de mano");
+                      return;
+                    }
+
+                    if (data.type === 'creature') {
+                      alert("No puedes lanzar criaturas sobre otras cartas.");
+                      return;
+                    }
+
+                    if (data.cost > mana) {
+                      alert(`Mana insuficiente! Coste: ${data.cost}, Tienes: ${mana}`);
+                      return;
+                    }
+
+                    onPlayCard({
+                      _id: data.id,
+                      type: data.type,
+                      cost: data.cost,
+                      targetId: carta._id,
+                    });
+                  }}
+                  onTouchStart={() => {
+                    const timeoutId = setTimeout(() => {
+                      setLongPressCardId(carta._id);
+                    }, 500);
+                    setLongPressTimeout(timeoutId);
+                  }}
+                  onTouchEnd={() => {
+                    clearTimeout(longPressTimeout);
+                    setLongPressCardId(null);
+                  }}
+                  onTouchCancel={() => {
+                    clearTimeout(longPressTimeout);
+                    setLongPressCardId(null);
+                  }}
                 >
                   <img src={carta.front_image} alt={`Carta ${index + 1}`} className="player-card-image" />
 
@@ -178,27 +286,18 @@ function PlayerTable({
                       </div>
                     </div>
                   )}
-
-                  {carta.abilities?.length > 0 && (
-                    <div className="player-stats-abilities">
-                      <span className="label">Habilidades:</span>
-                      <ul>
-                        {carta.abilities.map((h, i) => <li key={i}>{h}</li>)}
-                      </ul>
+                  {(carta.abilities?.length > 0 || carta.temporaryAbilities?.length > 0) && (
+                    <div className="player-ability-tags">
+                      {carta.abilities?.map((h, i) => (
+                        <div key={`perm-${i}`} className="ability-tag">{h}</div>
+                      ))}
+                      {carta.temporaryAbilities?.map((h, i) => (
+                        <div key={`temp-${i}`} className="ability-tag temp">{h}</div>
+                      ))}
                     </div>
                   )}
-
-                  {carta.temporaryAbilities?.length > 0 && (
-                    <div className="player-stats-abilities temp">
-                      <span className="label">Temporales:</span>
-                      <ul>
-                        {carta.temporaryAbilities.map((h, i) => <li key={i}>{h}</li>)}
-                      </ul>
-                    </div>
-                  )}
-
                   {carta.equipements?.length > 0 && (
-                    <>  
+                    <>
                       <div className="player-equipment-count">{carta.equipements.length}</div>
                       <div className="player-equipment-preview">
                         {carta.equipements.map((equipo) => (
@@ -218,9 +317,9 @@ function PlayerTable({
                       </div>
                     </>
                   )}
-
                   {isSelected && <div className="attack-label"></div>}
                 </Paper>
+
               </div>
             </div>
           );

@@ -7,7 +7,7 @@ async function createDeck(req, res) {
 
     for (const cardId of req.body.cards) {
 
-        const cardFound = await Card.findById(cardObjectId);
+        const cardFound = await Card.findById(cardId);
 
         if (!cardFound) {
             return req.response.error(`Carta no encontrada: ${cardId}`);

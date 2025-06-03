@@ -46,7 +46,6 @@ function Menu() {
     const cargar = async () => {
       try {
         const resultado = await cargaInformacion();
-        console.log("Datos cargados en Menu:", resultado);
         setData(resultado);
       } catch (error) {
         console.error("Error al cargar datos:", error);

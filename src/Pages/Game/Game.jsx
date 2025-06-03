@@ -7,6 +7,7 @@ import RivalHand from '../../components/GameComponents/RivalHand/RivalHand';
 import RivalTable from '../../components/GameComponents/RivalTable/RivalTable';
 import PlayerTable from '../../components/GameComponents/PlayerTable/PlayerTable';
 import Announcement from '../../components/GameComponents/Announcement/Announcement';
+import TurnIndicator from '../../components/GameComponents/TurnIndicator/TurnIndicator';
 import { useLocation } from 'react-router-dom';
 
 import './Game.css';
@@ -40,10 +41,16 @@ function Game() {
   const [pendingEquipementCard, setPendingEquipementCard] = useState(null);
   const [pendingSpellCard, setPendingSpellCard] = useState(null);
   const [attackers, setAttackers] = useState([]);
+  const [pendingCard, setPendingCard] = useState(null); // { id, type }
+
   const [announcementLink, setAnnouncementLink] = useState('');
   const [showAnnouncement, setShowAnnouncement] = useState(false);
   const [gameEnded, setGameEnded] = useState(false);
   const [isWinner, setIsWinner] = useState(null);
+
+
+  const [draggingType, setDraggingType] = useState(null);
+
 
 
 
@@ -67,7 +74,6 @@ function Game() {
   };
 
   const handlePlayCard = (card) => {
-    console.log("intentando cartra hola daniel", card)
     if (card.type === 'equipement' && !card.targetId) {
       setPendingEquipementCard(card);
       return;
@@ -76,23 +82,31 @@ function Game() {
       setPendingSpellCard(card);
       return;
     }
-    console.log('Jugando carta2:', card);
     playCard(setGameData, gameData, card);
   };
 
   const handleSwitchPhase = () => switchPhase(setGameData, gameData);
   const handleEndTurn = async (selectedAttackCards) => await endTurn(selectedAttackCards, setGameData, gameData);
-  const handleDefense = async () => await defense(setGameData, gameData);
+  const handleDefense = async () => {
+  try {
+    await defense(setGameData, gameData);
+    resetBattle();
+    setBattles([]);
+  } catch (error) {
+    console.error('Error al ejecutar defense:', error);
+    // Aquí puedes manejar errores si quieres mostrar un mensaje al usuario
+  }
+};
 
-  const setPhase = (nuevaFase) => {
-    setGameData((prevData) => ({
-      ...prevData,
-      turn: {
-        ...prevData.turn,
-        phase: nuevaFase
-      }
-    }));
-  };
+  // const setPhase = (nuevaFase) => {
+  //   setGameData((prevData) => ({
+  //     ...prevData,
+  //     turn: {
+  //       ...prevData.turn,
+  //       phase: nuevaFase
+  //     }
+  //   }));
+  // };
 
   useEffect(() => {
     if (pendingEquipementCard && selectedTableCardIdForEquipment) {
@@ -212,12 +226,15 @@ console.log("partida->",gameData.user.hand)
           mana={gameData.user.mana}
           onCardClick={handleRivalCardClick}
           onPlayCard={handlePlayCard}
+          draggingType={draggingType}
+          pendingCard={pendingCard}
+           setPendingCard={setPendingCard}
         />
 
         <PlayerTable
           cartas={gameData.user.table}
           turn={gameData.turn}
-          onRequestPhaseChange={setPhase}
+          // onRequestPhaseChange={setPhase}
           handleSwitchPhase={handleSwitchPhase}
           handleEndTurn={handleEndTurn}
           handleDefense={handleDefense}
@@ -230,6 +247,9 @@ console.log("partida->",gameData.user.hand)
           onResetBattle={handleResetBattle}
           mana={gameData.user.mana}
           onPlayCard={handlePlayCard}
+          draggingType={draggingType}
+          pendingCard={pendingCard}
+           setPendingCard={setPendingCard}
         />
       </div>
 
@@ -240,6 +260,8 @@ console.log("partida->",gameData.user.hand)
         onPlayCard={handlePlayCard}
         selectedTableCardIdForEquipment={selectedTableCardIdForEquipment}
         selectedTableCardIdForSpell={selectedTableCardIdforSpell}
+        setDraggingType={setDraggingType}
+         setPendingCard={setPendingCard}
       />
 
       <PlayerProfile
@@ -252,7 +274,12 @@ console.log("partida->",gameData.user.hand)
         onSurrender={handleSurrenderClick}
       />
 
-      {showAnnouncement && (
+      <TurnIndicator turn={gameData.turn} />
+
+
+
+
+      {/* {showAnnouncement && (
         <Announcement
           link={announcementLink}
           duration={2000}
@@ -281,7 +308,7 @@ console.log("partida->",gameData.user.hand)
             </div>
           )}
         </div>
-      )}
+      )} */}
     </div>
     
   );

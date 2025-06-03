@@ -4,7 +4,7 @@ import './RivalTable.css';
 
 function RivalTable({ 
   cartas, turn, battles, targetSpellCard, targetEquipmentCard, isSelectingTargetForSpell, 
-  isSelectingTargetForEquipment, mana, onCardClick, onPlayCard }) {
+  isSelectingTargetForEquipment, mana, onCardClick, onPlayCard, draggingType, pendingCard, setPendingCard }) {
 
   const [hiddenCards, setHiddenCards] = useState([]); 
   const [removedCards, setRemovedCards] = useState([]);
@@ -54,12 +54,16 @@ function RivalTable({
         {cartas.map((carta, index) => {
           if (removedCards.includes(carta._id)) return null;
 
-          const cardClass = ` ${carta.position === 'attack' ? 'attack-position' : ''}`;
+          const cardClass = (turn.whose === 'rival' && turn.phase === 'attack' && carta.position === 'attack') ? 'attack-position' : '';
+
           const isInRivalBattle = battles.some(b => b.atacanteId === carta._id);
           const isFadingOut = hiddenCards.includes(carta._id);
 
-          const totalAtk = carta.equipements?.reduce((sum, eq) => sum + (eq.atk || 0), 0) || 0;
-          const totalHp = carta.equipements?.reduce((sum, eq) => sum + (eq.hp || 0), 0) || 0;
+          const bonusAtk = carta.equipements?.reduce((sum, eq) => sum + (eq.atk || 0), 0) || 0;
+          const bonusHp = carta.equipements?.reduce((sum, eq) => sum + (eq.hp || 0), 0) || 0;
+
+          const totalAtk = (carta.atk || 0) + bonusAtk;
+          const totalHp = (carta.hp || 0) + bonusHp;
 
           return (
             <div
@@ -71,9 +75,34 @@ function RivalTable({
                   className={`${cardClass} 
                   ${isInRivalBattle ? 'rival-card-in-battle' : hoveredCardId === carta._id ? 'hovered' : ''} 
                   ${longPressCardId === carta._id ? 'rival-long-pressed' : ''} 
-                  ${carta.new ? 'rival-card-new' : ''}`}
+                  ${carta.new ? 'rival-card-new' : ''}
+                  ${draggingType === 'spell' || draggingType === 'equipement' ? 'rival-drop-hover' : ''}
+                  ${['spell', 'equipement'].includes(pendingCard?.type) ? 'rival-drop-hover' : ''}
+                `}
+                  
                   elevation={10}
                   onClick={() => {
+
+                        if (
+                            pendingCard &&
+                            (pendingCard.type === 'spell' || pendingCard.type === 'equipement') &&
+                            turn.whose === 'user' &&
+                            turn.phase === 'hand'
+                          ) {
+                            onPlayCard({
+                              _id: pendingCard.id,
+                              type: pendingCard.type,
+                              cost: pendingCard.cost,
+                              targetId: carta._id,
+                            });
+
+                            setPendingCard(null); // ✅ LIMPIA la carta pendiente después de usarla
+                            return;
+                          }
+
+
+
+
                     if (isSelectingTargetForSpell && targetSpellCard) {
                       if (turn.whose === 'user' && turn.phase === 'hand') {
                         targetSpellCard(carta._id);
@@ -122,6 +151,7 @@ function RivalTable({
                         setPendingCardData(data);
                         setPendingEquipTarget(carta._id);
                         setConfirmDialogOpen(true);
+                        setPendingCard(null);
                         return;
                       }
 
@@ -132,6 +162,8 @@ function RivalTable({
                           cost: data.cost,
                           targetId: carta._id,
                         });
+                        setPendingCard(null);
+                        return;
                       }
                     }}
                   onTouchStart={() => {
@@ -154,28 +186,36 @@ function RivalTable({
                     alt={`Carta ${index + 1}`}
                     className="rival-card-image"
                   />
+                      {typeof carta.atk === 'number' && typeof carta.hp === 'number' && (
+                        <div className="rival-card-center-stats">
+                          <div className="atk">{totalAtk}</div>
+                          <div className="blnc">/</div>
+                          <div className="hp">{totalHp}</div>
+                        </div>
+                      )}
 
                   {carta.equipements?.length > 0 && (
-                    <div className="rival-equipment-bonus-overlay">
-                      +{totalAtk} / +{totalHp}
-                    </div>
-                  )}
+                      <>
+                        <div className="rival-equipment-count">{carta.equipements.length}</div>
+                        <div className="rival-equipment-preview">
+                          {carta.equipements.map((equipo) => (
+                            <div key={equipo._id} className="rival-equipment-wrapper">
+                              <img
+                                src={equipo.front_image}
+                                alt={equipo._id}
+                                className={`rival-equipment-image ${equipo.new ? 'rival-card-new' : ''}`}
+                              />
+                              {(typeof equipo.atk === 'number' || typeof equipo.hp === 'number') && (
+                                <div className="equipment-bonus">
+                                  +{equipo.atk || 0} / +{equipo.hp || 0}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    )}
 
-                  {carta.equipements?.length > 0 && (
-                    <>
-                      <div className="rival-equipment-count">{carta.equipements.length}</div>
-                      <div className="rival-equipment-preview">
-                        {carta.equipements.map((equipo) => (
-                          <img
-                            key={equipo._id}
-                            src={equipo.front_image}
-                            alt={equipo._id}
-                            className={`rival-equipment-image ${equipo.new ? 'rival-card-new' : ''}`}
-                          />
-                        ))}
-                      </div>
-                    </>
-                  )}
                 </Paper>
               </div>
             </div>

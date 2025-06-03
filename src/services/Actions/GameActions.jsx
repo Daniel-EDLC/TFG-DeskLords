@@ -14,7 +14,6 @@ export async function playCard(setGameData, gameData, card) {
   const userToken = await user.getIdToken();
 
   let payload = {};
-  console.log("jugando carta3", card);
   switch (card.type) {
     case "creature":
       payload = {
@@ -23,11 +22,9 @@ export async function playCard(setGameData, gameData, card) {
         cardId: card._id,
         type: "creature",
       };
-      console.log("jugando carta4", card);
       break;
 
     case "spell":
-      console.log("hechizo sacada" + card.targetId);
       payload = {
         gameId: gameData.gameId,
         playerId: user.uid,
@@ -38,7 +35,6 @@ export async function playCard(setGameData, gameData, card) {
       break;
 
     case "equipement":
-      console.log("equipo sacada" + card.targetId);
       payload = {
         gameId: gameData.gameId,
         playerId: user.uid,
@@ -51,7 +47,6 @@ export async function playCard(setGameData, gameData, card) {
     default:
       break;
   }
-  console.log(payload);
   try {
     const response = await fetch("https://api-meafpnv6bq-ew.a.run.app/api/useCard", {
       method: "POST",
@@ -68,6 +63,7 @@ export async function playCard(setGameData, gameData, card) {
     console.log("Respuesta del servidor:", result);
     setGameData((prev) => ({
   ...prev,
+  rival: result.data.rival,
   user: result.data.user,
   turn: result.data.turn
 }));
@@ -159,7 +155,6 @@ export async function switchPhase(setGameData, gameData) {
     gameId: gameData.gameId,
     turn:{ phase: gameData.turn.phase}
   };
-  console.log("0.5",payload)
 
   try {
     const response = await fetch("https://api-meafpnv6bq-ew.a.run.app/api/switchPhase", {
@@ -175,7 +170,6 @@ export async function switchPhase(setGameData, gameData) {
 
     const result = await response.json();
 
-    console.log("1->",gameData)
     setGameData((prev) => ({
       ...prev,
       turn: {
@@ -183,7 +177,6 @@ export async function switchPhase(setGameData, gameData) {
         ...result.data.turn,
       },
     }));
-     console.log("2->",gameData)
   } catch (error) {
     console.error("Error al cambiar phase:", error);
   }
@@ -331,7 +324,6 @@ export function addCardToBattle(carta) {
        }
 
        const data = await response.json();
-       console.log('Respuesta del servidor:', data);
 
      
      } catch (error) {
@@ -359,7 +351,6 @@ export async function attack(selectedAttackCards, setGameData) {
     }
 
     const data = await response.json();
-    console.log('Respuesta del servidor:', data);
 
     setGameData(prev => ({
       ...prev,
@@ -419,6 +410,7 @@ export async function endTurn(selectedAttackCards, setGameData, gameData) {
     console.log(data);
 
     console.log("defensa del rival");
+    console.log(data.data)
     setGameData((prev) => ({
       ...prev,
       turn: {
@@ -436,6 +428,7 @@ export async function endTurn(selectedAttackCards, setGameData, gameData) {
     }));
     setTimeout(() => {
       console.log("mano del rival");
+      console.log(data.data)
       setGameData((prev) => ({
         ...prev,
         turn: {
@@ -455,7 +448,7 @@ export async function endTurn(selectedAttackCards, setGameData, gameData) {
 
     setTimeout(() => {
       console.log("ataque del rival");
-
+      console.log(data.data)
       setGameData((prev) => ({
         ...prev,
         turn: {
@@ -486,8 +479,6 @@ export async function defense(setGameData, gameData) {
 
   const battle = getBattle();
   const attackers = gameData.rival.table.filter(carta => carta.position === 'attack');
-  console.log('Estado de la batalla:', battle);
-  console.log('Atacantes:', attackers);
 
   const idsEnBatalla = battle.map(b => b.atacanteId);
 
@@ -500,11 +491,7 @@ export async function defense(setGameData, gameData) {
 
   const batallaFinal = [...battle, ...nuevasEntradas];
 
-  console.log('batalla final1:', batallaFinal);
-  console.log('batalla final2:', getBattle());
   resetBattle();
-  console.log('batalla final3:', batallaFinal);
-  console.log('batalla final4:', getBattle());
  
   
 
@@ -512,7 +499,6 @@ export async function defense(setGameData, gameData) {
     await new Promise(res => setTimeout(res, 300)); // Simula una llamada async
 
     const data = defenseResponse;
-    console.log('Respuesta simulada de la defensa:', data);
 
     setGameData(prev => ({
       ...prev,
@@ -612,9 +598,6 @@ export async function defense(setGameData, gameData) {
   }
 }
 
-// export async function endTurn() {
-//  console.log('turno acabado');
-// }
 
 export async function onSurrender(gameData) {
 

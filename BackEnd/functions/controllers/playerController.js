@@ -100,7 +100,7 @@ async function getPlayerInfo(req, res) {
                 player.owned_decks.map(async deckId => {
                     const deckFound = await Deck.findById(deckId);
                     return {
-                        ...deckFound.toObject(),
+                        ...deckFound.toObject?.(),
                         available: true,
                     };
                 })
@@ -114,7 +114,7 @@ async function getPlayerInfo(req, res) {
                 player.locked_decks.map(async deckId => {
                     const deckFound = await Deck.findById(deckId);
                     return {
-                        ...deckFound.toObject(),
+                        ...deckFound.toObject?.(),
                         available: false,
                     };
                 })
@@ -129,7 +129,7 @@ async function getPlayerInfo(req, res) {
             playerAvatar: player.profile_img || 'https://example.com/default-avatar.png',
             playerName: player.displayName || 'Jugador Anónimo',
             playerLevel: player.player_level,
-            playerExperience: player.level_progress || 2445456,
+            playerExperience: player.player_level_progress,
             rol: player.rol,
             decks: allDecks,
             maps: allMaps,
