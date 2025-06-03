@@ -131,6 +131,7 @@ async function getPlayerInfo(req, res) {
             playerLevel: player.player_level,
             playerExperience: player.player_level_progress,
             rol: player.rol,
+            coins: player.coins || 0,
             decks: allDecks,
             maps: allMaps,
             news: newsFound || [],

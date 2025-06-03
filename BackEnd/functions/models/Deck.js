@@ -6,6 +6,7 @@ const deckSchema = new mongoose.Schema({
     cards: {type: [cardSchema], required: true},
     description: {type: String, required: false},
     image: {type: String, required: false},
+    belongsTo: {type: String, enum: ['shop', 'history'] ,required: false}, // Cambiar a true cuando tenga los mazos definitivos
 })
 
 const Deck = mongoose.model('Deck', deckSchema);
