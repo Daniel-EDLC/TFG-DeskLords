@@ -40,15 +40,13 @@ async function useCard(req, res) {
         // Leer el estado actualizado del juego
         const updatedGame = await Game.findById(gameId);
 
-        // Marcar solo la última carta añadida como new: true, el resto no
+        // Marcar solo la última carta añadida como new: true, el resto como new: false
         const playerTableupdated = updatedGame.playerTable.map((card, idx, arr) => {
           const base = card.toObject?.() || card;
-          if (idx === arr.length - 1) {
-            return { ...base, new: true };
-          } else {
-            const { new: _omit, ...rest } = base;
-            return rest;
-          }
+          return {
+            ...base,
+            new: idx === arr.length - 1 // true solo para la última carta, false para el resto
+          };
         });
 
         return req.response.success({
@@ -68,6 +66,13 @@ async function useCard(req, res) {
             table: playerTableupdated,
             health: updatedGame.playerHp,
             mana: updatedGame.playerMana
+          },
+          rival: {
+            hand: updatedGame.rivalHand.length,
+            table: updatedGame.rivalTable,
+            pending_deck: updatedGame.rivalPendingDeck.length,
+            health: updatedGame.rivalHp,
+            mana: updatedGame.rivalMana
           }
         });
       }
@@ -77,6 +82,21 @@ async function useCard(req, res) {
         if (equipTarget) {
           // Usamos positional operator para actualizar el equipo de la carta objetivo
           usedCard.target = equipTarget;
+          const newAtk = (equipTarget.atk || 0) + (usedCard.atk || 0);
+          const newHp = (equipTarget.hp || 0) + (usedCard.hp || 0);
+
+          // 1. Actualizar stats
+          await Game.updateOne(
+            { _id: gameId, 'playerTable._id': equipTarget._id },
+            { 
+              $set: {
+              'playerTable.$.atk': newAtk,
+              'playerTable.$.hp': newHp
+              }
+            }
+          );
+
+          // 2. Añadir equipement y quitar de la mano, restar maná
           await Game.updateOne(
             { _id: gameId, 'playerTable._id': equipTarget._id },
             {
@@ -91,15 +111,13 @@ async function useCard(req, res) {
           // Marcar solo el último equipement añadido como new: true, el resto no
           const playerTableupdated = updatedGame.playerTable.map(card => {
             if (card._id.toString() === equipTarget._id.toString()) {
-              // Si la carta es la objetivo, procesar su array de equipements
+              // Procesar su array de equipements
               const equipements = (card.equipements || []).map((eq, idx, arr) => {
                 const eqBase = eq.toObject?.() || eq;
-                if (idx === arr.length - 1) {
-                  return { ...eqBase, new: true };
-                } else {
-                  const { new: _omit, ...rest } = eqBase;
-                  return rest;
-                }
+                return {
+                  ...eqBase,
+                  new: idx === arr.length - 1 // true solo para el último, false para el resto
+                };
               });
               return { ...card.toObject?.(), equipements };
             } else {
@@ -124,6 +142,13 @@ async function useCard(req, res) {
               table: playerTableupdated,
               health: updatedGame.playerHp,
               mana: updatedGame.playerMana
+            },
+            rival: {
+              hand: updatedGame.rivalHand.length,
+              table: updatedGame.rivalTable,
+              pending_deck: updatedGame.rivalPendingDeck.length,
+              health: updatedGame.rivalHp,
+              mana: updatedGame.rivalMana
             }
           });
         } else {
@@ -133,6 +158,7 @@ async function useCard(req, res) {
       case 'spell': {
         // Resolver efectos de hechizo
         if (usedCard.effect === 'protect_one') {
+          console.log('\n----------------------------------------------------------\nObjetivo del hechizo encontrado ==> ', targetedCard);
           if (targetedCard) {
             // Proteger carta aliada y añadir el spell a equipements
             usedCard.target = targetedCard;
@@ -151,13 +177,13 @@ async function useCard(req, res) {
             // Marcar solo el último spell añadido como new: true en equipements
             const playerTableupdated = updatedGame.playerTable.map(card => {
               if (card._id.toString() === targetedCard._id.toString()) {
+                // Procesar su array de equipements
                 const equipements = (card.equipements || []).map((eq, idx, arr) => {
-                  if (idx === arr.length - 1) {
-                    return { ...eq.toObject?.() || eq, new: true };
-                  } else {
-                    const { new: _omit, ...rest } = eq.toObject?.() || eq;
-                    return rest;
-                  }
+                  const eqBase = eq.toObject?.() || eq;
+                  return {
+                    ...eqBase,
+                    new: idx === arr.length - 1 // true solo para el último, false para el resto
+                  };
                 });
                 return { ...card.toObject?.(), equipements };
               } else {
@@ -182,6 +208,13 @@ async function useCard(req, res) {
                 table: playerTableupdated,
                 health: updatedGame.playerHp,
                 mana: updatedGame.playerMana
+              },
+              rival: {
+                hand: updatedGame.rivalHand.length,
+                table: updatedGame.rivalTable,
+                pending_deck: updatedGame.rivalPendingDeck.length,
+                health: updatedGame.rivalHp,
+                mana: updatedGame.rivalMana
               }
             });
           } else {
@@ -249,12 +282,10 @@ async function useCard(req, res) {
                 if (card._id.toString() === targetedCard._id.toString()) {
                   const equipements = (card.equipements || []).map((eq, idx, arr) => {
                     const eqBase = eq.toObject?.() || eq;
-                    if (idx === arr.length - 1) {
-                      return { ...eqBase, new: true };
-                    } else {
-                      const { new: _omit, ...rest } = eqBase;
-                      return rest;
-                    }
+                    return {
+                      ...eqBase,
+                      new: idx === arr.length - 1 // true solo para el último, false para el resto
+                    };
                   });
                   return { ...card.toObject?.(), equipements };
                 } else {
@@ -266,12 +297,10 @@ async function useCard(req, res) {
                 if (card._id.toString() === targetedCard._id.toString()) {
                   const equipements = (card.equipements || []).map((eq, idx, arr) => {
                     const eqBase = eq.toObject?.() || eq;
-                    if (idx === arr.length - 1) {
-                      return { ...eqBase, new: true };
-                    } else {
-                      const { new: _omit, ...rest } = eqBase;
-                      return rest;
-                    }
+                    return {
+                      ...eqBase,
+                      new: idx === arr.length - 1 // true solo para el último, false para el resto
+                    };
                   });
                   return { ...card.toObject?.(), equipements };
                 } else {
@@ -337,7 +366,7 @@ async function attack(req, res) {
     console.log('\n----------------------------------------------------------\nCartas que van en el body.cards ==> ', cards);
     const attackers = await Promise.all(
       cards.map(async cardObj => {
-        const card = await Card.findById(cardObj.id);
+        const card = game.playerTable.find(c => c._id.toString() === cardObj.id);
         if (!card) throw new Error(`Carta atacante no encontrada: ${cardObj.id}`);
         return card;
       })
@@ -352,16 +381,11 @@ async function attack(req, res) {
 
     console.log('\n----------------------------------------------------------\nLlamada a resolverCombate para cada asignación de combate');
     try {
-      const combates = assignments.map(assignment =>
-        resolverCombate({
-          gameId: gameId,
-          attacker: assignment.attacker,
-          defender: assignment.defender,
-          isAI: false
-        })
-      );
-
-      await Promise.all(combates);
+      await resolverCombate({
+        gameId: gameId,
+        assignments: assignments,
+        isAI: false
+      });
     } catch (error) {
       return req.response.error(`Error al resolver combates: ${error.message}`);
     }
@@ -549,35 +573,23 @@ async function defend(req, res) {
 
     const combats = [];
     for (const combat of req.body.battles) {
-      // Buscar el atacante en la mesa del rival
-      const attacker = game.rivalTable.find(card => card._id.toString() === combat.atacanteId);
-      if (!attacker) return req.response.error(`Atacante no encontrado: ${combat.atacanteId}`);
-
-      // Si el defensor es "player", lo dejamos como string, si no, buscamos la carta en la mesa del player
-      let defender;
-      if (combat.defensorId === "player") {
-        defender = "player";
-      } else {
-        defender = game.playerTable.find(card => card._id.toString() === combat.defensorId);
-        if (!defender) return req.response.error(`Defensor no encontrado: ${combat.defensorId}`);
-      }
-
-      // Pushear los objetos de carta ya convertidos
-      combats.push({ attacker, defender });
+      combats.push({
+        attacker: combat.atacanteId,
+        defender: combat.defensorId
+      });
     }
 
     console.log('\n----------------------------------------------------------\nCombates a resolver ==> ', combats);
 
-    const resolvedCombats = combats.map(combat =>
-      resolverCombate({
+    try {
+      await resolverCombate({
         gameId: gameId,
-        attacker: combat.attacker,
-        defender: combat.defender,
+        assignments: combats,
         isAI: true
-      })
-    );
-
-    await Promise.all(resolvedCombats);
+      });
+    } catch (error) {
+      return req.response.error(`Error al resolver combates: ${error.message}`);
+    }
 
     const updatedGame = await Game.findById(gameId);
 

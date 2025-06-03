@@ -2,7 +2,6 @@ const Game = require('../models/Game');
 const Player = require('../models/Player');
 const mongoose = require('mongoose');
 
-// quitar las cartas de spell que estan dentro del array de equipamientos
 async function nextTurn({ game }) {
   if (!game) throw new Error('Juego no encontrado');
 
@@ -63,9 +62,39 @@ async function nextTurn({ game }) {
       }
     }
   );
-
   console.log('\n----------------------------------------------------------------------\nSpells del jugador al graveyard ==> ', spellsToGraveyardPlayer);
   console.log('\n----------------------------------------------------------------------\nSpells del rival al graveyard ==> ', spellsToGraveyardRival);
+
+  const updatedGame = await Game.findById(game._id);
+
+  // 3. Actualizar las cartas en la mesa para que no sean nuevas
+  let playerTable = updatedGame.playerTable.map(card => {
+    const base = card.toObject?.() || card;
+    return {
+      ...base,
+      new: false // false porque ya no es una carta recién jugada
+    };
+  });
+
+  let rivalTable = updatedGame.rivalTable.map(card => {
+    const base = card.toObject?.() || card;
+    return {
+      ...base,
+      new: false // false porque ya no es una carta recién jugada
+    };
+  });
+  await Game.updateOne(
+    { _id: updatedGame._id },
+    {
+      $set: {
+        playerTable,
+        rivalTable,
+      },
+    }
+  );
+
+  console.log('\n----------------------------------------------------------------------\nMesa del jugador actualizada sin cartas nuevas ==> ', playerTable);
+  console.log('\n----------------------------------------------------------------------\nMesa del rival actualizada sin cartas nuevas ==> ', rivalTable);
 }
 
 async function drawCard({ game, isAI }) {
