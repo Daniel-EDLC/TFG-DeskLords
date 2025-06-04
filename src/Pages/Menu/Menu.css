@@ -8,8 +8,8 @@ body {
   position: absolute;
   left: 0%;
   transform: translate(10%);
-  width: 20vw;
-  filter: drop-shadow(0 0 2px rgba(255, 217, 0, 0.877));
+  width: 22vw;
+  /* filter: drop-shadow(0 0 2px rgba(255, 217, 0, 0.877)); */
 }
 
 .logout-btn {
@@ -122,7 +122,7 @@ body {
 }
 
 .custom-btn:hover {
-  color: #ffd700;
+  color: #c9c611;
 }
 
 .custom-btn:hover::before {
@@ -163,7 +163,6 @@ body {
   gap: 2rem;
 }
 
-/* Noticias ocupa más ancho */
 .inicio-columna.izquierda {
   width: 28vw;
 }
@@ -179,11 +178,56 @@ body {
   height: 33vh;
   width: 20vw;
   border-radius: 10px;
-    background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(255, 255, 255, 0.05);
   border: 2px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
 
 }
+
+.play-card {
+  transition: transform 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.play-card:hover {
+  transform: scale(1.05);
+  border-color: #c9c611;
+  background-color: rgba(255, 251, 0, 0.062);
+  cursor: pointer;
+}
+
+
+
+.card-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 80%;
+}
+
+.static-img,
+.gif-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.4s ease;
+  border-radius: 8px;
+}
+
+.gif-img {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.card-image-wrapper:hover .gif-img {
+  opacity: 1;
+}
+
+.card-image-wrapper:hover .static-img {
+  opacity: 0;
+}
+
 
 .play-card img {
   width: 100%;
@@ -197,7 +241,7 @@ body {
   text-align: right;
   margin: 0;
   font-size: 3rem;
-  color: #ffd700;
+  color: #c9c611;
 }
 
 .inicio-columna-derecha-arriba{
@@ -243,7 +287,7 @@ body {
   opacity: 0;
   animation:
     logoFadeIn 2s ease 1s forwards,
-    logoFadeOut 1s ease 5s forwards; /* 👈 se desvanece en el segundo 6 */
+    logoFadeOut 1s ease 5s forwards;
 }
 
 @keyframes logoFadeIn {
@@ -303,10 +347,10 @@ body {
 
   .menu-logo { 
     padding-top: 4vh;
-    width: 80vw;
+    width: 90vw;
     margin: 1rem auto 0.5rem;
     display: block;
-    filter: drop-shadow(0 0 3px rgba(255, 217, 0, 0.877));
+    /* filter: drop-shadow(0 0 3px rgba(255, 217, 0, 0.877)); */
   }
 
   .main-content {

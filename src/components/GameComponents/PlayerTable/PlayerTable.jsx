@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Paper, Dialog, DialogTitle, DialogActions, Button } from '@mui/material';
+import { Box, Paper, Dialog, DialogTitle, DialogActions, Button, useMediaQuery } from '@mui/material';
+
 import './PlayerTable.css';
 
 function PlayerTable({ 
@@ -15,6 +16,8 @@ function PlayerTable({
   const [hoveredCardId, setHoveredCardId] = useState(null);
   const [longPressCardId, setLongPressCardId] = useState(null);
   const [longPressTimeout, setLongPressTimeout] = useState(null);
+  const isMobile = useMediaQuery('(max-width:435px)');
+
 
   useEffect(() => {
     cartas.forEach((carta) => {
@@ -137,9 +140,9 @@ function PlayerTable({
                 return (
                   <Box className="phase-buttons-inner">
                     {cartas.length > 0 && (
-                      <Button variant="contained" className="phase-button" onClick={handleSwitchPhase}> Fase mesa </Button>
+                      <Button variant="contained" className="phase-button" onClick={handleSwitchPhase}> {isMobile ? 'Mesa' : 'Fase Mesa'} </Button>
                     )}
-                    <Button variant="contained" className="end-turn-button" onClick={handleEndTurnClick}> Pasar turno </Button>
+                    <Button variant="contained" className="end-turn-button" onClick={handleEndTurnClick}> {isMobile ? 'Pasar' : 'Pasar turno'} </Button>
                   </Box>
                 );
 
@@ -148,7 +151,7 @@ function PlayerTable({
                 return (
                   <Box className="phase-buttons-inner">
                     {selectedAttackCards.length > 0 ? (
-                      <Button variant="contained" className="phase-button" color="primary" onClick={handleEndTurnClick}>Atacar y finalizar</Button>
+                      <Button variant="contained" className="phase-button" color="primary" onClick={handleEndTurnClick}>{isMobile ? 'Atacar' : 'Atacar y finalizar'}</Button>
                     ) : (
                       <Button variant="contained" className="end-turn-button" onClick={handleEndTurnClick}>Finalizar</Button>
                     )}
@@ -162,10 +165,12 @@ function PlayerTable({
               <Box className="phase-buttons-inner">
                 {battles.length > 0 ? (
                   <>
-                    <Button variant="contained" className="resetBattle-button" color="primary" onClick={onResetBattle}>Reiniciar batallas</Button>
-                    <Button variant="contained" className="phase-button" color="primary" onClick={handleDefenseClick}>Defender y empezar turno</Button>
+                    <Button variant="contained" className="resetBattle-button" color="primary" onClick={onResetBattle}>{isMobile ? 'Reiniciar' : 'Reiniciar batallas'}</Button>
+                    <Button variant="contained" className="phase-button" color="primary" onClick={handleDefenseClick}>{isMobile ? 'Defender' : 'Defender y empezar turno'}</Button>
                   </>
-                ) : null}
+                ) : (
+                  <Button variant="contained" className="phase-button" color="primary" onClick={handleDefenseClick}>{isMobile ? 'No defender' : 'Empezar turno sin defender'}</Button>
+                )}
               </Box>
             );
           }

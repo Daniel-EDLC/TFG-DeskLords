@@ -24,21 +24,21 @@
   height: 160px;
   object-fit: cover;
   border-radius: 50%;
-  border: 3px solid #3e7148;
+  border: 3px solid #adab007e;
 }
 
 .user-nick {
   font-size: 2.6rem;
   margin-bottom: 1rem;
   font-family: 'Georgia', serif;
-  color: #a8eec1;
+  color: #c0b303;
 }
 
 .user-name {
   font-size: 1.6rem;
   margin-bottom: 1rem;
   font-family: 'Georgia', serif;
-  color: #a8eec1;
+  color: #c0b303;
 }
 
 .user-info p {

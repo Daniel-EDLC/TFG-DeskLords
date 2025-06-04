@@ -40,6 +40,9 @@ function Menu() {
   const [selectedDeckId, setSelectedDeckId] = useState("");
   const [modalAbierto, setModalAbierto] = useState(false);
 
+  const [isHovered, setIsHovered] = useState(false);
+
+
   console.log("Menu data:", data);
   
 
@@ -134,10 +137,10 @@ const botones = [
                 <div className="inicio-columna derecha">
                   <div className="inicio-columna-derecha-arriba">
                     <div className="play-card" onClick={() => setModalAbierto(true)}>
-                      <img
-                        src="https://platform.polygon.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/24596644/Elspeths_Smite_Artist_Livia_Prima_cropped.jpg?quality=90&strip=all&crop=7.8%2C0%2C84.4%2C100&w=2400"
-                        className="play-imagen"
-                      />
+                        <div className="card-image-wrapper">
+                          <img src="/imageBattle.png" alt="estática" className="static-img" />
+                          <img src="https://cdna.artstation.com/p/assets/images/images/017/853/124/original/urban-bradesko-fx-02.gif?1557583057" alt="gif" className="gif-img" />
+                        </div>
                       <h1 className="play-text">Play!</h1>
                     </div>
                     <Shop decks={data.decks} />
@@ -228,7 +231,7 @@ const botones = [
                 ))}
             </Box>
             <div className="gestion-shape"></div>
-            <button className="logout-btn" onClick={() => signOut(auth)}>
+            <button className="logout-btn" onClick={() => signOut(auth) && navigate("/")}>
               <ExitToAppIcon />
             </button>
           </Box>

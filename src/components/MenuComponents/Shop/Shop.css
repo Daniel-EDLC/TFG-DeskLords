@@ -7,7 +7,7 @@
 }
 
 .tienda-container h2 {
-  color: #ffd700;
+  color: #c9c611;
   margin-bottom: 2rem;
 }
 
@@ -38,7 +38,7 @@
 .mazo-card h3 {
   margin: 0;
   font-size: 1.2rem;
-  color: #ffd700;
+  color: #c9c611;
 }
 
 .mazo-card p {
@@ -50,7 +50,7 @@
   background: none;
   border: none;
   font-size: 2rem;
-  color: #ffd700;
+  color: #c9c611;
   cursor: pointer;
   transition: transform 0.2s;
 }
@@ -90,7 +90,7 @@ display: none;
 }
 
 .tienda-container h2 {
-  color: #ffd700;
+  color: #c9c611;
   margin-bottom: rem;
 }
 
@@ -98,7 +98,7 @@ display: none;
   margin: 0;
   padding: 0;
   font-size: 1rem;
-  color: #ffd700;
+  color: #c9c611;
 }
 
 .mazo-card p {

@@ -200,7 +200,7 @@
   .profile-container {
     position: fixed;
     bottom: 15vh;
-    left: 50%;
+    left: 35%;
     transform: translateX(-50%);
     margin: 0;
     z-index: 9999;
