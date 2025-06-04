@@ -5,7 +5,7 @@ const cardSchema = new mongoose.Schema({
     name: {type: String, required: true},
     type: {type: String, required: true, enum: ['creature', 'spell', 'equipement']},
     description: {type: String, required: true},
-    element: {type: String, required: false, enum: ['fire', 'water', 'earth', 'air', 'light', 'darkness']},
+    element: {type: String, required: false},
     atk: {type: Number, required: false},
     hp: {type: Number, required: false},
     cost: {type: Number, required: true},
