@@ -264,6 +264,10 @@ body {
 }
 
 
+.perfil-container{
+  justify-content: center;
+}
+
 .splash-screen {
   position: fixed;
   inset: 0;
@@ -444,7 +448,7 @@ body {
     gap: 1rem;
   }
 
-  .inicio-missions{
+  .inicio-battlePass{
     position: absolute;
     margin-top: 55vh;
     align-items: center;
@@ -467,6 +471,15 @@ body {
   .inicio-columna-derecha-arriba {
     flex-direction: column;
     gap: 1rem;
+  }
+
+  .menu-mobile{
+    display: flex;
+    flex-direction: column;
+  }
+  .menu-mobile-top{
+    display: flex;
+    flex-direction: row;
   }
 }
 

@@ -1,8 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./News.css";
 
 function News({ noticias }) {
   const [indiceActual, setIndiceActual] = useState(0);
+
+  useEffect(() => {
+    if (!noticias || noticias.length <= 1) return;
+
+    const intervalo = setInterval(() => {
+      setIndiceActual((prev) => (prev === noticias.length - 1 ? 0 : prev + 1));
+    }, 7000);
+
+    return () => clearInterval(intervalo);
+  }, [noticias.length]);
 
   const anterior = () => {
     setIndiceActual((prev) => (prev === 0 ? noticias.length - 1 : prev - 1));
@@ -12,7 +22,7 @@ function News({ noticias }) {
     setIndiceActual((prev) => (prev === noticias.length - 1 ? 0 : prev + 1));
   };
 
-  if (noticias.length === 0) return null;
+  if (!noticias || noticias.length === 0) return null;
 
   const noticia = noticias[indiceActual];
 
@@ -24,13 +34,11 @@ function News({ noticias }) {
         </button>
 
         <div className="noticia-card">
-          {noticia.image && (
             <img
-              src={noticia.image}
+              src={"/LOGO.png"}
               alt={noticia.title}
               className="noticia-img"
             />
-          )}
           <div className="noticia-texto">
             <h3>{noticia.title}</h3>
             <p>{noticia.content}</p>

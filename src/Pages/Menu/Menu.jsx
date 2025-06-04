@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { useMediaQuery, Box, IconButton, Dialog } from "@mui/material";
 import SportsKabaddiIcon from "@mui/icons-material/SportsKabaddi";
-import { signOut } from 'firebase/auth';
-import { auth } from '../../../firebaseConfig';
-
+import { signOut } from "firebase/auth";
+import { auth } from "../../../firebaseConfig";
 
 import StorageIcon from "@mui/icons-material/Storage";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
@@ -18,6 +17,7 @@ import Decks from "../../components/MenuComponents/Decks/Decks";
 import News from "../../components/MenuComponents/News/News";
 import Shop from "../../components/MenuComponents/Shop/Shop";
 import Missions from "../../components/MenuComponents/Missions/Missions";
+import BattlePass from "../../components/MenuComponents/BattlePass/BattlePass";
 import ContactUs from "../../components/MenuComponents/ContactUs/ContactUs";
 
 import {
@@ -40,22 +40,16 @@ function Menu() {
   const [selectedDeckId, setSelectedDeckId] = useState("");
   const [modalAbierto, setModalAbierto] = useState(false);
 
-  const [isHovered, setIsHovered] = useState(false);
-
+  // const [isHovered, setIsHovered] = useState(false);
 
   console.log("Menu data:", data);
-  
 
-
-
-
-    useEffect(() => {
-      const timeout = setTimeout(() => {
-        setShowSplash(false);
-      }, 7000);
-      return () => clearTimeout(timeout);
-    }, []);
-
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setShowSplash(false);
+    }, 7000);
+    return () => clearTimeout(timeout);
+  }, []);
 
   useEffect(() => {
     const cargar = async () => {
@@ -102,22 +96,21 @@ function Menu() {
   };
 
   if (!data) {
-  return null;
-}
-
-const botones = [
-  { id: "inicio", icon: <HomeIcon />, texto: "Inicio" },
-  { id: "coleccion", icon: <CollectionsIcon />, texto: "Colección" },
-  { id: "perfil", icon: <AccountCircleIcon />, texto: "Perfil" },
-  { id: "batalla", icon: <SportsKabaddiIcon />, texto: "Batalla" },
-  {
-    id: data.rol === "admin" ? "gestion" : "contacto",
-    icon: <StorageIcon />,
-    texto: data.rol === "admin" ? "Gestión" : "Contacto"
+    return null;
   }
-];
 
-
+  const botones = [
+    { id: "inicio", icon: <HomeIcon />, texto: "Inicio" },
+    { id: "coleccion", icon: <CollectionsIcon />, texto: "Colección" },
+    { id: "perfil", icon: <AccountCircleIcon />, texto: "Perfil" },
+    { id: "batalla", icon: <SportsKabaddiIcon />, texto: "Batalla" },
+    {
+      id: data.rol === "admin" ? "gestion" : "contacto",
+      icon: <StorageIcon />,
+      texto: data.rol === "admin" ? "Gestión" : "Contacto",
+    },
+  ];
+console.log("datos:", data.shop.decks);
   const renderContenido = () => {
     switch (seccionActiva) {
       case "inicio":
@@ -125,9 +118,12 @@ const botones = [
           <div>
             {isMobile ? (
               <div className="menu-mobile">
-                <Shop decks={data.decks} />
-                <Missions misiones={data.missions} />
-                <News noticias={data.news} />
+                <div className="menu-mobile-top">
+                  <News noticias={data.news} />
+                  <Shop shop={data.shop} />
+                </div>
+                <BattlePass nivelActual={6} />
+                
               </div>
             ) : (
               <div className="inicio-layout">
@@ -136,17 +132,28 @@ const botones = [
                 </div>
                 <div className="inicio-columna derecha">
                   <div className="inicio-columna-derecha-arriba">
-                    <div className="play-card" onClick={() => setModalAbierto(true)}>
-                        <div className="card-image-wrapper">
-                          <img src="/imageBattle.png" alt="estática" className="static-img" />
-                          <img src="https://cdna.artstation.com/p/assets/images/images/017/853/124/original/urban-bradesko-fx-02.gif?1557583057" alt="gif" className="gif-img" />
-                        </div>
+                    <div
+                      className="play-card"
+                      onClick={() => setModalAbierto(true)}
+                    >
+                      <div className="card-image-wrapper">
+                        <img
+                          src="/imageBattle.png"
+                          alt="estática"
+                          className="static-img"
+                        />
+                        <img
+                          src="https://cdna.artstation.com/p/assets/images/images/017/853/124/original/urban-bradesko-fx-02.gif?1557583057"
+                          alt="gif"
+                          className="gif-img"
+                        />
+                      </div>
                       <h1 className="play-text">Play!</h1>
                     </div>
-                    <Shop decks={data.decks} />
+                    <Shop shop={data.shop} coins={data.coins} />
                   </div>
-                  <div className="inicio-missions">
-                    <Missions misiones={data.missions} />
+                  <div className="inicio-battlePass">
+                    <BattlePass nivelActual={6} />
                   </div>
                 </div>
               </div>
@@ -157,6 +164,8 @@ const botones = [
         return <Decks decks={data.decks} />;
       case "perfil":
         return (
+          
+          <div className="perfil-container">
           <UserProfile
             className="user-profile"
             avatar={data.playerAvatar}
@@ -164,16 +173,21 @@ const botones = [
             name={data.playerName}
             level={data.playerLevel}
             experience={data.playerExperience}
+            coins={data.coins}
+            email={data.playerEmail || "No disponible"}
+            rol={data.rol || "No disponible"}
+            partidasGanadas={data.wins}
+            partidasPerdidas={data.loses}
+            mazoFavorito={data.favoriteDeck || "No disponible"}
           />
-        );
+        </div>
+      );
       // case "gestion":
       //   return (
-          
+
       //   );
-        case "contacto":
-          return (
-            <ContactUs />
-          );
+      case "contacto":
+        return <ContactUs />;
       case "batalla":
         return (
           <div className="maps-container">
@@ -231,7 +245,10 @@ const botones = [
                 ))}
             </Box>
             <div className="gestion-shape"></div>
-            <button className="logout-btn" onClick={() => signOut(auth) && navigate("/")}>
+            <button
+              className="logout-btn"
+              onClick={() => signOut(auth) && navigate("/")}
+            >
               <ExitToAppIcon />
             </button>
           </Box>
@@ -266,15 +283,13 @@ const botones = [
         </Box>
       </Dialog>
 
-    {showSplash && (
-  <div className="splash-screen">
-    <div className="splash-wrapper">
-      <img src="/LOGO.png" alt="Logo DeskLords" className="splash-logo" />
-    </div>
-  </div>
-)}
-
-
+      {showSplash && (
+        <div className="splash-screen">
+          <div className="splash-wrapper">
+            <img src="/LOGO.png" alt="Logo DeskLords" className="splash-logo" />
+          </div>
+        </div>
+      )}
     </>
   );
 }

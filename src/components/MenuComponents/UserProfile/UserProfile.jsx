@@ -1,21 +1,50 @@
 import React from 'react';
 import './UserProfile.css';
 
-const UserProfile = ({ avatar, name, level, experience, email, rol }) => {
+const UserProfile = ({ avatar, name, level, experience, email, rol, partidasGanadas, partidasPerdidas, mazoFavorito }) => {
+  const experienciaPorNivel = 100;
+  const progreso = Math.min((experience % experienciaPorNivel) / experienciaPorNivel * 100, 100);
+
+  const totalPartidas = partidasGanadas + partidasPerdidas;
+  const victoryPercent = totalPartidas > 0 ? Math.round((partidasGanadas / totalPartidas) * 100) : 0;
+
   return (
-    <div className="user-container">
-      <img src={avatar} alt="avatar" className="user-avatar" />
-      <h1 className="user-nick">{name}</h1>
-      <h2 className="user-name">{name}</h2>
-      <div className="user-info">
-        <p><strong>Nivel:</strong> {level}</p>
-        <p><strong>Experiencia:</strong> {experience}</p>
-        <p><strong>Email:</strong> {email}</p>
-        <p><strong>Rol:</strong> {rol}</p>
+    <div className="profile-container">
+      <div className="profile-header">
+        <img src={avatar} alt="avatar" className="profile-avatar" />
+        <div className="profile-info">
+          <h2 className="profile-name">{name}</h2>
+          <p className="profile-role">Rol: {rol}</p>
+          <p className="profile-email">{email}</p>
+        </div>
+      </div>
+
+      <div className="profile-level">
+        <p>Nivel {level}</p>
+        <div className="progress-bar">
+          <div className="progress-fill" style={{ width: `${progreso}%` }}></div>
+        </div>
+        <span>{experience % experienciaPorNivel} / {experienciaPorNivel} XP</span>
+      </div>
+
+      <div className="profile-stats-circular">
+        <div className="circular-chart" style={{
+          background: `conic-gradient(#c0b303 ${victoryPercent}%, rgba(255,255,255,0.1) 0)`
+        }}>
+          <span>{victoryPercent}%</span>
+        </div>
+        <div className="circular-legend">
+          <p>Ganadas: {partidasGanadas}</p>
+          <p>Perdidas: {partidasPerdidas}</p>
+        </div>
+      </div>
+
+      <div className="profile-favorite-deck">
+        <h3>Mazo más usado</h3>
+        <p>{mazoFavorito}</p>
       </div>
     </div>
   );
 };
 
 export default UserProfile;
-

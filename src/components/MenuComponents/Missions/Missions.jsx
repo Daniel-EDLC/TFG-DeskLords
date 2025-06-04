@@ -3,7 +3,7 @@ import "./Missions.css";
 
 function Missions({ misiones }) {
   if (!misiones || misiones.length === 0) {
-    return <p className="missions-empty">No tienes misiones activas.</p>;
+    return <p className="missions-empty">No tienes misiones / pases de batalla activos.</p>;
   }
 
   return (

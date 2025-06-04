@@ -1,25 +1,31 @@
-.user-container {
+.profile-container {
   background-color: rgba(255, 255, 255, 0.05);
   border: 2px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
   border-radius: 16px;
   padding: 2rem;
-  text-align: center;
   color: white;
   width: 100%;
-  max-width: 25vw;
-  min-height: 50vh;
+  max-width: 600px;
   margin: 2rem auto;
   transition: transform 0.3s ease;
 }
 
-
-.user-container:hover {
+.profile-container:hover {
   transform: scale(1.02);
 }
 
-.user-avatar {
-  top: 40px;
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  text-align: center;
+}
+
+.profile-avatar {
   width: 160px;
   height: 160px;
   object-fit: cover;
@@ -27,42 +33,110 @@
   border: 3px solid #adab007e;
 }
 
-.user-nick {
+.profile-info {
+  flex: 1;
+  min-width: 200px;
+}
+
+.profile-name {
   font-size: 2.6rem;
   margin-bottom: 1rem;
   font-family: 'Georgia', serif;
   color: #c0b303;
 }
 
-.user-name {
-  font-size: 1.6rem;
-  margin-bottom: 1rem;
-  font-family: 'Georgia', serif;
-  color: #c0b303;
-}
-
-.user-info p {
-  margin: 0.5rem 0;
+.profile-role {
   font-size: 1rem;
+  color: #dddddd;
+}
+
+.profile-email {
+  font-size: 0.9rem;
+  color: #bbbbbb;
+}
+
+.profile-level {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.progress-bar {
+  height: 16px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 8px auto;
+  max-width: 400px;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #c0b303;
+  width: 0%;
+  transition: width 0.5s ease-in-out;
+}
+
+.profile-level span {
+  font-size: 0.9rem;
+  color: #aaa;
+}
+.profile-stats-circular {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+.circular-chart {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: conic-gradient(#c0b303 60%, rgba(255,255,255,0.1) 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 1rem;
+  box-shadow: 0 0 10px #c0b30377;
+}
+
+.circular-legend p {
+  margin: 4px 0;
+  font-size: 0.9rem;
+  color: #ddd;
 }
 
 
+/* Responsive */
 @media (max-width: 435px) {
-  .user-container {
+  .profile-container {
     padding: 1.5rem;
     max-width: 90%;
   }
 
-  .user-avatar {
-    width: 80px;
-    height: 80px;
+  .profile-avatar {
+    width: 100px;
+    height: 100px;
   }
 
-  .user-name {
-    font-size: 1.2rem;
+  .profile-name {
+    font-size: 1.6rem;
   }
 
-  .user-info p {
+  .profile-role,
+  .profile-email {
     font-size: 0.85rem;
+  }
+
+  .profile-stats {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .profile-stats div {
+    width: 100%;
+    max-width: 300px;
   }
 }

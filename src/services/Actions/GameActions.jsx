@@ -670,3 +670,20 @@ export async function onSurrender(gameData) {
     console.error("Error al enviar rendición:", error);
   }
 }
+
+
+
+// services/shopService.js
+export const buyProduct = async (id, tipo) => {
+  const response = await fetch(`/api/tienda/comprar`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id, tipo }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Error al comprar el producto");
+  }
+
+  return response.json();
+};
