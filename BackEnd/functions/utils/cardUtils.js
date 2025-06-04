@@ -1,4 +1,4 @@
-const Game = require('../../src/models/Game');
+const Game = require('../models/Game');
 
 async function sendUsedCardResponse(gameId, usedCard, req) {
     const updatedGame = await Game.findById(gameId);

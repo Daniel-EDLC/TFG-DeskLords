@@ -2,7 +2,7 @@ const Player = require('../models/Player');
 const Deck = require('../models/Deck');
 const Map = require('../models/Map');
 const News = require('../models/News');
-const Avatars = require('../../src/models/Avatars');
+const Avatars = require('../models/Avatars');
 
 async function createPlayer(req, res) {
     try {
@@ -168,12 +168,18 @@ async function getPlayerInfo(req, res) {
 
         }
 
-        const avatarUrl = Avatars.findById(player.selected_avatar);
+        const avatarActive = await Avatars.findById(player.selected_avatar);
+        const avatarUrl = avatarActive.url
 
         const newsFound = await News.find().sort({ fecha: -1 })
 
+        const shopItems = {
+            decks: allDecks.filter(deck => !deck.available || deck.belongsTo === 'shop'),
+            avatars: allAvatars.filter(avatar => !avatar.available && avatar.belongsTo === 'shop'),
+        }
+
         req.response.success({
-            playerAvatar: player.profile_img || 'https://example.com/default-avatar.png',
+            playerAvatar: avatarUrl || "no lo encuentra",
             playerName: player.displayName || 'Jugador Anónimo',
             playerLevel: player.player_level,
             playerExperience: player.player_level_progress,
@@ -183,7 +189,7 @@ async function getPlayerInfo(req, res) {
             maps: allMaps,
             news: newsFound || [],
             avatars: allAvatars,
-            selectedAvatar: avatarUrl,
+            shop: shopItems
         })
     } catch (error) {
         req.response.error(`Error al obtener información del jugador: ${error.message}`);
