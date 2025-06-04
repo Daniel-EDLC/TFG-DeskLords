@@ -1,4 +1,4 @@
-const moongose = require('mongoose');
+const mongoose = require('mongoose');
 
 const avatarsSchema = new mongoose.Schema({
   url: { type: String, required: true },

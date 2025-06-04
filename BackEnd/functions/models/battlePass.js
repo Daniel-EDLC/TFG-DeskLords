@@ -1,19 +1,19 @@
-const moongose = require('mongoose');
+const mongoose = require('mongoose');
 
-const levelSchema = new moongose.Schema({
+const levelSchema = new mongoose.Schema({
     type: { type: String, required: true },
-    rewards: { type: moongose.Schema.Types.Mixed, required: true },
+    rewards: { type: mongoose.Schema.Types.Mixed, required: true },
     completed: { type: Boolean, default: false },
 });
 
-const battlePassSchema = new moongose.Schema({
+const battlePassSchema = new mongoose.Schema({
     playerId: { type: String, required: true },
     actual_level: { type: Number, default: 0 },
     levels: { type: [levelSchema], required: false },
 });
 
-const BattlePassLevels = moongose.model('BattlePassLevels', levelSchema);
-const BattlePass = moongose.model('BattlePass', battlePassSchema);
+const BattlePassLevels = mongoose.model('BattlePassLevels', levelSchema);
+const BattlePass = mongoose.model('BattlePass', battlePassSchema);
 
 module.exports = {
     BattlePass,

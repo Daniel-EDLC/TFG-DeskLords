@@ -112,3 +112,23 @@ async function updateBattlePass(playerId) {
         return { error: 'Error updating Battle Pass' };
     }
 }
+
+async function deleteBattlePass(playerId) {
+    try {
+        const battlePass = await BattlePass.findOneAndDelete({ playerId });
+        if (!battlePass) {
+            return { error: 'Pase de batalla no encontrado para este jugador' };
+        }
+        return { success: 'Pase de batalla eliminado correctamente' };
+    } catch (error) {
+        console.error('Error deleting Battle Pass:', error);
+        return { error: 'Error deleting Battle Pass' };
+    }
+}
+
+module.exports = {
+    getBattlePass,
+    createBattlePass,
+    updateBattlePass,
+    deleteBattlePass
+};
