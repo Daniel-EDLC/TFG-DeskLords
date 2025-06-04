@@ -10,13 +10,14 @@
   gap: 20px;
   position: relative;
   overflow: hidden;
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(0, 0, 0, 0.404);
   border: 2px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
 }
 
 .tittle {
   font-size: 1.5rem;
+  color: white;
 }
 
 .mapa-content {
@@ -53,7 +54,7 @@
   margin-top: 10px;
   padding: 10px 20px;
   background-color: rgba(255, 255, 255, 0.1);
-  border: 3px solid rgba(0, 131, 9, 0.267);
+  border: 3px solid rgba(255, 251, 0, 0.281);
   color: white;
   font-weight: bold;
   border-radius: 10px;
@@ -65,13 +66,12 @@
 
 .mapa-info button:hover,
 .deck-card.selected-deck:hover {
-  color: rgb(24, 91, 0);
-  background-color: #dcdcdc85;
-  border-color: rgb(0, 70, 0);
+  background-color: rgba(154, 165, 2, 0.329);
+  border-color: #ffd900c7;
 }
 
 .deck-card.selected-deck:hover .deck-name {
-  color: rgb(24, 91, 0);
+  color: rgb(255, 255, 255);
 }
 
 /* Selector de mazos */

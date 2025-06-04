@@ -8,7 +8,7 @@
 .maps-wrapper {
   display: flex;
   flex-direction: column;
-    background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(0, 0, 0, 0.404);
   border: 2px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
   width: 30vw;
@@ -28,6 +28,7 @@
 .maps-wrapper h2 {
   text-align: center;
   margin-bottom: 10px;
+  color: white;
 }
 
 .maps-grid {
@@ -53,12 +54,12 @@
   color: white;
   cursor: pointer;
   transition: background-color 0.3s;
-  border: 3px solid rgba(0, 131, 9, 0.267);
+  border: 3px solid rgba(255, 251, 0, 0.267);
 }
 
-.mapa-card:hover {
-  color: rgb(24, 91, 0);
-  background-color: #dcdcdca8;
+.mapa-card:hover {  
+  background-color: rgba(154, 165, 2, 0.329);
+  border-color: #ffd900c7;
 }
 
 .mapa-card.disabled {

@@ -27,7 +27,7 @@ const ActualMap = ({ mapa, onPlay, decks, selectedDeckId, onSelectDeck }) => {
           : {}
       }
     >
-      <label className="tittle">Enfréntate al deck de {mapa.name}</label>
+      <label className="tittle">VS: {mapa.name}</label>
       <div className={`mapa-content ${isMobile ? "vertical" : ""}`}>
         {!isMobile && selectedDeck?.image && (
           <img

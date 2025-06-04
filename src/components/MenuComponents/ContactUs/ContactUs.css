@@ -39,6 +39,7 @@
 }
 
 .contacto-button {
+  width: 100%;
   margin-top: 1rem;
   background-color: #8a821a;
   color: white;
@@ -51,7 +52,8 @@
 }
 
 .contacto-button:hover {
-background-color: #413d0c;
+  background-color: #c9c611;
+  color: black;
 }
 
 

@@ -30,7 +30,7 @@
 .auth-tittle-tittle {
   width: 60%;
   object-fit: contain;
-  filter: drop-shadow(0 0 10px #cacacaa1);
+  /* filter: drop-shadow(0 0 10px #cacacaa1); */
 }
 
 .auth-card {
@@ -42,8 +42,9 @@
 }
 
 .auth-card > * {
-  background-color: #1f1f1fe0;
-  border: 2px solid #a8a8a844;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
   padding: 2.5rem;
   border-radius: 16px;
   filter: drop-shadow(0 0 10px #cacacaa1);
