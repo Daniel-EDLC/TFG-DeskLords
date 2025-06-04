@@ -109,7 +109,6 @@ async function placeCards(game) {
       const base = card.toObject?.() || card;
       const equipements = (base.equipements || []).map(eq => {
         const eqBase = eq.toObject?.() || eq;
-        console.log('----------------------------------------------------------------------eqBase ==>', eqBase);
         return {
           ...eqBase,
           new: usedCards.includes(eqBase._id.toString())

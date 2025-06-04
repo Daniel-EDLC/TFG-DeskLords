@@ -16,6 +16,9 @@ const gameRoutes = require('./routes/gameRoutes');
 const mapRoutes = require('./routes/mapRoutes');
 const playerRoutes = require('./routes/playerRoutes');
 const setRoutes = require('./routes/setRoutes');
+const commentsRoutes = require('./routes/commentsRoutes');
+const battlePassRoutes = require('./routes/battlePassRoutes');
+const avatarsRoutes = require('./routes/avatarsRoutes');
 
 app.use(express.json());
 
@@ -38,5 +41,8 @@ app.use('/api', gameRoutes);
 app.use('/api', mapRoutes);
 app.use('/api', playerRoutes);
 app.use('/api', setRoutes);
+app.use('/api', commentsRoutes);
+app.use('/api', battlePassRoutes);
+app.use('/api', avatarsRoutes);
 
 module.exports = app;

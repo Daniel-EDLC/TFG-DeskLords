@@ -1,10 +1,21 @@
 const Player = require('../models/Player');
 const Deck = require('../models/Deck');
 const Map = require('../models/Map');
+const Avatars = require('../models/Avatars');
 const { Types } = require('mongoose');
 
 async function createPlayer(req, res) {
     try {
+
+        const existingPlayer = await Player.findOne({ uid: req.body.uid });
+        if (existingPlayer) {
+            return req.response.error("El usuario ya existe");
+        }
+
+        const defaultAvatar = await Avatars.findOne({ name: 'default' });
+        const lockedAvatars = await Avatars.find();
+
+        const lockedAvatarsFiltered = lockedAvatars.filter(avatar => avatar.name !== 'default');
         
         const newPlayer = new Player({
             uid: req.body.uid,
@@ -24,6 +35,8 @@ async function createPlayer(req, res) {
             maps_locked: [
                 "6838a30436599377ad700434",
             ],
+            selected_avatar: defaultAvatar._id,
+            locked_avatars: lockedAvatarsFiltered.map(avatar => avatar._id),
         });
 
         const playerSaved = await newPlayer.save();

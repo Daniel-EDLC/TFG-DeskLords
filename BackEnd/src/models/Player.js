@@ -1,23 +1,34 @@
 const mongoose = require('mongoose');
 
 const playerSchema = new mongoose.Schema({
-    uid: {type: String, required: true, unique: true}, // Firebase UID
-    status: {type: String, enum: ['active', 'suspended', 'banned', 'deleted'], default: 'active'},
-    name: {type: String, required: true},
-    surname: {type: String, required: true},
-    displayName: {type: String, required: true},
-    register_date: {type: Date, default: Date.now, immutable: true, required: true},
-    profile_img: {type: String, required: false, default: 'https://example.com/default-avatar.png'}, // Default avatar URL
-    player_level: {type: Number, default: 0, required: false},
-    player_level_progress: {type: Number, default: 0, required: false}, // puntos de experiencia exactos
-    owned_decks: {type: [String], required: false},
-    locked_decks: {type: [String], required: false},
-    maps_unlocked: {type: [String], required: false}, // Assuming you have a Map model
-    maps_locked: {type: [String], required: false}, // Assuming you have a Map model
-    // actual_map: {type: String, required: false},
-    // actual_map_level: {type: Number, required: false},
-    rol: {type: String, default: 'Player', required: true},
-})
+    uid: { type: String, required: true, unique: true }, // Firebase UID
+    status: { type: String, enum: ['active', 'suspended', 'banned', 'deleted'], default: 'active' },
+    name: { type: String, required: true },
+    surname: { type: String, required: true },
+    displayName: { type: String, required: true },
+    register_date: { type: Date, default: Date.now, immutable: true, required: true },
+    rol: { type: String, default: 'Player', required: true },
+
+    // Campos de Experiencia
+    player_level: { type: Number, default: 0, required: false },
+    player_level_progress: { type: Number, default: 0, required: false }, // puntos de experiencia exactos
+
+    // Campos de Mazos
+    owned_decks: { type: [String], required: false },
+    locked_decks: { type: [String], required: false },
+
+    // Campos de Mapas
+    maps_unlocked: { type: [String], required: false },
+    maps_locked: { type: [String], required: false },
+
+    // Campos de la foto de perfil
+    selected_avatar: { type: String, required: false },
+    unlocked_avatars: { type: [String], required: false },
+    locked_avatars: { type: [String], required: false },
+
+    // Campos de Monedas
+    coins: { type: Number, default: 0, required: false },
+});
 
 const Player = mongoose.model('Player', playerSchema);
 

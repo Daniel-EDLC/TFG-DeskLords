@@ -7,7 +7,7 @@ const connectDB = require('./config/db');
 const app = express();
 
 // Importar los middlewares
-const validarTokenJWT = require('./middlewares/validarTokenJWT');
+// const validarTokenJWT = require('./middlewares/validarTokenJWT');
 const createResponseHelper = require('./middlewares/responseHelper');
 
 const abilityRoutes = require('./routes/abilityRoutes');
@@ -19,6 +19,8 @@ const playerRoutes = require('./routes/playerRoutes');
 const setRoutes = require('./routes/setRoutes');
 const newsRoutes = require('./routes/newsRoutes');
 const commentsRoutes = require('./routes/commentsRoutes');
+const battlePassRoutes = require('./routes/battlePassRoutes');
+const avatarsRoutes = require('./routes/avatarsRoutes');
 
 app.use(express.json());
 app.use(connectDB);
@@ -43,5 +45,7 @@ app.use('/api', playerRoutes);
 app.use('/api', setRoutes);
 app.use('/api', newsRoutes);
 app.use('/api', commentsRoutes);
+app.use('/api', battlePassRoutes);
+app.use('/api', avatarsRoutes);
 
 module.exports = app;

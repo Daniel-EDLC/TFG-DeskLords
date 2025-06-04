@@ -2,9 +2,20 @@ const Player = require('../models/Player');
 const Deck = require('../models/Deck');
 const Map = require('../models/Map');
 const News = require('../models/News');
+const Avatars = require('../models/Avatars');
 
 async function createPlayer(req, res) {
     try {
+        
+        const existingPlayer = await Player.findOne({ uid: req.body.uid });
+        if (existingPlayer) {
+            return req.response.error("El usuario ya existe");
+        }
+
+        const defaultAvatar = await Avatars.findOne({ name: 'default' });
+        const lockedAvatars = await Avatars.find();
+
+        const lockedAvatarsFiltered = lockedAvatars.filter(avatar => avatar.name !== 'default');
         
         const newPlayer = new Player({
             uid: req.body.uid,
@@ -24,6 +35,8 @@ async function createPlayer(req, res) {
             maps_locked: [
                 "6838a30436599377ad700434",
             ],
+            selected_avatar: defaultAvatar._id,
+            locked_avatars: lockedAvatarsFiltered.map(avatar => avatar._id),
         });
 
         const playerSaved = await newPlayer.save();
@@ -123,10 +136,50 @@ async function getPlayerInfo(req, res) {
             allDecks = allDecks.concat(decks_locked);
         }
 
+        let allAvatars = [];
+
+        if (player.unlocked_avatars.length > 0) {
+            const avatars_unlocked = await Promise.all(
+                player.unlocked_avatars.map(async avatarId => {
+                    const avatarFound = await Avatars.findById(avatarId);
+                    return {
+                        ...avatarFound.toObject?.(),
+                        available: true,
+                    };
+                })
+            );
+
+            allAvatars = allAvatars.concat(avatars_unlocked);
+
+        }
+
+        if (player.locked_avatars.length > 0) {
+            const avatars_locked = await Promise.all(
+                player.locked_avatars.map(async avatarId => {
+                    const avatarFound = await Avatars.findById(avatarId);
+                    return {
+                        ...avatarFound.toObject?.(),
+                        available: false,
+                    };
+                })
+            );
+
+            allAvatars = allAvatars.concat(avatars_locked);
+
+        }
+
+        const avatarActive = await Avatars.findById(player.selected_avatar);
+        const avatarUrl = avatarActive.url
+
         const newsFound = await News.find().sort({ fecha: -1 })
 
+        const shopItems = {
+            decks: allDecks.filter(deck => !deck.available || deck.belongsTo === 'shop'),
+            avatars: allAvatars.filter(avatar => !avatar.available && avatar.belongsTo === 'shop'),
+        }
+
         req.response.success({
-            playerAvatar: player.profile_img || 'https://example.com/default-avatar.png',
+            playerAvatar: avatarUrl || "no lo encuentra",
             playerName: player.displayName || 'Jugador Anónimo',
             playerLevel: player.player_level,
             playerExperience: player.player_level_progress,
@@ -135,6 +188,8 @@ async function getPlayerInfo(req, res) {
             decks: allDecks,
             maps: allMaps,
             news: newsFound || [],
+            avatars: allAvatars,
+            shop: shopItems
         })
     } catch (error) {
         req.response.error(`Error al obtener información del jugador: ${error.message}`);
@@ -166,6 +221,36 @@ async function updatePlayer(req, res) {
     }
 }
 
+async function updatePlayerAvatar(req, res) {
+    try {
+        const playerId = req.body.idPlayer;
+        const avatarId = req.body.avatarId;
+
+        if (!playerId || !avatarId) {
+            return req.response.error('Faltan datos obligatorios');
+        }
+
+        const player = await Player.findById(playerId);
+
+        if (player.locked_avatars.includes(avatarId)) {
+            return req.response.error('El avatar está bloqueado y no se puede seleccionar');
+        }
+
+        const updatedPlayer = await Player.findByIdAndUpdate(
+            playerId,
+            { selected_avatar: avatarId }
+        );
+
+        if (!updatedPlayer) {
+            return req.response.error('Jugador no encontrado');
+        }
+
+        req.response.success({ player: updatedPlayer });
+    } catch (error) {
+        req.response.error(`Error al actualizar el avatar del jugador: ${error.message}`);
+    }
+}
+
 async function deletePlayer(req, res) {
     try {
         const playerId = req.body.idPlayer;
@@ -187,5 +272,6 @@ module.exports = {
     checkPlayerExists,
     getPlayers,
     updatePlayer,
-    deletePlayer
+    deletePlayer,
+    updatePlayerAvatar
 };

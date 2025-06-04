@@ -1,18 +1,15 @@
 const Game = require('../models/Game');
 const Player = require('../models/Player');
-const Card = require('../models/Card');
 const { resolverCombate, chooseDefenders } = require('./combatService');
 const { nextTurn, drawCard, checkForGameOver, removeDeadCardsFromTables } = require('./turnService');
 const { placeCards, changeCardsPositionToAttack } = require('./IAService');
+const { handleCreatureCard, handleEquipementCard, handleSpellCard } = require('../utils/cardUtils');
 
 async function useCard(req, res) {
   try {
-    const gameId = req.body.gameId;
-
+    const { gameId, playerId, cardId, target } = req.body;
     const game = await Game.findById(gameId);
-    const player = await Player.findOne({ uid: req.body.playerId });
-
-    console.log('Game al inicio de la partida ==> ', game.playerDeck, game.rivalDeck);
+    const player = await Player.findOne({ uid: playerId });
 
     if (!player) return req.response.error('Jugador no encontrado');
     if (game.playerId !== player.uid) return req.response.error('El id del jugador no coincide con el de la partida');
@@ -20,334 +17,22 @@ async function useCard(req, res) {
     try {
       await removeDeadCardsFromTables(gameId, game.playerTable, game.rivalTable);
     } catch (error) {
-      return req.response.error(`Error al eliminar cartas muertas de las mesas: ${error.message}`);
+      return req.response.error(`Error al eliminar cartas muertas: ${error.message}`);
     }
 
-    const usedCard = game.playerHand.find(card => card._id.toString() === req.body.cardId);
-    console.log('\n----------------------------------------------------------\nCarta usada ==> ', usedCard);
-    const targetedCard = game.playerTable.find(card => card._id.toString() === req.body.target?.id) ||
-      game.rivalTable.find(card => card._id.toString() === req.body.target?.id);
-    console.log('\n----------------------------------------------------------\nCarta objetivo ==> ', targetedCard);
+    const usedCard = game.playerHand.find(card => card._id.toString() === cardId);
+    const targetedCard = [...game.playerTable, ...game.rivalTable]
+      .find(card => card._id.toString() === target?.id);
 
-    if (!usedCard) return req.response.error("Carta no encontrada en la mano del jugador");
+    if (!usedCard) return req.response.error('Carta no encontrada en la mano del jugador');
 
     switch (usedCard.type) {
-      case 'creature': {
-        // Añadir criatura a la mesa del jugador y quitar de la mano
-        await Game.updateOne(
-          { _id: gameId },
-          {
-            $push: { playerTable: usedCard },
-            $pull: { playerHand: { _id: usedCard._id } },
-            $inc: { playerMana: -usedCard.cost }
-          }
-        );
-
-        // Leer el estado actualizado del juego
-        const updatedGame = await Game.findById(gameId);
-
-        // Marcar solo la última carta añadida como new: true, el resto como new: false
-        const playerTableupdated = updatedGame.playerTable.map((card, idx, arr) => {
-          const base = card.toObject?.() || card;
-          return {
-            ...base,
-            new: idx === arr.length - 1 // true solo para la última carta, false para el resto
-          };
-        });
-
-        return req.response.success({
-          gameId: req.body.gameId,
-          action_result: {
-            type: 'use',
-            card: usedCard
-          },
-          turn: {
-            number: updatedGame.currentTurn,
-            whose: "user",
-            phase: "hand"
-          },
-          user: {
-            hand: updatedGame.playerHand,
-            pending_deck: updatedGame.playerPendingDeck.length,
-            table: playerTableupdated,
-            health: updatedGame.playerHp,
-            mana: updatedGame.playerMana
-          },
-          rival: {
-            hand: updatedGame.rivalHand.length,
-            table: updatedGame.rivalTable,
-            pending_deck: updatedGame.rivalPendingDeck.length,
-            health: updatedGame.rivalHp,
-            mana: updatedGame.rivalMana
-          }
-        });
-      }
-      case 'equipement': {
-        // Equipar carta a objetivo
-        const equipTarget = game.playerTable.find(card => card._id.toString() === targetedCard?._id?.toString());
-        if (equipTarget) {
-          // Usamos positional operator para actualizar el equipo de la carta objetivo
-          usedCard.target = equipTarget;
-          const newAtk = (equipTarget.atk || 0) + (usedCard.atk || 0);
-          const newHp = (equipTarget.hp || 0) + (usedCard.hp || 0);
-
-          // 1. Actualizar stats
-          await Game.updateOne(
-            { _id: gameId, 'playerTable._id': equipTarget._id },
-            { 
-              $set: {
-              'playerTable.$.atk': newAtk,
-              'playerTable.$.hp': newHp
-              }
-            }
-          );
-
-          // 2. Añadir equipement y quitar de la mano, restar maná
-          await Game.updateOne(
-            { _id: gameId, 'playerTable._id': equipTarget._id },
-            {
-              $push: { 'playerTable.$.equipements': usedCard },
-              $pull: { playerHand: { _id: usedCard._id } },
-              $inc: { playerMana: -usedCard.cost }
-            }
-          );
-
-          const updatedGame = await Game.findById(gameId);
-
-          // Marcar solo el último equipement añadido como new: true, el resto no
-          const playerTableupdated = updatedGame.playerTable.map(card => {
-            if (card._id.toString() === equipTarget._id.toString()) {
-              // Procesar su array de equipements
-              const equipements = (card.equipements || []).map((eq, idx, arr) => {
-                const eqBase = eq.toObject?.() || eq;
-                return {
-                  ...eqBase,
-                  new: idx === arr.length - 1 // true solo para el último, false para el resto
-                };
-              });
-              return { ...card.toObject?.(), equipements };
-            } else {
-              return card.toObject?.();
-            }
-          });
-
-          return req.response.success({
-            gameId: req.body.gameId,
-            action_result: {
-              type: 'use',
-              card: usedCard
-            },
-            turn: {
-              number: updatedGame.currentTurn,
-              whose: "user",
-              phase: "hand"
-            },
-            user: {
-              hand: updatedGame.playerHand,
-              pending_deck: updatedGame.playerPendingDeck.length,
-              table: playerTableupdated,
-              health: updatedGame.playerHp,
-              mana: updatedGame.playerMana
-            },
-            rival: {
-              hand: updatedGame.rivalHand.length,
-              table: updatedGame.rivalTable,
-              pending_deck: updatedGame.rivalPendingDeck.length,
-              health: updatedGame.rivalHp,
-              mana: updatedGame.rivalMana
-            }
-          });
-        } else {
-          return req.response.error('Target de equipamiento no encontrado');
-        }
-      }
-      case 'spell': {
-        // Resolver efectos de hechizo
-        if (usedCard.effect === 'protect_one') {
-          console.log('\n----------------------------------------------------------\nObjetivo del hechizo encontrado ==> ', targetedCard);
-          if (targetedCard) {
-            // Proteger carta aliada y añadir el spell a equipements
-            usedCard.target = targetedCard;
-            await Game.updateOne(
-              { _id: gameId, 'playerTable._id': targetedCard._id },
-              {
-                $set: { 'playerTable.$.temporaryAbilities': 'invulnerable' },
-                $push: { 'playerTable.$.equipements': usedCard },
-                $pull: { playerHand: { _id: usedCard._id } },
-                $inc: { playerMana: -usedCard.cost }
-              }
-            );
-
-            const updatedGame = await Game.findById(gameId);
-
-            // Marcar solo el último spell añadido como new: true en equipements
-            const playerTableupdated = updatedGame.playerTable.map(card => {
-              if (card._id.toString() === targetedCard._id.toString()) {
-                // Procesar su array de equipements
-                const equipements = (card.equipements || []).map((eq, idx, arr) => {
-                  const eqBase = eq.toObject?.() || eq;
-                  return {
-                    ...eqBase,
-                    new: idx === arr.length - 1 // true solo para el último, false para el resto
-                  };
-                });
-                return { ...card.toObject?.(), equipements };
-              } else {
-                return card.toObject?.();
-              }
-            });
-
-            return req.response.success({
-              gameId: req.body.gameId,
-              action_result: {
-                type: 'use',
-                card: usedCard
-              },
-              turn: {
-                number: updatedGame.currentTurn,
-                whose: "user",
-                phase: "hand"
-              },
-              user: {
-                hand: updatedGame.playerHand,
-                pending_deck: updatedGame.playerPendingDeck.length,
-                table: playerTableupdated,
-                health: updatedGame.playerHp,
-                mana: updatedGame.playerMana
-              },
-              rival: {
-                hand: updatedGame.rivalHand.length,
-                table: updatedGame.rivalTable,
-                pending_deck: updatedGame.rivalPendingDeck.length,
-                health: updatedGame.rivalHp,
-                mana: updatedGame.rivalMana
-              }
-            });
-          } else {
-            return req.response.error('Target de hechizo de tipo protect no encontrado');
-          }
-        } else if (usedCard.effect === 'kill') {
-          if (targetedCard) {
-            usedCard.target = targetedCard;
-            // Determinar si la carta objetivo está en la mesa del rival o del player
-            if (game.rivalTable.some(card => card._id.toString() === targetedCard._id.toString())) {
-              // Objetivo en la mesa del rival
-              // 1. Marcar la carta como muerta
-              await Game.updateOne(
-                { _id: gameId, 'rivalTable._id': targetedCard._id },
-                { $set: { 'rivalTable.$.alive': false } }
-              );
-
-              // 2. Añadir el equipement
-              await Game.updateOne(
-                { _id: gameId, 'rivalTable._id': targetedCard._id },
-                { $push: { 'rivalTable.$.equipements': usedCard } }
-              );
-
-              // 3. Quitar la carta de la mano y restar maná
-              await Game.updateOne(
-                { _id: gameId },
-                {
-                  $pull: { playerHand: { _id: usedCard._id } },
-                  $inc: { playerMana: -usedCard.cost }
-                }
-              );
-            } else if (game.playerTable.some(card => card._id.toString() === targetedCard._id.toString())) {
-              // Objetivo en la mesa del player
-              // 1. Marcar la carta como muerta
-              await Game.updateOne(
-                { _id: gameId, 'playerTable._id': targetedCard._id },
-                { $set: { 'playerTable.$.alive': false } }
-              );
-
-              // 2. Añadir el equipement
-              await Game.updateOne(
-                { _id: gameId, 'playerTable._id': targetedCard._id },
-                { $push: { 'playerTable.$.equipements': usedCard } }
-              );
-
-              // 3. Quitar la carta de la mano y restar maná
-              await Game.updateOne(
-                { _id: gameId },
-                {
-                  $pull: { playerHand: { _id: usedCard._id } },
-                  $inc: { playerMana: -usedCard.cost }
-                }
-              );
-            } else {
-              return req.response.error('Target de hechizo de tipo kill no encontrado');
-            }
-
-            const updatedGame = await Game.findById(gameId);
-
-            // Marcar solo el último spell añadido como new: true en equipements de la carta objetivo
-            let playerTableupdated = updatedGame.playerTable;
-            let rivalTableupdated = updatedGame.rivalTable;
-            if (game.rivalTable.some(card => card._id.toString() === targetedCard._id.toString())) {
-              rivalTableupdated = updatedGame.rivalTable.map(card => {
-                if (card._id.toString() === targetedCard._id.toString()) {
-                  const equipements = (card.equipements || []).map((eq, idx, arr) => {
-                    const eqBase = eq.toObject?.() || eq;
-                    return {
-                      ...eqBase,
-                      new: idx === arr.length - 1 // true solo para el último, false para el resto
-                    };
-                  });
-                  return { ...card.toObject?.(), equipements };
-                } else {
-                  return card.toObject?.();
-                }
-              });
-            } else if (game.playerTable.some(card => card._id.toString() === targetedCard._id.toString())) {
-              playerTableupdated = updatedGame.playerTable.map(card => {
-                if (card._id.toString() === targetedCard._id.toString()) {
-                  const equipements = (card.equipements || []).map((eq, idx, arr) => {
-                    const eqBase = eq.toObject?.() || eq;
-                    return {
-                      ...eqBase,
-                      new: idx === arr.length - 1 // true solo para el último, false para el resto
-                    };
-                  });
-                  return { ...card.toObject?.(), equipements };
-                } else {
-                  return card.toObject?.();
-                }
-              });
-            }
-
-            return req.response.success({
-              gameId: req.body.gameId,
-              action_result: {
-                type: 'use',
-                card: usedCard
-              },
-              turn: {
-                number: updatedGame.currentTurn,
-                whose: "user",
-                phase: "hand"
-              },
-              user: {
-                hand: updatedGame.playerHand,
-                table: playerTableupdated,
-                pending_deck: updatedGame.playerPendingDeck.length,
-                health: updatedGame.playerHp,
-                mana: updatedGame.playerMana
-              },
-              rival: {
-                hand: updatedGame.rivalHand.length,
-                table: rivalTableupdated,
-                pending_deck: updatedGame.rivalPendingDeck.length,
-                health: updatedGame.rivalHp,
-                mana: updatedGame.rivalMana
-              }
-            });
-          } else {
-            return req.response.error('Objetivo de hechizo no válido');
-          }
-        } else {
-          return req.response.error('Efecto de hechizo no soportado');
-        }
-      }
+      case 'creature':
+        return handleCreatureCard(game, usedCard, req, res);
+      case 'equipement':
+        return handleEquipementCard(game, usedCard, targetedCard, req, res);
+      case 'spell':
+        return handleSpellCard(game, usedCard, targetedCard, req, res);
       default:
         return req.response.error('Tipo de carta no soportado');
     }
@@ -477,7 +162,7 @@ async function attack(req, res) {
 
     const updatedGameAfterDrawing = await Game.findById(gameId);
 
-    console.log('\n----------------------------------------------------------Cartas DESPUÉS de robar en la mano del rival ==> \n',updatedGameAfterDrawing.rivalHand);
+    console.log('\n----------------------------------------------------------Cartas DESPUÉS de robar en la mano del rival ==> \n', updatedGameAfterDrawing.rivalHand);
     console.log('\n----------------------------------------------------------Pending deck del rival DESPUÉS de robar ==> ', updatedGameAfterDrawing.rivalPendingDeck.length);
 
     try {
