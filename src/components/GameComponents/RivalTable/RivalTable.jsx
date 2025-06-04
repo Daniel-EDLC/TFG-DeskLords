@@ -59,11 +59,7 @@ function RivalTable({
           const isInRivalBattle = battles.some(b => b.atacanteId === carta._id);
           const isFadingOut = hiddenCards.includes(carta._id);
 
-          const bonusAtk = carta.equipements?.reduce((sum, eq) => sum + (eq.atk || 0), 0) || 0;
-          const bonusHp = carta.equipements?.reduce((sum, eq) => sum + (eq.hp || 0), 0) || 0;
-
-          const totalAtk = (carta.atk || 0) + bonusAtk;
-          const totalHp = (carta.hp || 0) + bonusHp;
+      
 
           return (
             <div
@@ -188,9 +184,15 @@ function RivalTable({
                   />
                       {typeof carta.atk === 'number' && typeof carta.hp === 'number' && (
                         <div className="rival-card-center-stats">
-                          <div className="atk">{totalAtk}</div>
+                          <div className="atk">
+                        {carta.atk}
+                        {/* {carta.atk + (carta.equipements?.reduce((sum, eq) => sum + (eq.atk || 0), 0) || 0)} */}
+                          </div>
                           <div className="blnc">/</div>
-                          <div className="hp">{totalHp}</div>
+                          <div className="hp">
+                        {carta.hp}
+                        {/* {carta.hp + (carta.equipements?.reduce((sum, eq) => sum + (eq.hp || 0), 0) || 0)} */}
+                          </div>
                         </div>
                       )}
 

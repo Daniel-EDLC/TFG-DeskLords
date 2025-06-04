@@ -4,22 +4,25 @@
   right: 0;
   margin: 20px;
   z-index: 5;
+  
 }
 
 .profile-with-deck {
   display: flex;
   align-items: flex-end;
   gap: 1rem;
+  
 }
 
 .profile-card {
-  background-color: rgba(255, 255, 255, 0.8);
   border-radius: 8px;
   padding: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
 }
 
 .avatar-wrapper {
@@ -196,7 +199,7 @@
 @media (max-width: 435px) {
   .profile-container {
     position: fixed;
-    bottom: 140px;
+    bottom: 15vh;
     left: 50%;
     transform: translateX(-50%);
     margin: 0;
@@ -210,11 +213,12 @@
     justify-content: center;
     align-items: center;
     gap: 0.5rem; /* Reducido */
-    background-color: rgba(255, 255, 255, 0.8);
     border-radius: 8px;
     padding: 6px 8px; /* Menor padding */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  }
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+    }
 
   .profile-card {
     flex-direction: row;
@@ -223,6 +227,9 @@
     gap: 0.5rem;
     background-color: transparent;
     box-shadow: none;
+    background-color: rgba(255, 255, 255, 0);
+    border: 2px solid rgba(255, 255, 255, 0);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0);
   }
 
   .avatar-image {

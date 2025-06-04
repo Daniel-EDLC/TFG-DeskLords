@@ -15,7 +15,7 @@ export default function TurnIndicator({ turn }) {
   const isPlayerTurn = whose === 'user';
   console.log(turn)
   return (
-    <div className={`turn-indicator ${!isPlayerTurn ? 'rival' : 'user'}`}>
+    <div className={`turn-indicator ${!isPlayerTurn ? 'rival' : 'player'}`}>
       {!isPlayerTurn && <div className="info-rival">Turno rival</div>}
       {isPlayerTurn && <div className="info-player">Tu turno</div>}
       <div className="icons">

@@ -136,10 +136,14 @@ function PlayerTable({
               case 'hand':
                 return (
                   <Box className="phase-buttons-inner">
-                    <Button variant="contained" className="phase-button" onClick={handleSwitchPhase}>Fase mesa</Button>
-                    <Button variant="contained" className="end-turn-button" onClick={handleEndTurnClick}>Pasar turno</Button>
+                    {cartas.length > 0 && (
+                      <Button variant="contained" className="phase-button" onClick={handleSwitchPhase}> Fase mesa </Button>
+                    )}
+                    <Button variant="contained" className="end-turn-button" onClick={handleEndTurnClick}> Pasar turno </Button>
                   </Box>
                 );
+
+
               case 'table':
                 return (
                   <Box className="phase-buttons-inner">
@@ -161,9 +165,7 @@ function PlayerTable({
                     <Button variant="contained" className="resetBattle-button" color="primary" onClick={onResetBattle}>Reiniciar batallas</Button>
                     <Button variant="contained" className="phase-button" color="primary" onClick={handleDefenseClick}>Defender y empezar turno</Button>
                   </>
-                ) : (
-                  <Button variant="contained" className="noDefense-button" color="primary" onClick={handleDefenseClick}>Empezar turno sin defender</Button>
-                )}
+                ) : null}
               </Box>
             );
           }
@@ -207,10 +209,9 @@ function PlayerTable({
           const isSelected = selectedAttackCards.includes(carta._id);
           const isInPlayerBattle = battles.some(b => b.defensorId === carta._id);
           const isFadingOut = hiddenCards.includes(carta._id);
-
           return (
             <div key={carta._id} className={`player-card-wrapper ${isFadingOut ? 'player-card-fade-out' : ''} `}>
-              <div className={`player-card-table ${isSelected ? 'selected' : ''} ${isInPlayerBattle ? 'player-card-in-battle' : ''}`}>
+              <div className={`player-card-table ${isSelected ? 'selected' : ''} ${isInPlayerBattle ? 'player-card-in-battle' : ''} ${selectedAttackCards.includes(carta._id) ? 'attack-animating' : ''}`}>
                 <Paper
                   elevation={10}
                   className={`player-card-inner 
@@ -220,8 +221,7 @@ function PlayerTable({
                     ${isSelected ? 'selected' : ''}
                     ${draggingType === 'spell' || draggingType === 'equipement' ? 'player-drop-hover' : ''}
                     ${['spell', 'equipement'].includes(pendingCard?.type) ? 'player-drop-hover' : ''}
-                    
-                  `}
+                    `}
                   onClick={() => handleCardClick(carta)}
                   onDragOver={(e) => e.preventDefault()}
                   onDragEnter={() => setHoveredCardId(carta._id)}
@@ -278,11 +278,13 @@ function PlayerTable({
                   {typeof carta.atk === 'number' && typeof carta.hp === 'number' && (
                     <div className="player-card-center-stats">
                       <div className="atk">
-                        {carta.atk + (carta.equipements?.reduce((sum, eq) => sum + (eq.atk || 0), 0) || 0)}
+                        {carta.atk}
+                        {/* {carta.atk + (carta.equipements?.reduce((sum, eq) => sum + (eq.atk || 0), 0) || 0)} */}
                       </div>
                       <div className="blnc">/</div>
                       <div className="hp">
-                        {carta.hp + (carta.equipements?.reduce((sum, eq) => sum + (eq.hp || 0), 0) || 0)}
+                        {carta.hp}
+                        {/* {carta.hp + (carta.equipements?.reduce((sum, eq) => sum + (eq.hp || 0), 0) || 0)} */}
                       </div>
                     </div>
                   )}

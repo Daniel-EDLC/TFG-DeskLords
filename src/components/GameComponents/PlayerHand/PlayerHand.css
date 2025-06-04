@@ -8,7 +8,7 @@
 
 .player-hand {
   position: fixed;
-  bottom: -20px;
+  bottom: -10vh;
   left: 50%;
   transform: translateX(-50%);
   height: 250px;
@@ -91,6 +91,7 @@
 @media (max-width: 435px) {
   .player-hand {
     height: 180px;
+  bottom: -7vh;
   }
 
   .card {

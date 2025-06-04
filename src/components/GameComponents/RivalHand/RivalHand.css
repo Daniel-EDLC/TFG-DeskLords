@@ -1,7 +1,7 @@
 /* Posición y estructura del contenedor */
 .rival-hand-container {
   position: fixed;
-  top: -20px;
+  top: -10vh;
   left: 50%;
   transform: translateX(-50%);
   height: 200px;
@@ -40,6 +40,7 @@
 @media (max-width: 435px) {
   .rival-hand-container {
     height: 160px;
+      top: -7vh;
   }
 
   .rival-card {

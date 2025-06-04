@@ -372,7 +372,7 @@ export async function attack(selectedAttackCards, setGameData) {
 
 //version real attack
 
-export async function endTurn(selectedAttackCards, setGameData, gameData) {
+export async function endTurn(selectedAttackCards, setGameData, gameData, setFloatingMessage) {
 
  const user = await new Promise((resolve, reject) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -409,62 +409,97 @@ export async function endTurn(selectedAttackCards, setGameData, gameData) {
     
     console.log(data);
 
-    console.log("defensa del rival");
-    console.log(data.data)
-    setGameData((prev) => ({
-      ...prev,
-      turn: {
-        ...prev.turn,
-        ...data.data.action1.turn,
-      },
-      user: {
-        ...prev.user,
-        ...data.data.action1.user,
-      },
-      rival: {
-        ...prev.rival,
-        ...data.data.action1.rival,
-      },
-    }));
-    setTimeout(() => {
-      console.log("mano del rival");
-      console.log(data.data)
-      setGameData((prev) => ({
-        ...prev,
-        turn: {
-          ...prev.turn,
-          ...data.data.action2.turn,
-        },
-        user: {
-          ...prev.user,
-          ...data.data.action2.user,
-        },
-        rival: {
-          ...prev.rival,
-          ...data.data.action2.rival,
-        },
-      }));
-    }, 5000);
 
-    setTimeout(() => {
-      console.log("ataque del rival");
-      console.log(data.data)
-      setGameData((prev) => ({
-        ...prev,
-        turn: {
-          ...prev.turn,
-          ...data.data.action3.turn,
-        },
-        user: {
-          ...prev.user,
-          ...data.data.action3.user,
-        },
-        rival: {
-          ...prev.rival,
-          ...data.data.action3.rival,
-        },
-      }));
-    }, 10000);
+        if (data.data.battle === true) {
+          console.log("defensa del rival");
+          console.log(data.data);
+
+          setGameData((prev) => ({
+            ...prev,
+            turn: { ...prev.turn, ...data.data.action1.turn },
+            user: { ...prev.user, ...data.data.action1.user },
+            rival: { ...prev.rival, ...data.data.action1.rival },
+          }));
+          setTimeout(() => {
+            console.log("mano del rival");
+            console.log(data.data);
+
+            setGameData((prev) => ({
+              ...prev,
+              turn: { ...prev.turn, ...data.data.action2.turn },
+              user: { ...prev.user, ...data.data.action2.user },
+              rival: { ...prev.rival, ...data.data.action2.rival },
+            }));
+          }, 5000);
+          setTimeout(() => {
+            console.log("ataque del rival");
+            console.log(data.data);
+
+            setGameData((prev) => {
+              const newGameData = {
+                ...prev,
+                turn: { ...prev.turn, ...data.data.action3.turn },
+                user: { ...prev.user, ...data.data.action3.user },
+                rival: { ...prev.rival, ...data.data.action3.rival },
+              };
+
+              const cartasEnMesa = newGameData.user.table;
+              if (!cartasEnMesa || cartasEnMesa.length === 0) {
+                setTimeout(() => {
+                  setFloatingMessage('Daño automático, no hay criaturas en mesa');
+                }, 2000);
+
+                setTimeout(() => {
+                  defense(setGameData, newGameData);
+                }, 4000);
+              }
+
+              return newGameData;
+            });
+          }, 10000);
+
+        } else {
+          console.log("mano del rival (sin acción 1)");
+          console.log(data.data);
+
+          setGameData((prev) => ({
+            ...prev,
+            turn: { ...prev.turn, ...data.data.action2.turn },
+            user: { ...prev.user, ...data.data.action2.user },
+            rival: { ...prev.rival, ...data.data.action2.rival },
+          }));
+
+          setTimeout(() => {
+            console.log("ataque del rival");
+            console.log(data.data);
+
+            setGameData((prev) => {
+              const newGameData = {
+                ...prev,
+                turn: { ...prev.turn, ...data.data.action3.turn },
+                user: { ...prev.user, ...data.data.action3.user },
+                rival: { ...prev.rival, ...data.data.action3.rival },
+              };
+
+              const cartasEnMesa = newGameData.user.table;
+              if (!cartasEnMesa || cartasEnMesa.length === 0) {
+                setTimeout(() => {
+                  setFloatingMessage('Daño automático, no hay criaturas en mesa');
+                }, 2000);
+
+                setTimeout(() => {
+                  defense(setGameData, newGameData);
+                }, 4000);
+              }
+
+              return newGameData;
+            });
+          }, 5000);
+        }
+
+
+
+    
   } catch (error) {
     console.error("Error simulado al enviar ataque:", error);
   }

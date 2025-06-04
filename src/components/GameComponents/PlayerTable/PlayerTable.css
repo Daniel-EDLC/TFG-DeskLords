@@ -413,6 +413,8 @@
   background-color: rgb(128, 0, 0) !important;
 }
 
+
+
 /* Móvil */
 @media (max-width: 435px) {
   .player-table-container {

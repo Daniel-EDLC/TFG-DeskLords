@@ -1,6 +1,7 @@
 .user-container {
   background-color: rgba(255, 255, 255, 0.05);
   border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
   border-radius: 16px;
   padding: 2rem;
   text-align: center;
@@ -9,7 +10,6 @@
   max-width: 25vw;
   min-height: 50vh;
   margin: 2rem auto;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
   transition: transform 0.3s ease;
 }
 

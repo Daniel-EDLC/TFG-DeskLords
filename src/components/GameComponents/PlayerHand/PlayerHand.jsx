@@ -2,10 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Paper } from '@mui/material';
 import './PlayerHand.css';
 
-function PlayerHand({ cartas, mana, turn, onPlayCard, setDraggingType, setPendingCard  }) {
+function PlayerHand({ cartas, mana, turn, onPlayCard, setDraggingType, setPendingCard, setFloatingMessage }) {
   const [selectedCardId, setSelectedCardId] = useState(null);
-  const [floatingMessage, setFloatingMessage] = useState('');
-  const [isFading, setIsFading] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [longPressCardId, setLongPressCardId] = useState(null);
   const [longPressTimeout, setLongPressTimeout] = useState(null);
@@ -15,18 +13,6 @@ function PlayerHand({ cartas, mana, turn, onPlayCard, setDraggingType, setPendin
       setSelectedCardId(null);
     }
   }, [turn.phase]);
-
-  useEffect(() => {
-    if (floatingMessage) {
-      setIsFading(false);
-      const fadeTimer = setTimeout(() => setIsFading(true), 2500);
-      const removeTimer = setTimeout(() => setFloatingMessage(''), 3000);
-      return () => {
-        clearTimeout(fadeTimer);
-        clearTimeout(removeTimer);
-      };
-    }
-  }, [floatingMessage]);
 
   const total = cartas.length;
 
@@ -139,12 +125,6 @@ function PlayerHand({ cartas, mana, turn, onPlayCard, setDraggingType, setPendin
           );
         })}
       </div>
-
-      {floatingMessage && (
-        <div className={`floating-overlay ${isFading ? 'fade-out' : ''}`}>
-          <div className="floating-message">{floatingMessage}</div>
-        </div>
-      )}
     </>
   );
 }

@@ -18,6 +18,7 @@ import Decks from "../../components/MenuComponents/Decks/Decks";
 import News from "../../components/MenuComponents/News/News";
 import Shop from "../../components/MenuComponents/Shop/Shop";
 import Missions from "../../components/MenuComponents/Missions/Missions";
+import ContactUs from "../../components/MenuComponents/ContactUs/ContactUs";
 
 import {
   cargarPartida,
@@ -34,18 +35,16 @@ function Menu() {
 
   const [data, setData] = useState(null);
   const [seccionActiva, setSeccionActiva] = useState("inicio");
-  const [showGestion, setShowGestion] = useState(false);
+  // const [showGestion, setShowGestion] = useState(false);
   const [selectedMap, setSelectedMap] = useState(null);
   const [selectedDeckId, setSelectedDeckId] = useState("");
   const [modalAbierto, setModalAbierto] = useState(false);
 
-  const botones = [
-    { id: "inicio", icon: <HomeIcon />, texto: "Inicio" },
-    { id: "coleccion", icon: <CollectionsIcon />, texto: "Colección" },
-    { id: "perfil", icon: <AccountCircleIcon />, texto: "Perfil" },
-    { id: "batalla", icon: <SportsKabaddiIcon />, texto: "Batalla" },
-    { id: "gestion", icon: <StorageIcon />, texto: data.rol === "admin" ? "Gestión" : "Contacto" }
-    ];
+  console.log("Menu data:", data);
+  
+
+
+
 
     useEffect(() => {
       const timeout = setTimeout(() => {
@@ -70,9 +69,9 @@ function Menu() {
   useEffect(() => {
     if (!data) return;
 
-    if (data.rol === "admin") {
-      setShowGestion(true);
-    }
+    // if (data.rol === "admin") {
+    //   setShowGestion(true);
+    // }
 
     if (!selectedMap && data.maps?.length) {
       const firstAvailable = data.maps.find((m) => m.available);
@@ -99,16 +98,22 @@ function Menu() {
     }
   };
 
-
   if (!data) {
-    return (
-      <div className="loading-container">
-        <div className="loading-box">
-          <p>Espera unos segundos...</p>
-        </div>
-      </div>
-    );
+  return null;
+}
+
+const botones = [
+  { id: "inicio", icon: <HomeIcon />, texto: "Inicio" },
+  { id: "coleccion", icon: <CollectionsIcon />, texto: "Colección" },
+  { id: "perfil", icon: <AccountCircleIcon />, texto: "Perfil" },
+  { id: "batalla", icon: <SportsKabaddiIcon />, texto: "Batalla" },
+  {
+    id: data.rol === "admin" ? "gestion" : "contacto",
+    icon: <StorageIcon />,
+    texto: data.rol === "admin" ? "Gestión" : "Contacto"
   }
+];
+
 
   const renderContenido = () => {
     switch (seccionActiva) {
@@ -158,16 +163,14 @@ function Menu() {
             experience={data.playerExperience}
           />
         );
-      case "bbdd":
-        return (
-          <div className="section-placeholder">
-            {data.rol === "admin" ? (
-              <button className="btn">BBDD</button>
-            ) : data.rol === "player" ? (
-              <button className="btn">Contacto</button>
-            ) : null}
-          </div>
-        );
+      // case "gestion":
+      //   return (
+          
+      //   );
+        case "contacto":
+          return (
+            <ContactUs />
+          );
       case "batalla":
         return (
           <div className="maps-container">

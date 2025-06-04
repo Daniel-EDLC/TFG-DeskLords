@@ -51,6 +51,20 @@ function Game() {
 
   const [draggingType, setDraggingType] = useState(null);
 
+  const [floatingMessage, setFloatingMessage] = useState('');
+  const [isFading, setIsFading] = useState(false);
+
+  useEffect(() => {
+    if (floatingMessage) {
+      setIsFading(false);
+      const fadeTimer = setTimeout(() => setIsFading(true), 2500);
+      const removeTimer = setTimeout(() => setFloatingMessage(''), 3000);
+      return () => {
+        clearTimeout(fadeTimer);
+        clearTimeout(removeTimer);
+      };
+    }
+  }, [floatingMessage]);
 
 
 
@@ -86,7 +100,7 @@ function Game() {
   };
 
   const handleSwitchPhase = () => switchPhase(setGameData, gameData);
-  const handleEndTurn = async (selectedAttackCards) => await endTurn(selectedAttackCards, setGameData, gameData);
+  const handleEndTurn = async (selectedAttackCards) => await endTurn(selectedAttackCards, setGameData, gameData, setFloatingMessage);
   const handleDefense = async () => {
   try {
     await defense(setGameData, gameData);
@@ -148,26 +162,25 @@ function Game() {
       return;
     }
 
-    let link = '';
-    switch (gameData.turn.phase) {
-      case 'hand':
-        link = gameData.turn.whose === 'user' ? '/FASEMANOPLAYERFINAL.png' : '/FASEMANORIVALFINAL.png';
-        break;
-      case 'table':
-      case 'attack':
-        link = '/FASEATAQUEFINAL.png';
-        break;
-      case 'defense':
-        link = '/FASEDEFENSAFINAL.png';
-        break;
-      default:
-        link = '';
-    }
+    //  let link = '';
+    // switch (gameData.turn.phase) {
+    //   case 'hand':
+    //     link = gameData.turn.whose === 'user' ? '/FASEMANOPLAYERFINAL.png' : '/FASEMANORIVALFINAL.png';
+    //     break;
+    //   case 'attack':
+    //     link = '/FASEATAQUEFINAL.png';
+    //     break;
+    //   case 'defense':
+    //     link = '/FASEDEFENSAFINAL.png';
+    //     break;
+    //   default:
+    //     link = '';
+    // }
 
-    if (link) {
-      setAnnouncementLink(link);
-      setShowAnnouncement(true);
-    }
+    // if (link) {
+    //   setAnnouncementLink(link);
+    //   setShowAnnouncement(true);
+    // }
   }, [phaseTurn, whoseTurn, gameData?.user?.health, gameData?.rival?.health]);
 
   const updateBattles = () => {
@@ -261,7 +274,8 @@ console.log("partida->",gameData.user.hand)
         selectedTableCardIdForEquipment={selectedTableCardIdForEquipment}
         selectedTableCardIdForSpell={selectedTableCardIdforSpell}
         setDraggingType={setDraggingType}
-         setPendingCard={setPendingCard}
+        setPendingCard={setPendingCard}
+        setFloatingMessage={setFloatingMessage}
       />
 
       <PlayerProfile
@@ -276,10 +290,7 @@ console.log("partida->",gameData.user.hand)
 
       <TurnIndicator turn={gameData.turn} />
 
-
-
-
-      {/* {showAnnouncement && (
+     {showAnnouncement && (
         <Announcement
           link={announcementLink}
           duration={2000}
@@ -308,10 +319,18 @@ console.log("partida->",gameData.user.hand)
             </div>
           )}
         </div>
-      )} */}
+      )} 
+      {floatingMessage && (
+  <div className={`floating-overlay ${isFading ? 'fade-out' : ''}`}>
+    <div className="floating-message">{floatingMessage}</div>
+  </div>
+)}
     </div>
     
   );
 }
 
 export default Game;
+
+
+
