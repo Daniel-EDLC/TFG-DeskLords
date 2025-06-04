@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { useMediaQuery, Box, IconButton, Dialog } from "@mui/material";
 import SportsKabaddiIcon from "@mui/icons-material/SportsKabaddi";
+import { signOut } from 'firebase/auth';
+import { auth } from '../../../firebaseConfig';
+
+
 import StorageIcon from "@mui/icons-material/Storage";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import CollectionsIcon from "@mui/icons-material/Collections";
@@ -40,17 +44,15 @@ function Menu() {
     { id: "coleccion", icon: <CollectionsIcon />, texto: "Colección" },
     { id: "perfil", icon: <AccountCircleIcon />, texto: "Perfil" },
     { id: "batalla", icon: <SportsKabaddiIcon />, texto: "Batalla" },
-    { id: "bbdd", icon: <StorageIcon />, texto: "BBDD" },
-  ];
+    { id: "gestion", icon: <StorageIcon />, texto: data.rol === "admin" ? "Gestión" : "Contacto" }
+    ];
 
-useEffect(() => {
-  const timeout = setTimeout(() => {
-    setShowSplash(false);
-  }, 7000); // 6s + 1s de fade out
-  return () => clearTimeout(timeout);
-}, []);
-
-
+    useEffect(() => {
+      const timeout = setTimeout(() => {
+        setShowSplash(false);
+      }, 7000);
+      return () => clearTimeout(timeout);
+    }, []);
 
 
   useEffect(() => {
@@ -157,7 +159,15 @@ useEffect(() => {
           />
         );
       case "bbdd":
-        return <div className="section-placeholder">[Herramientas BBDD]</div>;
+        return (
+          <div className="section-placeholder">
+            {data.rol === "admin" ? (
+              <button className="btn">BBDD</button>
+            ) : data.rol === "player" ? (
+              <button className="btn">Contacto</button>
+            ) : null}
+          </div>
+        );
       case "batalla":
         return (
           <div className="maps-container">
@@ -215,7 +225,7 @@ useEffect(() => {
                 ))}
             </Box>
             <div className="gestion-shape"></div>
-            <button className="logout-btn">
+            <button className="logout-btn" onClick={() => signOut(auth)}>
               <ExitToAppIcon />
             </button>
           </Box>
