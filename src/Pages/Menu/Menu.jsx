@@ -1,11 +1,15 @@
 import { useState, useEffect } from "react";
-import { useMediaQuery, Box, Button, IconButton, Dialog } from "@mui/material";
+import { useMediaQuery, Box, IconButton, Dialog } from "@mui/material";
 import SportsKabaddiIcon from "@mui/icons-material/SportsKabaddi";
+import { signOut } from 'firebase/auth';
+import { auth } from '../../../firebaseConfig';
+
+
 import StorageIcon from "@mui/icons-material/Storage";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import CollectionsIcon from "@mui/icons-material/Collections";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import HomeIcon from '@mui/icons-material/Home';
+import HomeIcon from "@mui/icons-material/Home";
 
 import ActualMap from "../../components/MenuComponents/ActualMap/ActualMap";
 import Maps from "../../components/MenuComponents/Maps/Maps";
@@ -24,7 +28,8 @@ import { useNavigate } from "react-router-dom";
 import "./Menu.css";
 
 function Menu() {
-  const esMovil = useMediaQuery("(max-width:435px)");
+  const [showSplash, setShowSplash] = useState(true);
+  const isMobile = useMediaQuery("(max-width:435px)");
   const navigate = useNavigate();
 
   const [data, setData] = useState(null);
@@ -39,8 +44,16 @@ function Menu() {
     { id: "coleccion", icon: <CollectionsIcon />, texto: "Colección" },
     { id: "perfil", icon: <AccountCircleIcon />, texto: "Perfil" },
     { id: "batalla", icon: <SportsKabaddiIcon />, texto: "Batalla" },
-    { id: "bbdd", icon: <StorageIcon />, texto: "BBDD" },
-  ];
+    { id: "gestion", icon: <StorageIcon />, texto: data.rol === "admin" ? "Gestión" : "Contacto" }
+    ];
+
+    useEffect(() => {
+      const timeout = setTimeout(() => {
+        setShowSplash(false);
+      }, 7000);
+      return () => clearTimeout(timeout);
+    }, []);
+
 
   useEffect(() => {
     const cargar = async () => {
@@ -77,8 +90,6 @@ function Menu() {
 
   const handlePlay = async () => {
     if (selectedMap && selectedDeckId) {
-      console.log("mapa:", selectedMap);
-      console.log("deck:", selectedDeckId);
       try {
         const gameData = await cargarPartida(selectedDeckId, selectedMap.id);
         navigate("/game", { state: { partida: gameData } });
@@ -88,29 +99,50 @@ function Menu() {
     }
   };
 
+
+  if (!data) {
+    return (
+      <div className="loading-container">
+        <div className="loading-box">
+          <p>Espera unos segundos...</p>
+        </div>
+      </div>
+    );
+  }
+
   const renderContenido = () => {
     switch (seccionActiva) {
       case "inicio":
         return (
-          <div className="inicio-layout">
-            <div className="inicio-columna izquierda">
-              <News noticias={data.news} />
-            </div>
-            <div className="inicio-columna derecha">
-              <div className="inicio-columna-derecha-arriba">
-                <div className="play-card" onClick={() => setModalAbierto(true)}>
-                  <img
-                    src="https://platform.polygon.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/24596644/Elspeths_Smite_Artist_Livia_Prima_cropped.jpg?quality=90&strip=all&crop=7.8%2C0%2C84.4%2C100&w=2400"
-                    className="play-imagen"
-                  />
-                  <h1 className="play-text">Play!</h1>
-                </div>
+          <div>
+            {isMobile ? (
+              <div className="menu-mobile">
                 <Shop decks={data.decks} />
-              </div>
-              <div className="inicio-missions">
                 <Missions misiones={data.missions} />
+                <News noticias={data.news} />
               </div>
-            </div>
+            ) : (
+              <div className="inicio-layout">
+                <div className="inicio-columna izquierda">
+                  <News noticias={data.news} />
+                </div>
+                <div className="inicio-columna derecha">
+                  <div className="inicio-columna-derecha-arriba">
+                    <div className="play-card" onClick={() => setModalAbierto(true)}>
+                      <img
+                        src="https://platform.polygon.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/24596644/Elspeths_Smite_Artist_Livia_Prima_cropped.jpg?quality=90&strip=all&crop=7.8%2C0%2C84.4%2C100&w=2400"
+                        className="play-imagen"
+                      />
+                      <h1 className="play-text">Play!</h1>
+                    </div>
+                    <Shop decks={data.decks} />
+                  </div>
+                  <div className="inicio-missions">
+                    <Missions misiones={data.missions} />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         );
       case "coleccion":
@@ -127,7 +159,15 @@ function Menu() {
           />
         );
       case "bbdd":
-        return <div className="section-placeholder">[Herramientas BBDD]</div>;
+        return (
+          <div className="section-placeholder">
+            {data.rol === "admin" ? (
+              <button className="btn">BBDD</button>
+            ) : data.rol === "player" ? (
+              <button className="btn">Contacto</button>
+            ) : null}
+          </div>
+        );
       case "batalla":
         return (
           <div className="maps-container">
@@ -146,19 +186,9 @@ function Menu() {
     }
   };
 
-  if (!data) {
-    return (
-      <div className="loading-container">
-        <div className="loading-box">
-          <p>Espera unos segundos...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <>
-      {esMovil ? (
+      {isMobile ? (
         <>
           <img src="/LOGO.png" alt="Logo DeskLords" className="menu-logo" />
           <Box className="main-content">
@@ -183,7 +213,7 @@ function Menu() {
             <img src="/LOGO.png" alt="Logo DeskLords" className="nav-logo" />
             <Box className="gestion-buttons">
               {botones
-                .filter((btn) => esMovil || btn.id !== "batalla")
+                .filter((btn) => isMobile || btn.id !== "batalla")
                 .map((btn) => (
                   <button
                     key={btn.id}
@@ -195,7 +225,7 @@ function Menu() {
                 ))}
             </Box>
             <div className="gestion-shape"></div>
-            <button className="logout-btn">
+            <button className="logout-btn" onClick={() => signOut(auth)}>
               <ExitToAppIcon />
             </button>
           </Box>
@@ -206,19 +236,39 @@ function Menu() {
         </>
       )}
 
-      {/* Modal de batalla desde Play */}
-      <Dialog open={modalAbierto} onClose={() => setModalAbierto(false)} maxWidth="xl" className="modal-maps-container" PaperProps={{style: {backgroundColor: 'transparent', boxShadow: 'none',},}}>
-          <Box className="maps-container">
-            <ActualMap
-              mapa={selectedMap}
-              onPlay={handlePlay}
-              decks={data.decks}
-              selectedDeckId={selectedDeckId}
-              onSelectDeck={setSelectedDeckId}
-            />
-            <Maps mapas={data.maps} onSelect={handleMapSelect} />
-          </Box>
+      <Dialog
+        open={modalAbierto}
+        onClose={() => setModalAbierto(false)}
+        maxWidth="xl"
+        className="modal-maps-container"
+        PaperProps={{
+          style: {
+            backgroundColor: "transparent",
+            boxShadow: "none",
+          },
+        }}
+      >
+        <Box className="maps-container">
+          <ActualMap
+            mapa={selectedMap}
+            onPlay={handlePlay}
+            decks={data.decks}
+            selectedDeckId={selectedDeckId}
+            onSelectDeck={setSelectedDeckId}
+          />
+          <Maps mapas={data.maps} onSelect={handleMapSelect} />
+        </Box>
       </Dialog>
+
+    {showSplash && (
+  <div className="splash-screen">
+    <div className="splash-wrapper">
+      <img src="/LOGO.png" alt="Logo DeskLords" className="splash-logo" />
+    </div>
+  </div>
+)}
+
+
     </>
   );
 }

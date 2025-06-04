@@ -7,6 +7,7 @@ import './Login.css';
 
 function Login({ onSwitch, onGoogleRegister }) {
   const API_URL = import.meta.env.VITE_API_URL;
+  const navigate = useNavigate();
 
   // signOut(auth);
 

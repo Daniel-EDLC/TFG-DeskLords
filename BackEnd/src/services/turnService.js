@@ -30,8 +30,8 @@ async function nextTurn({ game }) {
   const updatedPlayerTable = cleanEquipements(game.playerTable, true);
   const updatedRivalTable = cleanEquipements(game.rivalTable, false);
 
-  console.log('\n----------------------------------------------------------------------\nPlayerTable sin equipements ==> ', updatedPlayerTable);
-  console.log('\n----------------------------------------------------------------------\nRivalTable sin equipements ==> ', updatedRivalTable);
+  // console.log('\n----------------------------------------------------------------------\nPlayerTable sin spells en equipements ==> ', updatedPlayerTable);
+  // console.log('\n----------------------------------------------------------------------\nRivalTable sin spells en equipements ==> ', updatedRivalTable);
 
   // 1. Limpiar temporaryAbilities de todas las cartas
   await Game.updateOne(
@@ -62,8 +62,8 @@ async function nextTurn({ game }) {
       }
     }
   );
-  console.log('\n----------------------------------------------------------------------\nSpells del jugador al graveyard ==> ', spellsToGraveyardPlayer);
-  console.log('\n----------------------------------------------------------------------\nSpells del rival al graveyard ==> ', spellsToGraveyardRival);
+  // console.log('\n----------------------------------------------------------------------\nSpells del jugador al graveyard ==> ', spellsToGraveyardPlayer);
+  // console.log('\n----------------------------------------------------------------------\nSpells del rival al graveyard ==> ', spellsToGraveyardRival);
 
   const updatedGame = await Game.findById(game._id);
 
@@ -93,8 +93,8 @@ async function nextTurn({ game }) {
     }
   );
 
-  console.log('\n----------------------------------------------------------------------\nMesa del jugador actualizada sin cartas nuevas ==> ', playerTable);
-  console.log('\n----------------------------------------------------------------------\nMesa del rival actualizada sin cartas nuevas ==> ', rivalTable);
+  // console.log('\n----------------------------------------------------------------------\nMesa del jugador actualizada sin cartas nuevas ==> ', playerTable);
+  // console.log('\n----------------------------------------------------------------------\nMesa del rival actualizada sin cartas nuevas ==> ', rivalTable);
 }
 
 async function drawCard({ game, isAI }) {
@@ -102,9 +102,9 @@ async function drawCard({ game, isAI }) {
   const pendingDeckField = isAI ? 'rivalPendingDeck' : 'playerPendingDeck';
   const hpField = isAI ? 'rivalHp' : 'playerHp';
 
-  console.log('\n----------------------------------------------------------------------\nhandField ==> ', handField);
-  console.log('\n----------------------------------------------------------------------\npendingDeckField ==> ', pendingDeckField);
-  console.log('\n----------------------------------------------------------------------\nhpField ==> ', hpField);
+  console.log('\n----------------------------------------------------------------------handField ==> \n', handField);
+  console.log('\n----------------------------------------------------------------------pendingDeckField ==> \n', pendingDeckField);
+  console.log('\n----------------------------------------------------------------------hpField ==> \n', hpField);
 
   // Comprobar si la mano ya tiene 5 cartas
   if (game[handField].length >= 5) {
@@ -119,7 +119,7 @@ async function drawCard({ game, isAI }) {
   } else {
     const card = game[pendingDeckField][0];
 
-    console.log('\n----------------------------------------------------------------------\nCard to draw ==> ', card);
+    console.log('\n----------------------------------------------------------------------Card to draw ==> \n', card);
     // Forzar el _id a ObjectId para el $pull
     const cardId = typeof card._id === 'string' ? mongoose.Types.ObjectId(card._id) : card._id;
     await Game.updateOne(
@@ -130,6 +130,23 @@ async function drawCard({ game, isAI }) {
       }
     );
   }
+}
+
+async function removeDeadCardsFromTables(gameId, playerTable, rivalTable) {
+  const cleanTable = (table) => table.filter(card => card.alive !== false);
+
+  const updatedPlayerTable = cleanTable(playerTable);
+  const updatedRivalTable = cleanTable(rivalTable);
+
+  await Game.updateOne(
+    { _id: gameId },
+    {
+      $set: {
+        playerTable: updatedPlayerTable,
+        rivalTable: updatedRivalTable,
+      }
+    }
+  );
 }
 
 async function checkForGameOver(game) {
@@ -167,4 +184,4 @@ async function checkForGameOver(game) {
   return false; // El juego sigue activo
 }
 
-module.exports = { nextTurn, drawCard, checkForGameOver };
+module.exports = { nextTurn, drawCard, checkForGameOver, removeDeadCardsFromTables };
