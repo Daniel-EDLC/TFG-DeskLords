@@ -22,7 +22,7 @@ async function placeCards(game) {
       playerTable[idx].equipements = [...(playerTable[idx].equipements || []), spell];
 
       rivalMana -= spell.cost;
-      usedCards.push(spell._id);
+      usedCards.push(spell._id.toString());
       spellUsed = true;
     }
   }
@@ -30,7 +30,7 @@ async function placeCards(game) {
   // ---------------------
   // 2. Criaturas
   // ---------------------
-  let criatureHand = rivalHand.filter(c => c.type === 'creature' && c.cost <= rivalMana && !usedCards.includes(c._id));
+  let criatureHand = rivalHand.filter(c => c.type === 'creature' && c.cost <= rivalMana && !usedCards.includes(c._id.toString()));
 
   const sumAtkPlayer = playerTable.reduce((acc, c) => acc + (c.atk || 0), 0);
   const sumHpPlayer = playerTable.reduce((acc, c) => acc + (c.hp || 0), 0);
@@ -51,7 +51,7 @@ async function placeCards(game) {
     if (idx !== -1 && criatureHand[idx].cost <= rivalMana) {
       rivalTable.push(criatureHand[idx]);
       rivalMana -= criatureHand[idx].cost;
-      usedCards.push(criatureHand[idx]._id);
+      usedCards.push(criatureHand[idx]._id.toString());
       criatureHand.splice(idx, 1);
     } else {
       break;
@@ -74,7 +74,7 @@ async function placeCards(game) {
     rivalTable[idx].equipements = [...(rivalTable[idx].equipements || []), equip];
 
     rivalMana -= equip.cost;
-    usedCards.push(equip._id);
+    usedCards.push(equip._id.toString());
     equipementUsed = true;
   }
 
@@ -93,7 +93,7 @@ async function placeCards(game) {
       rivalTable[idx].equipements = [...(rivalTable[idx].equipements || []), spell];
 
       rivalMana -= spell.cost;
-      usedCards.push(spell._id);
+      usedCards.push(spell._id.toString());
       spellUsed = true;
     }
   }
@@ -101,7 +101,7 @@ async function placeCards(game) {
   // ---------------------
   // Limpieza y actualizaciones
   // ---------------------
-  rivalHand = rivalHand.filter(c => !usedCards.includes(c._id));
+  rivalHand = rivalHand.filter(c => !usedCards.includes(c._id.toString()));
 
   // Marcar cartas nuevas
   const markNewCards = (table) =>
@@ -109,15 +109,16 @@ async function placeCards(game) {
       const base = card.toObject?.() || card;
       const equipements = (base.equipements || []).map(eq => {
         const eqBase = eq.toObject?.() || eq;
+        console.log('----------------------------------------------------------------------eqBase ==>', eqBase);
         return {
           ...eqBase,
-          new: usedCards.includes(eqBase._id)
+          new: usedCards.includes(eqBase._id.toString())
         };
       });
       return {
         ...base,
         equipements,
-        new: usedCards.includes(card._id)
+        new: usedCards.includes(card._id.toString())
       };
     });
 

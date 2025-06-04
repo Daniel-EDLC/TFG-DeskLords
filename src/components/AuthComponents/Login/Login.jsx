@@ -100,10 +100,7 @@ function Login({ onSwitch, onGoogleRegister }) {
 
   async function isCreated(uid, token) {
   try {
-    const payload = {
-      idPlayer: uid
-    };
-
+    const payload = { idPlayer: uid };
     const response = await fetch('https://api-meafpnv6bq-ew.a.run.app/api/checkPlayerExists', {
       method: 'POST',
       headers: {
@@ -114,9 +111,10 @@ function Login({ onSwitch, onGoogleRegister }) {
     });
 
     const data = await response.json();
-    return data.result;
+    console.log('Respuesta de checkPlayerExists:', data);
+    return data.result === true; 
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error en isCreated:', error);
     return false;
   }
 }
