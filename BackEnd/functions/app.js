@@ -18,6 +18,7 @@ const mapRoutes = require('./routes/mapRoutes');
 const playerRoutes = require('./routes/playerRoutes');
 const setRoutes = require('./routes/setRoutes');
 const newsRoutes = require('./routes/newsRoutes');
+const commentsRoutes = require('./routes/commentsRoutes');
 
 app.use(express.json());
 app.use(connectDB);
@@ -41,5 +42,6 @@ app.use('/api', mapRoutes);
 app.use('/api', playerRoutes);
 app.use('/api', setRoutes);
 app.use('/api', newsRoutes);
+app.use('/api', commentsRoutes);
 
 module.exports = app;

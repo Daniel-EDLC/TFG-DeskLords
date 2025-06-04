@@ -17,6 +17,12 @@ async function useCard(req, res) {
     if (!player) return req.response.error('Jugador no encontrado');
     if (game.playerId !== player.uid) return req.response.error('El id del jugador no coincide con el de la partida');
 
+    try {
+      await removeDeadCardsFromTables(gameId, game.playerTable, game.rivalTable);
+    } catch (error) {
+      return req.response.error(`Error al eliminar cartas muertas de las mesas: ${error.message}`);
+    }
+
     const usedCard = game.playerHand.find(card => card._id.toString() === req.body.cardId);
     console.log('\n----------------------------------------------------------\nCarta usada ==> ', usedCard);
     const targetedCard = game.playerTable.find(card => card._id.toString() === req.body.target?.id) ||
@@ -507,27 +513,17 @@ async function attack(req, res) {
     }
 
     try {
-      // Mover cartas muertas al graveyard después de crear la respuesta
-      const deadCards = updatedGameResponse2.playerTable.filter(card => card.alive === false);
-      if (deadCards.length > 0) {
-        await Game.updateOne(
-          { _id: gameId },
-          {
-            $pull: { playerTable: { alive: false } },
-            $push: { playerGraveyard: { $each: deadCards } }
-          }
-        );
-      }
+      await removeDeadCardsFromTables(gameId, updatedGameResponse2.playerTable, updatedGameResponse2.rivalTable);
     } catch (error) {
-      return req.response.error(`Error al mover cartas muertas al graveyard: ${error.message}`);
+      return req.response.error(`Error al eliminar cartas muertas de las mesas: ${error.message}`);
     }
 
-    const updatedGameAfterPlacingCards = await Game.findById(gameId);
+    const updatedGameAfterRemovingDeadCards = await Game.findById(gameId);
 
     try {
-      if (updatedGameAfterPlacingCards.rivalTable.length > 0) {
+      if (updatedGameAfterRemovingDeadCards.rivalTable.length > 0) {
         // console.log('\n----------------------------------------------------------\nCambiando posición de cartas a ataque (llamada a changeCardsPositionToAttack)');
-        await changeCardsPositionToAttack(updatedGameAfterPlacingCards);
+        await changeCardsPositionToAttack(updatedGameAfterRemovingDeadCards);
       }
     } catch (error) {
       return req.response.error(`Error al cambiar posición de cartas a ataque: ${error.message}`);
@@ -537,6 +533,7 @@ async function attack(req, res) {
 
     return req.response.success({
       gameId: req.body.gameId,
+      battle: attackers.length > 0,
       action1: action1Response,
       action2: action2Response,
       action3: {
@@ -578,11 +575,11 @@ async function defend(req, res) {
     if (!game) return req.response.error('Partida no encontrada');
     if (game.playerId !== player.uid) return req.response.error('El id del jugador no coincide con el de la partida');
 
-    try {
-      await removeDeadCardsFromTables(gameId, game.playerTable, game.rivalTable);
-    } catch (error) {
-      return req.response.error(`Error al eliminar cartas muertas de las mesas: ${error.message}`);
-    }
+    // try {
+    //   await removeDeadCardsFromTables(gameId, game.playerTable, game.rivalTable);
+    // } catch (error) {
+    //   return req.response.error(`Error al eliminar cartas muertas de las mesas: ${error.message}`);
+    // }
 
     const combats = [];
     for (const combat of req.body.battles) {
@@ -592,7 +589,7 @@ async function defend(req, res) {
       });
     }
 
-    // console.log('\n----------------------------------------------------------\nCombates a resolver ==> ', combats);
+    console.log('\n----------------------------------------------------------Combates a resolver ==> \n', combats);
 
     try {
       await resolverCombate({
@@ -659,23 +656,13 @@ async function defend(req, res) {
 
     const updatedGameAfterDrawing = await Game.findById(gameId);
 
-    console.log('\n----------------------------------------------------------Cartas de la mano del player DESPUÉS de robar ==> \n', updatedGameAfterDrawing.playerHand);
-
-    try {
-      await removeDeadCardsFromTables(gameId, updatedGameAfterDrawing.playerTable, updatedGameAfterDrawing.rivalTable);
-    } catch (error) {
-      return req.response.error(`Error al eliminar cartas muertas de las mesas: ${error.message}`);
-    }
-
-    const updatedGameAfterRemovingDeadCards = await Game.findById(gameId);
-
     try {
       // Cambiar el campo position de todas las cartas de la mesa del player y del rival a 'waiting'
-      const updatedPlayerTable = updatedGameAfterRemovingDeadCards.playerTable.map(card => ({
+      const updatedPlayerTable = updatedGameAfterDrawing.playerTable.map(card => ({
         ...card.toObject?.() || card,
         position: 'waiting'
       }));
-      const updatedRivalTable = updatedGameAfterRemovingDeadCards.rivalTable.map(card => ({
+      const updatedRivalTable = updatedGameAfterDrawing.rivalTable.map(card => ({
         ...card.toObject?.() || card,
         position: 'waiting'
       }));

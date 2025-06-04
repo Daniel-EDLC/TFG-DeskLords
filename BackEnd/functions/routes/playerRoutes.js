@@ -5,7 +5,7 @@ const { createPlayer, getPlayerInfo, checkPlayerExists, updatePlayer, getPlayers
 router.post('/createPlayer', createPlayer);
 router.post('/getPlayerInfo', getPlayerInfo);
 router.post('/checkPlayerExists', checkPlayerExists);
-router.post('/updatePlayer', updatePlayer);
+router.put('/updatePlayer', updatePlayer);
 router.get('/getPlayers', getPlayers);
 router.post('/deletePlayer', deletePlayer);
 

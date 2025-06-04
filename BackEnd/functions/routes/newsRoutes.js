@@ -4,7 +4,7 @@ const { createNews, getNews, updateNews, deleteNews } = require('../controllers/
 
 router.post('/createNews', createNews);
 router.get('/getNews', getNews);
-router.post('/updateNews', updateNews);
+router.put('/updateNews', updateNews);
 router.post('/deleteNews', deleteNews);
 
 module.exports = router;
