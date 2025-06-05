@@ -40,9 +40,13 @@ align-items: center;
   height: 180px; 
   object-fit: cover;
   border-radius: 6px;
-  margin-bottom: 1rem;
+  margin: 1rem;
 }
 
+.mazo-card h2 {
+  margin-bottom: 10px;
+  color: #c9c611;
+}
 
 .mazo-card h3 {
   margin: 0;
@@ -81,6 +85,7 @@ align-items: center;
   overflow-x: auto;
   padding: 1rem 0;
   scroll-snap-type: x mandatory;
+  
 }
 
 .tienda-scroll::-webkit-scrollbar {
@@ -100,6 +105,7 @@ align-items: center;
   flex: 0 0 auto;
   scroll-snap-align: start;
   width: 180px;
+  
 }
 
 
@@ -108,7 +114,7 @@ align-items: center;
   border-radius: 10px;
   background-color: rgba(255, 255, 255, 0.05);
   border: 2px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
   text-align: center;
   max-width: 200px;
   height: auto;
@@ -150,6 +156,120 @@ align-items: center;
 }
 
 
+/* Estilo para el diálogo principal */
+.shop-dialog {
+  background-color: rgba(66, 66, 66, 0.911) !important;
+  border: 2px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05) !important;
+  color: white !important;
+  border-radius: 12px !important;
+  padding: 1rem;
+}
+
+.shop-confirm-dialog {
+  background-color: #1e1e1e !important;
+  color: white !important;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+
+/* Header del modal con pestañas y saldo */
+.shop-dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0 1rem;
+}
+
+.shop-dialog-header span {
+  color: #c0b303;
+  font-weight: bold;
+}
+
+/* Confirmación de compra */
+.shop-confirm-box {
+  text-align: center;
+  padding: 1rem;
+}
+
+.shop-confirm-box img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
+.shop-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  margin: 0 0.5rem;
+  cursor: pointer;
+}
+
+.shop-btn-confirm {
+  background-color: #4caf50;
+  color: white;
+}
+
+.shop-btn-cancel {
+  background-color: #f44336;
+  color: white;
+}
+
+
+.shop-confirm-dialog {
+  background-color: rgba(56, 56, 56, 0.911) !important;
+  border: 2px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05) !important;
+  color: white !important;
+  border-radius: 12px !important;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.shop-confirm-box h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.confirm-product-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
+.shop-confirm-actions {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.shop-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.shop-btn-confirm {
+  background-color: #4caf50;
+  color: white;
+}
+
+.shop-btn-cancel {
+  background-color: #f44336;
+  color: white;
+}
+
+
 
 
 @media (max-width: 435px) {
@@ -187,6 +307,8 @@ align-items: center;
   margin: 0;
   padding: 0;
 }
+
+
 
 .mazo-card h3 {
   margin: 0;

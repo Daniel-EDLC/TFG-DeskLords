@@ -155,7 +155,7 @@
 }
 
 .deck-card:hover {
-  transform: scale(1.05);
+  
   border-color: #c9c611;
   
   background-color: rgba(255, 251, 0, 0.062);
