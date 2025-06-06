@@ -443,16 +443,21 @@ export async function endTurn(selectedAttackCards, setGameData, gameData, setFlo
                 rival: { ...prev.rival, ...data.data.action3.rival },
               };
 
-              const cartasEnMesa = newGameData.user.table;
-              if (!cartasEnMesa || cartasEnMesa.length === 0) {
-                setTimeout(() => {
-                  setFloatingMessage('Daño automático, no hay criaturas en mesa');
-                }, 2000);
+              const userTable = newGameData.user.table;
+                const rivalTable = newGameData.rival.table;
 
-                setTimeout(() => {
-                  defense(setGameData, newGameData);
-                }, 4000);
-              }
+                const hayAtacantes = rivalTable?.some(carta => carta.position === "attack");
+
+                if ((!userTable || userTable.length === 0) && hayAtacantes) {
+                  setTimeout(() => {
+                    setFloatingMessage('Daño automático, no hay criaturas en mesa');
+                  }, 2000);
+
+                  setTimeout(() => {
+                    defense(setGameData, newGameData);
+                  }, 4000);
+                }
+
 
               return newGameData;
             });
@@ -481,8 +486,13 @@ export async function endTurn(selectedAttackCards, setGameData, gameData, setFlo
                 rival: { ...prev.rival, ...data.data.action3.rival },
               };
 
-              const cartasEnMesa = newGameData.user.table;
-              if (!cartasEnMesa || cartasEnMesa.length === 0) {
+             const userTable = newGameData.user.table;
+              const rivalTable = newGameData.rival.table;
+
+              // Filtrar si el rival tiene criaturas en posición "attack"
+              const hayAtacantes = rivalTable?.some(carta => carta.position === "attack");
+
+              if ((!userTable || userTable.length === 0) && hayAtacantes) {
                 setTimeout(() => {
                   setFloatingMessage('Daño automático, no hay criaturas en mesa');
                 }, 2000);
@@ -491,6 +501,7 @@ export async function endTurn(selectedAttackCards, setGameData, gameData, setFlo
                   defense(setGameData, newGameData);
                 }, 4000);
               }
+
 
               return newGameData;
             });

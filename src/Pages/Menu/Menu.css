@@ -169,6 +169,10 @@ body {
 
 .inicio-columna.derecha {
   width: 52vw;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: space-between;
 }
 
 .play-card{
@@ -189,7 +193,7 @@ body {
 }
 
 .play-card:hover {
-  transform: scale(1.05);
+  /* transform: scale(1.05); */
   border-color: #c9c611;
   background-color: rgba(255, 251, 0, 0.062);
   cursor: pointer;
