@@ -204,14 +204,8 @@ function DecksList() {
       </table>
 
       {(editingDeck || isCreating) && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-          background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center'
-        }}>
-          <form onSubmit={saveDeck} style={{
-            background: 'black', padding: '20px', borderRadius: '10px',
-            width: '90%', maxWidth: '600px'
-          }}>
+        <div className="modal-overlay">
+          <form onSubmit={saveDeck}>
             <h3>{editingDeck ? 'Editar Deck' : 'Nuevo Deck'}</h3>
 
             <label>Nombre:</label>
@@ -252,9 +246,9 @@ function DecksList() {
 
             <div>
               <label>Cartas:</label>
-              <div style={{ maxHeight: '200px', overflowY: 'auto', border: '1px solid #ccc', padding: '10px' }}>
+              <div>
                 {filteredCards.map(card => (
-                  <label key={card._id} style={{ display: 'block' }}>
+                  <label key={card._id}>
                     <input
                       type="checkbox"
                       checked={formData.cards.includes(card._id)}
@@ -264,7 +258,7 @@ function DecksList() {
                   </label>
                 ))}
               </div>
-              <p style={{ color: formData.cards.length > 15 ? 'red' : 'inherit' }}>
+              <p>
                 {formData.cards.length}/15 cartas seleccionadas
               </p>
             </div>
@@ -279,7 +273,7 @@ function DecksList() {
             <button
               type="button"
               onClick={() => { setEditingDeck(null); setIsCreating(false); }}
-              style={{ marginLeft: '10px' }}
+              
             >
               Cancelar
             </button>

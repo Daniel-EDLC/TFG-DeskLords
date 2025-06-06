@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+
 function CardsList() {
     const [cards, setCards] = useState([]);
     const [abilitiesList, setAbilitiesList] = useState([]);
@@ -131,7 +132,7 @@ function CardsList() {
     }
 
     return (
-        <div style={{ padding: '20px' }}>
+        <div>
             <h2>Lista de Cartas</h2>
             <button onClick={() => { setIsCreating(true); setFormData(getEmptyForm()); setEditingCard(null); }}>
                 + Nueva Carta
@@ -169,17 +170,11 @@ function CardsList() {
             </table>
 
             {(editingCard || isCreating) && (
-                <div style={{
-                    position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-                    background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center'
-                }}>
-                    <form onSubmit={saveCard} style={{
-                        padding: '20px', borderRadius: '10px',
-                        width: '90%', maxWidth: '600px'
-                    }}>
+                <div className="modal-overlay">
+                    <form onSubmit={saveCard}>
                         <h3>{editingCard ? 'Editar Carta' : 'Nueva Carta'}</h3>
 
-                        <div>
+                        <div >
                             <label>name:</label>
                             <input
                                 type="text"

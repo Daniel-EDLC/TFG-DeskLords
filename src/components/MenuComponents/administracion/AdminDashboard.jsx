@@ -6,6 +6,8 @@ import MapsList from './map';
 import PlayersList from './player';
 import SetsList from './set';
 import GamesList from './game';
+//css
+import './admin.css';
 
 function AdminDashboard() {
   const [view, setView] = useState('cards');
