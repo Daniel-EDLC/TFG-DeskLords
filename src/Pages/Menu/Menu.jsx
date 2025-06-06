@@ -19,6 +19,7 @@ import Shop from "../../components/MenuComponents/Shop/Shop";
 import Missions from "../../components/MenuComponents/Missions/Missions";
 import BattlePass from "../../components/MenuComponents/BattlePass/BattlePass";
 import ContactUs from "../../components/MenuComponents/ContactUs/ContactUs";
+import AdminDashboard from '../../components/MenuComponents/administracion/AdminDashboard'
 
 import {
   cargarPartida,
@@ -47,7 +48,6 @@ function Menu() {
 
   const [data, setData] = useState(null);
   const [seccionActiva, setSeccionActiva] = useState("inicio");
-  // const [showGestion, setShowGestion] = useState(false);
   const [selectedMap, setSelectedMap] = useState(null);
   const [selectedDeckId, setSelectedDeckId] = useState("");
   const [modalAbierto, setModalAbierto] = useState(false);
@@ -77,10 +77,6 @@ function Menu() {
 
   useEffect(() => {
     if (!data) return;
-
-    // if (data.rol === "admin") {
-    //   setShowGestion(true);
-    // }
 
     if (!selectedMap && data.maps?.length) {
       const firstAvailable = data.maps.find((m) => m.available);
@@ -117,9 +113,9 @@ function Menu() {
     { id: "perfil", icon: <AccountCircleIcon />, texto: "Perfil" },
     { id: "batalla", icon: <SportsKabaddiIcon />, texto: "Batalla" },
     {
-      id: data.rol === "admin" ? "gestion" : "contacto",
+      id: data.rol === "admin" ? "gestionBBDD" : "gestionBBDD",
       icon: <StorageIcon />,
-      texto: data.rol === "admin" ? "Gestión" : "Contacto",
+      texto: data.rol === "admin" ? "Gestión" : "Gestión",
     },
   ];
 console.log("datos:", data.shop.decks);
@@ -194,10 +190,10 @@ console.log("datos:", data.shop.decks);
           />
         </div>
       );
-      // case "gestion":
-      //   return (
-
-      //   );
+       case "gestionBBDD":
+         return (
+          <AdminDashboard />
+         );
       case "contacto":
         return <ContactUs />;
       case "batalla":
