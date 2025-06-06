@@ -1,29 +1,17 @@
 import { useState } from 'react';
 import Login from '../../components/AuthComponents/Login/Login';
 import Register from '../../components/AuthComponents/Register/Register';
-import { useEffect } from 'react';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
+// import { useEffect } from 'react';
+import { signOut } from 'firebase/auth';
 import { auth } from '../../../firebaseConfig';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 import './Auth.css';
 
 export default function Auth() {
+
   const [isLogin, setIsLogin] = useState(true);
   const [googleUserData, setGoogleUserData] = useState(null);
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // Si ya hay usuario autenticado, redirigir
-        navigate('/menu'); 
-      }
-    });
-
-    return () => unsubscribe();
-  }, [navigate]);
 
   const handleSwitchToLogin=async()=>{
     try {

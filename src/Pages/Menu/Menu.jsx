@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useMediaQuery, Box, IconButton, Dialog } from "@mui/material";
 import SportsKabaddiIcon from "@mui/icons-material/SportsKabaddi";
-import { signOut } from "firebase/auth";
+import { signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../firebaseConfig";
 
 import StorageIcon from "@mui/icons-material/Storage";
@@ -29,6 +29,18 @@ import { useNavigate } from "react-router-dom";
 import "./Menu.css";
 
 function Menu() {
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
+  //     if (!user) {
+  //       navigate('/');
+  //     }
+  //   });
+
+  //   return () => unsubscribe();
+  // }, [navigate]);
+
+
+
   const [showSplash, setShowSplash] = useState(true);
   const isMobile = useMediaQuery("(max-width:435px)");
   const navigate = useNavigate();
