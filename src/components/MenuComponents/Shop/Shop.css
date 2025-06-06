@@ -74,9 +74,18 @@ align-items: center;
 
 .tienda-empty {
   text-align: center;
+  margin-top: 2vh;
   color: #aaa;
   font-style: italic;
   margin: 2rem;
+  
+  width: 25vw;
+  height: 35vh;
+  
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
 }
 
 .tienda-scroll {

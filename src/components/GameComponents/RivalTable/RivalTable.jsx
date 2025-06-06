@@ -208,7 +208,7 @@ function RivalTable({
                                 className={`rival-equipment-image ${equipo.new ? 'rival-card-new' : ''}`}
                               />
                               {(typeof equipo.atk === 'number' || typeof equipo.hp === 'number') && (
-                                <div className="equipment-bonus">
+                                <div className="rival-equipment-bonus-overlay">
                                   +{equipo.atk || 0} / +{equipo.hp || 0}
                                 </div>
                               )}

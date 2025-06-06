@@ -216,7 +216,11 @@ function PlayerTable({
           const isFadingOut = hiddenCards.includes(carta._id);
           return (
             <div key={carta._id} className={`player-card-wrapper ${isFadingOut ? 'player-card-fade-out' : ''} `}>
-              <div className={`player-card-table ${isSelected ? 'selected' : ''} ${isInPlayerBattle ? 'player-card-in-battle' : ''} ${selectedAttackCards.includes(carta._id) ? 'attack-animating' : ''}`}>
+              <div className={`player-card-table 
+                ${isSelected ? 'selected' : ''} 
+                ${isInPlayerBattle ? 'player-card-in-battle' : ''}
+                `}>
+                {/* ${selectedAttackCards.includes(carta._id) ? 'attack-animating' : ''} */}
                 <Paper
                   elevation={10}
                   className={`player-card-inner 

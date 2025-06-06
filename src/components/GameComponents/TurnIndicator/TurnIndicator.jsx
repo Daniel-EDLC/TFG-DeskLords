@@ -16,8 +16,8 @@ export default function TurnIndicator({ turn }) {
   console.log(turn)
   return (
     <div className={`turn-indicator ${!isPlayerTurn ? 'rival' : 'player'}`}>
-      {!isPlayerTurn && <div className="info-rival">Turno rival</div>}
-      {isPlayerTurn && <div className="info-player">Tu turno</div>}
+      {!isPlayerTurn && <div className="info-rival">Rival</div>}
+      {isPlayerTurn && <div className="info-player">Player</div>}
       <div className="icons">
         <div className={`icon ${phase === 'hand' ? 'active' : ''}`} title="Fase de mano">
           <PanToolIcon fontSize="inherit" />

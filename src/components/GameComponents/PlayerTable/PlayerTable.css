@@ -24,6 +24,16 @@
   position: relative;
 }
 
+
+.player-card-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  object-fit: cover;
+  display: block;
+}
+
+
 .player-card-table {
   width: 100px;
   height: 138px;
@@ -34,24 +44,16 @@
   transition: transform 0.5s ease;
 }
 
-.player-card-image {
-  width: 100%;
-  height: 100%;
-  border-radius: 4px;
-  object-fit: cover;
-  display: block;
-}
-
 .player-card-table:hover {
   transform: scale(2.3);
-  border: 2px solid rgba(19, 128, 0, 0.8);
+  /* border: 2px solid rgba(19, 128, 0, 0.8); */
   border-radius: 6px;
-  z-index: 100;
+  z-index: 1000;
 }
 
 /* ATACANDO */
 .player-card-table.selected {
-  transform: translateY(-15%);
+  /* transform: translateY(-15%); */
   border-radius: 6px;
   z-index: 20;
 }
@@ -95,7 +97,7 @@
 .player-card-in-battle {
   border: 3px solid rgb(220, 20, 203);
   border-radius: 5px;
-  transform: translateY(-15%);
+  /* transform: translateY(-15%); */
   position: relative;
   z-index: 20;
 }
@@ -166,17 +168,34 @@
   transform: translateY(-20px);
 }
 
-.player-equipment-image {
-  width: 50%;
-  height: 50%;
-  object-fit: contain;
-  border-radius: 2px;
-  transition: 0.5s;
+
+.player-equipment-wrapper {
+  position: relative;
+  display: inline-block;
+  z-index: 500;
+  width: 40px;
+  height: 60px;
+  flex-shrink: 0;
 }
 
-.player-equipment-image:hover {
+.player-equipment-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 2px;
+  transition: 0.5s;
+   z-index: 1000;
+}
+
+/* .player-equipment-image:hover {
   scale: 2.3;
-  z-index: 100;
+  z-index: 1000;
+} */
+
+.player-equipment-wrapper:hover {
+  scale: 2.3;
+  z-index: 1000;
+  transition: 0.5s;
 }
 
 .player-ability-tags {
@@ -296,25 +315,21 @@
   font-weight: bold;
 }
 
-.player-equipment-wrapper {
-  position: relative;
-  display: inline-block;
-  z-index: 50000;
-}
+
 
 .equipment-bonus {
   position: absolute;
-  bottom: 20%;
-  left: 25%;
+  bottom: 10%;
+  left: 50%;
   transform: translateX(-50%);
-  font-size: 0.55rem;
+  font-size: 0.45rem;
   font-weight: bold;
   color: rgb(68, 216, 0);
   background-color: rgba(0, 0, 0, 0.75);
   padding: 2px 4px;
   border-radius: 4px;
   white-space: nowrap;
-  z-index: 9999; /* bien alto para estar por encima de todo */
+  z-index: 9999;
   pointer-events: none;
 }
 
@@ -414,7 +429,7 @@
 }
 
 
-@keyframes epicAttack {
+/* @keyframes epicAttack {
   0% {
     transform: scale(1) translateY(0);
     box-shadow: none;
@@ -440,7 +455,7 @@
 .attack-animating {
   animation: epicAttack 0.6s ease-in-out;
   z-index: 2;
-}
+} */
 
 
 /* Móvil */
@@ -468,21 +483,33 @@
     flex: 0 0 auto;
   }
 
+
+  .player-card-new {
+  position: relative;
+  animation: rival-card-enter-from-center 1.5s ease-out;
+  z-index: 1000000;
+}
   .player-card-table:hover {
     transform: none;
   }
 
   .player-card-table.selected:hover {
-    transform: translateY(-15%);
+    transform: none;
   }
 
-  .player-equipment-image {
-    width: 40%;
-    height: 40%;
-  }
+ .player-equipment-wrapper {
+  width: 60px;
+  height: 85px;
+}
+
+.player-equipment-image {
+  width: 100%;
+  height: 100%;
+}
+
 
   .player-equipment-image:hover {
-    scale: 1.3;
+    scale: 0;
   }
 
   .phase-buttons {

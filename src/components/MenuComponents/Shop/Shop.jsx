@@ -75,7 +75,7 @@ function Shop({ shop, coins }) {
 
   if (items.length === 0) {
     return (
-      <p className="tienda-empty">No hay objetos en la tienda actualmente.</p>
+      <p className="tienda-empty">No hay items disponibles.</p>
     );
   }
 

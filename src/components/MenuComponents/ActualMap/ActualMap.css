@@ -119,8 +119,7 @@
   overflow-y: auto;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* Internet Explorer 10+ */
-  padding-right: 6px; /* espacio para scrollbar */
-  flex: 1; /* permite que este contenedor use el espacio sobrante */
+  flex: 1;
 }
 
 .deck-card {
@@ -148,11 +147,11 @@
   font-size: 0.9rem;
 }
 
-/* Móvil */
 @media (max-width: 435px) {
   .mapa-actual {
+    overflow: auto;
     width: 90vw;
-    height: auto;
+    height: 30vh;
     padding: 16px;
     margin: 16px;
     border: none;
@@ -178,7 +177,7 @@
   }
 
   .tittle {
-    font-size: 1.2rem;
+    font-size: 1rem;
     text-align: center;
   }
   
@@ -192,14 +191,14 @@
   }
 
   .mapa-info p {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     margin: 0 0 8px 0;
   }
 
   .mapa-info button {
     width: 90%;
-    font-size: 1rem;
-    margin-top: 10px;
+    font-size: 0.9rem;
+    margin-top: 5px;
   }
 
   .mapa-imagen {

@@ -455,7 +455,17 @@ export async function endTurn(selectedAttackCards, setGameData, gameData, setFlo
 
                   setTimeout(() => {
                     defense(setGameData, newGameData);
-                  }, 4000);
+                  }, 2000);
+                }
+
+                if ((hayAtacantes.length <= 0)) {
+                  setTimeout(() => {
+                    setFloatingMessage('no se han declarado atacantes');
+                  }, 2000);
+
+                  setTimeout(() => {
+                    defense(setGameData, newGameData);
+                  }, 2000);
                 }
 
 
@@ -489,7 +499,6 @@ export async function endTurn(selectedAttackCards, setGameData, gameData, setFlo
              const userTable = newGameData.user.table;
               const rivalTable = newGameData.rival.table;
 
-              // Filtrar si el rival tiene criaturas en posición "attack"
               const hayAtacantes = rivalTable?.some(carta => carta.position === "attack");
 
               if ((!userTable || userTable.length === 0) && hayAtacantes) {
@@ -499,9 +508,19 @@ export async function endTurn(selectedAttackCards, setGameData, gameData, setFlo
 
                 setTimeout(() => {
                   defense(setGameData, newGameData);
-                }, 4000);
+                }, 2000);
               }
 
+
+                if ((!hayAtacantes)) {
+                  setTimeout(() => {
+                    setFloatingMessage('no se han declarado atacantes');
+                  }, 2000);
+
+                  setTimeout(() => {
+                    defense(setGameData, newGameData);
+                  }, 2000);
+                }
 
               return newGameData;
             });
