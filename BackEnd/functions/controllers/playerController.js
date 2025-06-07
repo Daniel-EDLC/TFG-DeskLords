@@ -1,4 +1,5 @@
 const Player = require('../models/Player');
+const Deck = require('../models/Deck');
 const News = require('../models/News');
 const Avatars = require('../models/Avatars');
 const { getMapsAvailable, getAvatarsAvailable, getDecksAvailable } = require('../utils/playerUtils');
@@ -95,6 +96,12 @@ async function getPlayerInfo(req, res) {
 
         const battlePass = await getBattlePassPlayer(player.uid);
 
+        const playerXp = player.player_level_progress;
+
+        const defualtDeck = await Deck.findById(player.owned_decks[0]);
+
+        const defaultDeckImage = defualtDeck.image;
+
         req.response.success({
             playerAvatar: avatarUrl || "no lo encuentra",
             playerName: player.displayName || 'Jugador Anónimo',
@@ -108,6 +115,7 @@ async function getPlayerInfo(req, res) {
             avatars: allAvatars || [],
             shop: shopItems || [],
             battlePass: battlePass || {},
+            tutorial: { mode: playerXp == 0 && player.player_level == 0, defaultDeckImage: defaultDeckImage }
         })
     } catch (error) {
         req.response.error(`Error al obtener información del jugador: ${error.message}`);

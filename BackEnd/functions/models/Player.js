@@ -14,7 +14,7 @@ const playerSchema = new mongoose.Schema({
     player_level_progress: { type: Number, default: 0, required: false }, // puntos de experiencia exactos
 
     // Campos de Mazos
-    owned_decks: { type: [String], required: false },
+    owned_decks: { type: [String], required: false, default: ["68445462751c23f738012ae9"] },
     locked_decks: { type: [String], required: false },
 
     // Campos de Mapas
