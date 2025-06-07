@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useMediaQuery, Box, IconButton, Dialog } from "@mui/material";
 import SportsKabaddiIcon from "@mui/icons-material/SportsKabaddi";
-import { signOut } from "firebase/auth";
+import { signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../firebaseConfig";
 
 import StorageIcon from "@mui/icons-material/Storage";
@@ -19,6 +19,7 @@ import Shop from "../../components/MenuComponents/Shop/Shop";
 import Missions from "../../components/MenuComponents/Missions/Missions";
 import BattlePass from "../../components/MenuComponents/BattlePass/BattlePass";
 import ContactUs from "../../components/MenuComponents/ContactUs/ContactUs";
+import AdminDashboard from '../../components/MenuComponents/administracion/AdminDashboard'
 
 import {
   cargarPartida,
@@ -29,13 +30,24 @@ import { useNavigate } from "react-router-dom";
 import "./Menu.css";
 
 function Menu() {
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
+  //     if (!user) {
+  //       navigate('/');
+  //     }
+  //   });
+
+  //   return () => unsubscribe();
+  // }, [navigate]);
+
+
+
   const [showSplash, setShowSplash] = useState(true);
   const isMobile = useMediaQuery("(max-width:435px)");
   const navigate = useNavigate();
 
   const [data, setData] = useState(null);
   const [seccionActiva, setSeccionActiva] = useState("inicio");
-  // const [showGestion, setShowGestion] = useState(false);
   const [selectedMap, setSelectedMap] = useState(null);
   const [selectedDeckId, setSelectedDeckId] = useState("");
   const [modalAbierto, setModalAbierto] = useState(false);
@@ -65,10 +77,6 @@ function Menu() {
 
   useEffect(() => {
     if (!data) return;
-
-    // if (data.rol === "admin") {
-    //   setShowGestion(true);
-    // }
 
     if (!selectedMap && data.maps?.length) {
       const firstAvailable = data.maps.find((m) => m.available);
@@ -105,9 +113,9 @@ function Menu() {
     { id: "perfil", icon: <AccountCircleIcon />, texto: "Perfil" },
     { id: "batalla", icon: <SportsKabaddiIcon />, texto: "Batalla" },
     {
-      id: data.rol === "admin" ? "gestion" : "contacto",
+      id: data.rol === "admin" ? "gestionBBDD" : "gestionBBDD",
       icon: <StorageIcon />,
-      texto: data.rol === "admin" ? "Gestión" : "Contacto",
+      texto: data.rol === "admin" ? "Gestión" : "Gestión",
     },
   ];
 console.log("datos:", data.shop.decks);
@@ -182,10 +190,10 @@ console.log("datos:", data.shop.decks);
           />
         </div>
       );
-      // case "gestion":
-      //   return (
-
-      //   );
+       case "gestionBBDD":
+         return (
+          <AdminDashboard />
+         );
       case "contacto":
         return <ContactUs />;
       case "batalla":

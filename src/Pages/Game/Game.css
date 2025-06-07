@@ -148,8 +148,8 @@ body {
   body, html {
     margin: 0;
     padding: 0;
-    overflow: hidden; /* evita scroll vertical y horizontal */
-    height: 100dvh; /* altura dinámica en móviles */
+    overflow: hidden;
+    height: 100dvh;
   }
 
   .app-container {

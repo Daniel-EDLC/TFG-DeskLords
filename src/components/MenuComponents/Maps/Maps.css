@@ -100,19 +100,15 @@
 /* MOBILE */
 @media (max-width: 435px) {
 
-  .maps-container {
-  }
-
 
   .maps-wrapper {
     display: flex;
     align-items: center;
-    height: 40Vh;
+    height: 30vh;
     color: white;
-    width: calc(100% - 24px);
-    padding: 0 10px;
-    padding-bottom: 40px;
-    margin: auto;
+    width: calc(100% - 40px);
+    padding: 0 5px;
+    padding-bottom: 0px;
     border: none;
     background-size: cover;
     background-position: center;
@@ -123,6 +119,12 @@
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
   }
 
+
+  .maps-wrapper h2 {
+    font-size: 1rem;
+    margin-bottom: 8px;
+  }
+  
   .maps-content {
     flex-direction: column;
     display: flex;
@@ -141,9 +143,9 @@
   }
 
   .mapa-card {
-    width: 100%;
-    padding: 12px;
-    font-size: 1rem;
+    width: 70vw;
+    padding: 8px;
+    font-size: 0.9rem;
     border-width: 2px;
     border-radius: 8px;
     
