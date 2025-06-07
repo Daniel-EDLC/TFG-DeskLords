@@ -3,7 +3,7 @@ const Player = require('../models/Player');
 const { resolverCombate, chooseDefenders } = require('./combatService');
 const { nextTurn, drawCard, checkForGameOver, removeDeadCardsFromTables } = require('./turnService');
 const { placeCards, changeCardsPositionToAttack } = require('./IAService');
-const { handleCreatureCard, handleEquipementCard, handleSpellCard } = require('../utils/cardUtils');
+const { handleCreatureCard, handleEquipementCard, handleSpellCard, changeCardsPositionToWaiting } = require('../utils/cardUtils');
 
 async function useCard(req, res) {
   try {
@@ -42,7 +42,6 @@ async function useCard(req, res) {
 }
 
 async function attack(req, res) {
-  console.log('\n--------------------------------------------------------------------------------------\nIniciando la funcion de attack');
   try {
     const gameId = req.body.gameId;
 
@@ -190,6 +189,7 @@ async function attack(req, res) {
 
     try {
       if (updatedGameAfterRemovingDeadCards.rivalTable.length > 0) {
+        // console.log('\n----------------------------------------------------------\nCambiando posición de cartas a ataque (llamada a changeCardsPositionToAttack)');
         await changeCardsPositionToAttack(updatedGameAfterRemovingDeadCards);
       }
     } catch (error) {
@@ -317,23 +317,7 @@ async function defend(req, res) {
     const updatedGameAfterDrawing = await Game.findById(gameId);
 
     try {
-      const updatedPlayerTable = updatedGameAfterDrawing.playerTable.map(card => ({
-        ...card.toObject?.() || card,
-        position: 'waiting'
-      }));
-      const updatedRivalTable = updatedGameAfterDrawing.rivalTable.map(card => ({
-        ...card.toObject?.() || card,
-        position: 'waiting'
-      }));
-      await Game.updateOne(
-        { _id: gameId },
-        {
-          $set: {
-            playerTable: updatedPlayerTable,
-            rivalTable: updatedRivalTable
-          }
-        }
-      );
+      await changeCardsPositionToWaiting(updatedGameAfterDrawing);
     } catch (error) {
       return req.response.error(`Error al cambiar posición de cartas a 'waiting': ${error.message}`);
     }
