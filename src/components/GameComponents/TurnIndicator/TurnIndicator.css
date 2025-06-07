@@ -57,11 +57,47 @@
   opacity: 1;
 }
 
-  
 
-.turn-indicator.rival {
-  pointer-events: none;
+.phase-dialog .MuiPaper-root {
+  background-color: rgba(53, 53, 53, 0.938);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+  color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
 }
+
+.phase-dialog .MuiDialogTitle-root {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.phase-dialog .MuiDialogContent-root {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.phase-dialog .MuiDialogActions-root {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 1rem;
+}
+
+.phase-dialog .MuiButton-root {
+  color: white;
+  border: 1px solid white;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-weight: bold;
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+}
+
+.phase-dialog .MuiButton-root:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
 
 
 
@@ -80,4 +116,29 @@
   font-size: 1.3rem;
   transition: opacity 0.3s ease;
 }
+
+
+  .phase-dialog .MuiPaper-root {
+    width: 90vw;
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .phase-dialog .MuiDialogTitle-root {
+    font-size: 1.1rem;
+  }
+
+  .phase-dialog .MuiDialogContent-root {
+    font-size: 0.9rem;
+  }
+
+  .phase-dialog .MuiButton-root {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+  }
+
+
+
+
+
 }
