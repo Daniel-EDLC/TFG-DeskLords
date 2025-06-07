@@ -121,7 +121,7 @@ function MapsList() {
       <button onClick={() => { setIsCreating(true); setFormData(getEmptyForm()); setEditingMap(null); }}>
         + Nuevo Mapa
       </button>
-      <div className="table-scroll-wrapper"></div>
+      <div className="table-scroll-wrapper">
       <table border="1" cellPadding="8" cellSpacing="0">
         <thead>
           <tr>
