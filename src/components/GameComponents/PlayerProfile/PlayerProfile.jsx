@@ -24,7 +24,7 @@ function PlayerProfile({ name, imageUrl, life, mana, deck, onSurrender }) {
         <Box className="profile-with-deck">
           <Box className="deck-preview">
             <img
-              src="public/cards/cardBack.jpg"
+              src="https://storage.googleapis.com/imagenes-desklords/Imagenes_Cartas/Traseras/back_card.jpg"
               alt="Mazo"
               className="deck-card-image"
             />

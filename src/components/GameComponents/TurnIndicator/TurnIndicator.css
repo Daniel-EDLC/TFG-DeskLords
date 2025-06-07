@@ -33,11 +33,13 @@
 
 
 .turn-indicator .icons {
+  cursor: pointer;
   display: flex;
   gap: 15rem;
   font-size: 3rem;
   transition: opacity 0.3s ease;
 }
+
 
 .turn-indicator .icon {
   color: #888;
@@ -45,6 +47,10 @@
   transition: color 0.9s, transform 0.3s;
 }
 
+.turn-indicator .icon:hover {
+  scale: 1.1;
+  transition: 0.4s ease;
+}
 .turn-indicator.player .icon.active {
   color: #29df18;
   transform: scale(1.2);

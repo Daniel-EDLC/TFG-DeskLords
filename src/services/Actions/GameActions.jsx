@@ -3,7 +3,7 @@ import { auth } from "../../../firebaseConfig";
 //  version real playCard
 
 export async function playCard(setGameData, gameData, card) {
-  console.log("jugando carta ->",card)
+  console.log("jugando carta ->", card);
   const user = await new Promise((resolve, reject) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       unsubscribe();
@@ -48,25 +48,28 @@ export async function playCard(setGameData, gameData, card) {
       break;
   }
   try {
-    const response = await fetch("https://api-meafpnv6bq-ew.a.run.app/api/useCard", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${userToken}`
-      },
-      body: JSON.stringify(payload),
-    });
+    const response = await fetch(
+      "https://api-meafpnv6bq-ew.a.run.app/api/useCard",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
+        body: JSON.stringify(payload),
+      }
+    );
 
     if (!response.ok) throw new Error("Fallo en la acción de juego");
 
     const result = await response.json();
     console.log("Respuesta del servidor:", result);
     setGameData((prev) => ({
-  ...prev,
-  rival: result.data.rival,
-  user: result.data.user,
-  turn: result.data.turn
-}));
+      ...prev,
+      rival: result.data.rival,
+      user: result.data.user,
+      turn: result.data.turn,
+    }));
   } catch (error) {
     console.error("Error al jugar la carta:", error);
   }
@@ -153,18 +156,21 @@ export async function switchPhase(setGameData, gameData) {
   const payload = {
     playerId: user.uid,
     gameId: gameData.gameId,
-    turn:{ phase: gameData.turn.phase}
+    turn: { phase: gameData.turn.phase },
   };
 
   try {
-    const response = await fetch("https://api-meafpnv6bq-ew.a.run.app/api/switchPhase", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${userToken}`
-      },
-      body: JSON.stringify(payload),
-    });
+    const response = await fetch(
+      "https://api-meafpnv6bq-ew.a.run.app/api/switchPhase",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
+        body: JSON.stringify(payload),
+      }
+    );
 
     if (!response.ok) throw new Error("Fallo en la acción de juego");
 
@@ -372,9 +378,15 @@ export async function attack(selectedAttackCards, setGameData) {
 
 //version real attack
 
-export async function endTurn(selectedAttackCards, setGameData, gameData, setFloatingMessage) {
+export async function endTurn(
+  selectedAttackCards,
+  setGameData,
+  gameData,
+  setFloatingMessage
+) {
+  let defenseCalled = false;
 
- const user = await new Promise((resolve, reject) => {
+  const user = await new Promise((resolve, reject) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       unsubscribe();
       if (user) resolve(user);
@@ -383,8 +395,6 @@ export async function endTurn(selectedAttackCards, setGameData, gameData, setFlo
   });
   const userToken = await user.getIdToken();
 
-  
-
   const payload = {
     playerId: user.uid,
     gameId: gameData.gameId,
@@ -392,147 +402,141 @@ export async function endTurn(selectedAttackCards, setGameData, gameData, setFlo
   };
 
   try {
-    const response = await fetch("https://api-meafpnv6bq-ew.a.run.app/api/attack", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${userToken}`
-      },
-      body: JSON.stringify(payload),
-    });
+    const response = await fetch(
+      "https://api-meafpnv6bq-ew.a.run.app/api/attack",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
+        body: JSON.stringify(payload),
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Error al finalizar el turno");
     }
 
     const data = await response.json();
-    
+
     console.log(data);
 
+    if (data.data.battle === true) {
+      console.log("defensa del rival");
+      console.log(data.data);
 
-        if (data.data.battle === true) {
-          console.log("defensa del rival");
-          console.log(data.data);
+      setGameData((prev) => ({
+        ...prev,
+        turn: { ...prev.turn, ...data.data.action1.turn },
+        user: { ...prev.user, ...data.data.action1.user },
+        rival: { ...prev.rival, ...data.data.action1.rival },
+      }));
+      setTimeout(() => {
+        console.log("mano del rival");
+        console.log(data.data);
 
-          setGameData((prev) => ({
+        setGameData((prev) => ({
+          ...prev,
+          turn: { ...prev.turn, ...data.data.action2.turn },
+          user: { ...prev.user, ...data.data.action2.user },
+          rival: { ...prev.rival, ...data.data.action2.rival },
+        }));
+      }, 5000);
+      setTimeout(() => {
+        console.log("ataque del rival");
+        console.log(data.data);
+
+        setGameData((prev) => {
+          const newGameData = {
             ...prev,
-            turn: { ...prev.turn, ...data.data.action1.turn },
-            user: { ...prev.user, ...data.data.action1.user },
-            rival: { ...prev.rival, ...data.data.action1.rival },
-          }));
-          setTimeout(() => {
-            console.log("mano del rival");
-            console.log(data.data);
+            turn: { ...prev.turn, ...data.data.action3.turn },
+            user: { ...prev.user, ...data.data.action3.user },
+            rival: { ...prev.rival, ...data.data.action3.rival },
+          };
 
-            setGameData((prev) => ({
-              ...prev,
-              turn: { ...prev.turn, ...data.data.action2.turn },
-              user: { ...prev.user, ...data.data.action2.user },
-              rival: { ...prev.rival, ...data.data.action2.rival },
-            }));
-          }, 5000);
-          setTimeout(() => {
-            console.log("ataque del rival");
-            console.log(data.data);
+          const userTable = newGameData.user.table;
+          const rivalTable = newGameData.rival.table;
 
-            setGameData((prev) => {
-              const newGameData = {
-                ...prev,
-                turn: { ...prev.turn, ...data.data.action3.turn },
-                user: { ...prev.user, ...data.data.action3.user },
-                rival: { ...prev.rival, ...data.data.action3.rival },
-              };
-
-              const userTable = newGameData.user.table;
-              const rivalTable = newGameData.rival.table;
-
-              const hayAtacantes = rivalTable?.some(carta => carta.position === "attack");
+          const hayAtacantes = rivalTable?.some(
+            (carta) => carta.position === "attack"
+          );
 
           let autoDefend = false;
-              let mensaje = "";
+          let mensaje = "";
 
-              if ((!userTable || userTable.length === 0) && hayAtacantes) {
-                mensaje = "Daño automático, no hay criaturas en mesa";
-                autoDefend = true;
-              } else if (!hayAtacantes) {
-                mensaje = "no se han declarado atacantes";
-                autoDefend = true;
-              }
+          if ((!userTable || userTable.length === 0) && hayAtacantes) {
+            mensaje = "Daño automático, no hay criaturas en mesa";
+            autoDefend = true;
+          } else if (!hayAtacantes) {
+            mensaje = "no se han declarado atacantes";
+            autoDefend = true;
+          }
 
-              if (autoDefend) {
-                setTimeout(() => {
-                  setFloatingMessage(mensaje);
-                }, 2000);
+          if (autoDefend && !defenseCalled) {
+            defenseCalled = true;
+            setTimeout(() => {
+              setFloatingMessage(mensaje);
+              defense(setGameData, newGameData);
+            }, 2000);
+          }
 
-                setTimeout(() => {
-                  defense(setGameData, newGameData);
-                }, 2000);
-              }
+          return newGameData;
+        });
+      }, 10000);
+    } else {
+      console.log("mano del rival (sin acción 1)");
+      console.log(data.data);
 
+      setGameData((prev) => ({
+        ...prev,
+        turn: { ...prev.turn, ...data.data.action2.turn },
+        user: { ...prev.user, ...data.data.action2.user },
+        rival: { ...prev.rival, ...data.data.action2.rival },
+      }));
 
+      setTimeout(() => {
+        console.log("ataque del rival");
+        console.log(data.data);
 
-              return newGameData;
-            });
-          }, 10000);
-
-        } else {
-          console.log("mano del rival (sin acción 1)");
-          console.log(data.data);
-
-          setGameData((prev) => ({
+        setGameData((prev) => {
+          const newGameData = {
             ...prev,
-            turn: { ...prev.turn, ...data.data.action2.turn },
-            user: { ...prev.user, ...data.data.action2.user },
-            rival: { ...prev.rival, ...data.data.action2.rival },
-          }));
+            turn: { ...prev.turn, ...data.data.action3.turn },
+            user: { ...prev.user, ...data.data.action3.user },
+            rival: { ...prev.rival, ...data.data.action3.rival },
+          };
 
-          setTimeout(() => {
-            console.log("ataque del rival");
-            console.log(data.data);
+          const userTable = newGameData.user.table;
+          const rivalTable = newGameData.rival.table;
 
-            setGameData((prev) => {
-              const newGameData = {
-                ...prev,
-                turn: { ...prev.turn, ...data.data.action3.turn },
-                user: { ...prev.user, ...data.data.action3.user },
-                rival: { ...prev.rival, ...data.data.action3.rival },
-              };
+          const hayAtacantes = rivalTable?.some(
+            (carta) => carta.position === "attack"
+          );
 
-             const userTable = newGameData.user.table;
-              const rivalTable = newGameData.rival.table;
+          let autoDefend = false;
+          let mensaje = "";
 
-              const hayAtacantes = rivalTable?.some(carta => carta.position === "attack");
+          if ((!userTable || userTable.length === 0) && hayAtacantes) {
+            mensaje = "Daño automático, no hay criaturas en mesa";
+            autoDefend = true;
+          } else if (!hayAtacantes) {
+            mensaje = "no se han declarado atacantes";
+            autoDefend = true;
+          }
 
-              let autoDefend = false;
-                let mensaje = "";
+          if (autoDefend && !defenseCalled) {
+            defenseCalled = true;
+            setTimeout(() => {
+              setFloatingMessage(mensaje);
+              defense(setGameData, newGameData);
+            }, 2000);
+          }
 
-                if ((!userTable || userTable.length === 0) && hayAtacantes) {
-                  mensaje = "Daño automático, no hay criaturas en mesa";
-                  autoDefend = true;
-                } else if (!hayAtacantes) {
-                  mensaje = "no se han declarado atacantes";
-                  autoDefend = true;
-                }
-
-                if (autoDefend) {
-                  setTimeout(() => {
-                    setFloatingMessage(mensaje);
-                  }, 2000);
-
-                  setTimeout(() => {
-                    defense(setGameData, newGameData);
-                  }, 2000);
-                }
-
-
-              return newGameData;
-            });
-          }, 5000);
-        }
-
-
-
-    
+          return newGameData;
+        });
+      }, 5000);
+    }
   } catch (error) {
     console.error("Error simulado al enviar ataque:", error);
   }
@@ -592,7 +596,6 @@ export async function defense(setGameData, gameData) {
 // version real defense
 
 export async function defense(setGameData, gameData) {
-  
   const battle = getBattle();
   const attackers = gameData.rival.table.filter(
     (carta) => carta.position === "attack"
@@ -613,8 +616,7 @@ export async function defense(setGameData, gameData) {
   console.log("Batalla que se va a enviar:", batallaFinal);
   resetBattle();
 
-
- const user = await new Promise((resolve, reject) => {
+  const user = await new Promise((resolve, reject) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       unsubscribe();
       if (user) resolve(user);
@@ -630,14 +632,17 @@ export async function defense(setGameData, gameData) {
   };
 
   try {
-    const response = await fetch("https://api-meafpnv6bq-ew.a.run.app/api/defend", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${userToken}`
-      },
-      body: JSON.stringify(payload),
-    });
+    const response = await fetch(
+      "https://api-meafpnv6bq-ew.a.run.app/api/defend",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
+        body: JSON.stringify(payload),
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Error al enviar la defensa");
@@ -666,10 +671,8 @@ export async function defense(setGameData, gameData) {
   }
 }
 
-
 export async function onSurrender(gameData) {
-
- const user = await new Promise((resolve, reject) => {
+  const user = await new Promise((resolve, reject) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       unsubscribe();
       if (user) resolve(user);
@@ -684,14 +687,17 @@ export async function onSurrender(gameData) {
       idpartida: gameData._idpartida,
     };
 
-    const response = await fetch("https://api-meafpnv6bq-ew.a.run.app/api/surrender", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${userToken}`
-      },
-      body: JSON.stringify(payload),
-    });
+    const response = await fetch(
+      "https://api-meafpnv6bq-ew.a.run.app/api/surrender",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
+        body: JSON.stringify(payload),
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Error al rendirse");
@@ -703,8 +709,6 @@ export async function onSurrender(gameData) {
     console.error("Error al enviar rendición:", error);
   }
 }
-
-
 
 // services/shopService.js
 export const buyProduct = async (id, tipo) => {
