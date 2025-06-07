@@ -8,6 +8,7 @@ const deckSchema = new mongoose.Schema({
     image: {type: String, required: false},
     belongsTo: {type: String, enum: ['shop', 'history'] ,required: false}, // Cambiar a true cuando tenga los mazos definitivos
     price: {type: Number, required: false},
+    set: {type: String, required: false},
 })
 
 const Deck = mongoose.model('Deck', deckSchema);
