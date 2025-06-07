@@ -444,9 +444,9 @@ export async function endTurn(selectedAttackCards, setGameData, gameData, setFlo
               };
 
               const userTable = newGameData.user.table;
-                const rivalTable = newGameData.rival.table;
+              const rivalTable = newGameData.rival.table;
 
-                const hayAtacantes = rivalTable?.some(carta => carta.position === "attack");
+              const hayAtacantes = rivalTable?.some(carta => carta.position === "attack");
 
           let autoDefend = false;
               let mensaje = "";
