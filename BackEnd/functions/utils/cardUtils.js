@@ -40,7 +40,7 @@ async function handleCreatureCard(game, usedCard, req, res) {
     );
 
     const updatedGame = await Game.findById(game._id);
-    const playerTableMarked = markNewCards(updatedGame.playerTable);
+    const playerTableMarked = markNewCards(updatedGame.playerTable, [usedCard._id.toString()]);
 
     await Game.updateOne(
       { _id: game._id },
@@ -97,9 +97,9 @@ async function handleEquipementCard(game, usedCard, target, req, res) {
     const updatedGame = await Game.findById(game._id);
     
     // 4. Marcar nuevas cartas dependiendo de a quién se aplicó
-    const markedTable = isOpponentTarget
-      ? markNewCards(updatedGame.opponentTable)
-      : markNewCards(updatedGame.playerTable);
+    const markedTable = isRivalTarget
+      ? markNewCards(updatedGame.rivalTable, [usedCard._id.toString()])
+      : markNewCards(updatedGame.playerTable, [usedCard._id.toString()]);
 
     await Game.updateOne(
       { _id: game._id },
@@ -149,8 +149,8 @@ async function handleSpellCard(game, usedCard, target, req, res) {
 
       const updatedGame = await Game.findById(gameId);
       const markedTable = isRivalTarget
-        ? markNewCards(updatedGame.rivalTable)
-        : markNewCards(updatedGame.playerTable);
+        ? markNewCards(updatedGame.rivalTable, [usedCard._id.toString()])
+        : markNewCards(updatedGame.playerTable, [usedCard._id.toString()]);
 
       await Game.updateOne(
         { _id: gameId },
@@ -185,8 +185,8 @@ async function handleSpellCard(game, usedCard, target, req, res) {
       ]);
 
       const updatedGame = await Game.findById(gameId);
-      const playerTableMarked = markNewCards(updatedGame.playerTable);
-      const rivalTableMarked = markNewCards(updatedGame.rivalTable);
+      const playerTableMarked = markNewCards(updatedGame.playerTable, [usedCard._id.toString()]);
+      const rivalTableMarked = markNewCards(updatedGame.rivalTable, [usedCard._id.toString()]);
 
       await Game.updateOne(
         { _id: gameId },
@@ -207,23 +207,27 @@ async function handleSpellCard(game, usedCard, target, req, res) {
 }
 
 
-function markNewCards(table, usedCards = [], isAi = false) {
+function markNewCards(table, usedCardIds = [], isAi = false) {
   return table.map(card => {
     const cardData = card.toObject?.() || card;
+    const cardIdStr = cardData._id.toString();
+
     return {
       ...cardData,
-      equipements: mapEquipements(cardData.equipements, usedCards, isAi),
-      new: isAi ? usedCards.includes(cardData._id.toString()) : cardData.new || false
+      equipements: mapEquipements(cardData.equipements, usedCardIds, isAi),
+      new: usedCardIds.includes(cardIdStr)
     };
   });
 }
 
-function mapEquipements(equipements, usedCards, isAi) {
+function mapEquipements(equipements, usedCardIds, isAi = false) {
   return (equipements || []).map(eq => {
     const eqData = eq.toObject?.() || eq;
+    const eqIdStr = eqData._id.toString();
+
     return {
       ...eqData,
-      new: isAi ? usedCards.includes(eqData._id.toString()) : eqData.new || false
+      new: usedCardIds.includes(eqIdStr)
     };
   });
 }
