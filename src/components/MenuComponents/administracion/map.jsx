@@ -121,6 +121,7 @@ function MapsList() {
       <button onClick={() => { setIsCreating(true); setFormData(getEmptyForm()); setEditingMap(null); }}>
         + Nuevo Mapa
       </button>
+      <div className="table-scroll-wrapper"></div>
       <table border="1" cellPadding="8" cellSpacing="0">
         <thead>
           <tr>
@@ -144,6 +145,7 @@ function MapsList() {
           ))}
         </tbody>
       </table>
+      </div>
 
       {(editingMap || isCreating) && (
         <div className="modal-overlay">

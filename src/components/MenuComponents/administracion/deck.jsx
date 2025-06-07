@@ -177,6 +177,7 @@ function DecksList() {
       <button onClick={() => { setIsCreating(true); setFormData(getEmptyForm()); setEditingDeck(null); }}>
         + Nuevo Deck
       </button>
+      <div className="table-scroll-wrapper">
       <table border="1" cellPadding="8" cellSpacing="0" style={{ marginTop: '10px' }}>
         <thead>
           <tr>
@@ -202,6 +203,7 @@ function DecksList() {
           ))}
         </tbody>
       </table>
+      </div>
 
       {(editingDeck || isCreating) && (
         <div className="modal-overlay">
