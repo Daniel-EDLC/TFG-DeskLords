@@ -487,17 +487,3 @@ body {
   }
 }
 
-.main-content {
-  margin-top: 15vh;
-  height: calc(100vh - 15vh); 
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.menu-scroll-content {
-  flex-grow: 1;
-  overflow-y: auto;
-  height: 100%;
-  padding: 0;
-}

@@ -93,6 +93,7 @@ function SetsList() {
       <button onClick={() => { setIsCreating(true); setFormData(getEmptyForm()); setEditingSet(null); }}>
         + Nuevo Set
       </button>
+      <div className="table-scroll-wrapper">
       <table border="1" cellPadding="8" cellSpacing="0">
         <thead>
           <tr>
@@ -116,6 +117,7 @@ function SetsList() {
           ))}
         </tbody>
       </table>
+      </div>
 
       {(editingSet || isCreating) && (
         <div className="modal-overlay">

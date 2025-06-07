@@ -21,7 +21,10 @@ async function createDeck(req, res) {
             name: req.body.name,
             description: req.body.description,
             image: req.body.image,
-            cards: deckCards
+            cards: deckCards,
+            belongsTo: req.body.belongsTo,
+            price: req.body.price,
+            set: req.body.set
         });
 
         const deckSaved = await newDeck.save();

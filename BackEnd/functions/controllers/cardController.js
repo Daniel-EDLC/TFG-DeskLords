@@ -9,7 +9,8 @@ async function createCard(req, res) {
             description: req.body.description,
             cost: req.body.manaCost,
             atk: req.body.atk,
-            hp: req.body.hp
+            hp: req.body.hp,
+            set: req.body.set,
         });
 
         const cardSaved = await newCard.save();

@@ -41,6 +41,7 @@ function GamesList() {
   return (
     <div>
       <h2>Lista de Partidas</h2>
+      <div className="table-scroll-wrapper">
       <table border="1" cellPadding="8" cellSpacing="0">
         <thead>
           <tr>
@@ -73,6 +74,7 @@ function GamesList() {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }

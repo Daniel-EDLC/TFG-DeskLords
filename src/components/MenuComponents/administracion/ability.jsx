@@ -95,7 +95,7 @@ function AbilitiesList() {
       <button onClick={openCreate}>
         + Nueva Habilidad
       </button>
-
+    <div className="table-scroll-wrapper">
       <table border="1" cellPadding="8" cellSpacing="0">
         <thead>
           <tr>
@@ -117,6 +117,7 @@ function AbilitiesList() {
           ))}
         </tbody>
       </table>
+      </div>
 
       {(editingAbility || isCreating) && (
         <div className="modal-overlay">

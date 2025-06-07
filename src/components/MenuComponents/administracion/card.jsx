@@ -137,37 +137,39 @@ function CardsList() {
             <button onClick={() => { setIsCreating(true); setFormData(getEmptyForm()); setEditingCard(null); }}>
                 + Nueva Carta
             </button>
-            <table border="1" cellPadding="8" cellSpacing="0" style={{ marginTop: '10px' }}>
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Tipo</th>
-                        <th>Elemento</th>
-                        <th>ATK</th>
-                        <th>HP</th>
-                        <th>Coste</th>
-                        <th>Set</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {cards.map(card => (
-                        <tr key={card._id}>
-                            <td>{card.name}</td>
-                            <td>{card.type}</td>
-                            <td>{card.element}</td>
-                            <td>{card.atk}</td>
-                            <td>{card.hp}</td>
-                            <td>{card.cost}</td>
-                            <td>{card.set}</td>
-                            <td>
-                                <button onClick={() => openEdit(card)}>Editar</button>
-                                <button onClick={() => deleteCard(card._id)}>Borrar</button>
-                            </td>
+            <div className="table-scroll-wrapper">
+                <table border="1" cellPadding="8" cellSpacing="0" style={{ marginTop: '10px' }}>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Tipo</th>
+                            <th>Elemento</th>
+                            <th>ATK</th>
+                            <th>HP</th>
+                            <th>Coste</th>
+                            <th>Set</th>
+                            <th>Acciones</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {cards.map(card => (
+                            <tr key={card._id}>
+                                <td>{card.name}</td>
+                                <td>{card.type}</td>
+                                <td>{card.element}</td>
+                                <td>{card.atk}</td>
+                                <td>{card.hp}</td>
+                                <td>{card.cost}</td>
+                                <td>{card.set}</td>
+                                <td>
+                                    <button onClick={() => openEdit(card)}>Editar</button>
+                                    <button onClick={() => deleteCard(card._id)}>Borrar</button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
 
             {(editingCard || isCreating) && (
                 <div className="modal-overlay">
