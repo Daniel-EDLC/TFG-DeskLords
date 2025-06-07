@@ -104,9 +104,9 @@ function PlayersList() {
   }
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div>
       <h2>Lista de Jugadores</h2>
-      <table border="1" cellPadding="8" cellSpacing="0" style={{ marginTop: '10px' }}>
+      <table border="1" cellPadding="8" cellSpacing="0">
         <thead>
           <tr>
             <th>Nombre</th>
@@ -135,14 +135,8 @@ function PlayersList() {
       </table>
 
       {(editingPlayer) && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-          background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center'
-        }}>
-          <form onSubmit={savePlayer} style={{
-            padding: '20px', borderRadius: '10px',
-            width: '90%', maxWidth: '600px'
-          }}>
+        <div className="modal-overlay">
+          <form onSubmit={savePlayer} >
             <h3>{editingPlayer ? 'Editar Jugador' : 'Nuevo Jugador'}</h3>
 
             <label>Nombre:</label>
@@ -223,7 +217,7 @@ function PlayersList() {
 
             <br /><br />
             <button type="submit">Guardar</button>
-            <button type="button" onClick={() => { setEditingPlayer(null); setIsCreating(false); }} style={{ marginLeft: '10px' }}>
+            <button type="button" onClick={() => { setEditingPlayer(null); setIsCreating(false); }}>
               Cancelar
             </button>
           </form>

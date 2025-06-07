@@ -39,9 +39,9 @@ function GamesList() {
   }
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div>
       <h2>Lista de Partidas</h2>
-      <table border="1" cellPadding="8" cellSpacing="0" style={{ marginTop: '10px', width: '100%' }}>
+      <table border="1" cellPadding="8" cellSpacing="0">
         <thead>
           <tr>
             <th>Estado</th>

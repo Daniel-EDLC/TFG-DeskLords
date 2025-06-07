@@ -1,4 +1,4 @@
-const { BattlePass } = require('../models/battlePass');
+const BattlePass = require('../models/battlePass');
 
 function generateDefaultLevels() {
   return [
@@ -15,12 +15,19 @@ function generateDefaultLevels() {
   ];
 }
 
-function getBattlePassPlayer(player) {
-  const battlePassData = BattlePass.findOne({ playerId: player.uid });
+async function getBattlePassPlayer(idPlayer) {
 
-  const battlePassLevels = battlePassData.levels.length;
-  const actualPlayerLevel = battlePassData.actual_level;
+  const battlePassData = await BattlePass.findOne({ playerId: idPlayer });
+
+  const playerBattlePass = {
+    levels: battlePassData.levels,
+    actualLevel: battlePassData.actual_level,
+    totalLevels: battlePassData.levels.length,
+    completedLevels: battlePassData.completed_levels,
+    rewards: battlePassData.rewards || []
+  };
+
   return playerBattlePass;
 }
 
-module.exports = { generateDefaultLevels };
+module.exports = { generateDefaultLevels, getBattlePassPlayer };
