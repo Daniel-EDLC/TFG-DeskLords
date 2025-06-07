@@ -102,10 +102,6 @@ async function drawCard({ game, isAI }) {
   const pendingDeckField = isAI ? 'rivalPendingDeck' : 'playerPendingDeck';
   const hpField = isAI ? 'rivalHp' : 'playerHp';
 
-  console.log('\n----------------------------------------------------------------------handField ==> \n', handField);
-  console.log('\n----------------------------------------------------------------------pendingDeckField ==> \n', pendingDeckField);
-  console.log('\n----------------------------------------------------------------------hpField ==> \n', hpField);
-
   // Comprobar si la mano ya tiene 5 cartas
   if (game[handField].length >= 5) {
     return; // No se puede robar más cartas
@@ -118,8 +114,7 @@ async function drawCard({ game, isAI }) {
     );
   } else {
     const card = game[pendingDeckField][0];
-
-    console.log('\n----------------------------------------------------------------------Card to draw ==> \n', card);
+    
     // Forzar el _id a ObjectId para el $pull
     const cardId = typeof card._id === 'string' ? mongoose.Types.ObjectId(card._id) : card._id;
     await Game.updateOne(

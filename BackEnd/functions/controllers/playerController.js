@@ -1,12 +1,13 @@
 const Player = require('../models/Player');
-const Deck = require('../models/Deck');
-const Map = require('../models/Map');
 const News = require('../models/News');
 const Avatars = require('../models/Avatars');
+const { getMapsAvailable, getAvatarsAvailable, getDecksAvailable } = require('../utils/playerUtils');
+const { getBattlePassPlayer } = require('../utils/battlePassUtils');
+const { createBattlePass } = require('../controllers/battlePassController');
 
 async function createPlayer(req, res) {
     try {
-        
+
         const existingPlayer = await Player.findOne({ uid: req.body.uid });
         if (existingPlayer) {
             return req.response.error("El usuario ya existe");
@@ -16,7 +17,12 @@ async function createPlayer(req, res) {
         const lockedAvatars = await Avatars.find();
 
         const lockedAvatarsFiltered = lockedAvatars.filter(avatar => avatar.name !== 'default');
-        
+
+        const battlePassCreated = await createBattlePass(req.body.uid);
+        if (battlePassCreated.error) {
+            return req.response.error(`Error al crear el pase de batalla: ${battlePassCreated.error}`);
+        }
+
         const newPlayer = new Player({
             uid: req.body.uid,
             name: req.body.name,
@@ -71,102 +77,11 @@ async function getPlayerInfo(req, res) {
             return req.response.error('Jugador no encontrado');
         }
 
-        let allMaps = [];
+        const allMaps = await getMapsAvailable(player);
 
-        if (player.maps_unlocked.length > 0) {
-            const unlockedMaps = await Promise.all(
-                player.maps_unlocked.map(async mapId => {
-                    const mapFound = await Map.findById(mapId);
-                    return {
-                        name: mapFound.name,
-                        id: mapFound._id,
-                        image: mapFound.image,
-                        available: true,
-                    };
-                })
-            );
+        const allDecks = await getDecksAvailable(player);
 
-            allMaps = allMaps.concat(unlockedMaps);
-        }
-
-        if (player.maps_locked.length > 0) {
-            const lockedMaps = await Promise.all(
-                player.maps_locked.map(async mapId => {
-                    const mapFound = await Map.findById(mapId);
-                    return {
-                        name: mapFound.name,
-                        id: mapFound._id,
-                        image: mapFound.image,
-                        available: false,
-                    };
-                })
-            );
-
-            allMaps = allMaps.concat(lockedMaps);
-        }
-
-        let allDecks = [];
-
-        // Obtener los objetos completos de los decks
-        if (player.owned_decks.length > 0) {
-            const decks_unlocked = await Promise.all(
-                player.owned_decks.map(async deckId => {
-                    const deckFound = await Deck.findById(deckId);
-                    return {
-                        ...deckFound.toObject?.(),
-                        available: true,
-                    };
-                })
-            );
-
-            allDecks = allDecks.concat(decks_unlocked);
-        }
-
-        if (player.locked_decks.length > 0) {
-            const decks_locked = await Promise.all(
-                player.locked_decks.map(async deckId => {
-                    const deckFound = await Deck.findById(deckId);
-                    return {
-                        ...deckFound.toObject?.(),
-                        available: false,
-                    };
-                })
-            );
-
-            allDecks = allDecks.concat(decks_locked);
-        }
-
-        let allAvatars = [];
-
-        if (player.unlocked_avatars.length > 0) {
-            const avatars_unlocked = await Promise.all(
-                player.unlocked_avatars.map(async avatarId => {
-                    const avatarFound = await Avatars.findById(avatarId);
-                    return {
-                        ...avatarFound.toObject?.(),
-                        available: true,
-                    };
-                })
-            );
-
-            allAvatars = allAvatars.concat(avatars_unlocked);
-
-        }
-
-        if (player.locked_avatars.length > 0) {
-            const avatars_locked = await Promise.all(
-                player.locked_avatars.map(async avatarId => {
-                    const avatarFound = await Avatars.findById(avatarId);
-                    return {
-                        ...avatarFound.toObject?.(),
-                        available: false,
-                    };
-                })
-            );
-
-            allAvatars = allAvatars.concat(avatars_locked);
-
-        }
+        const allAvatars = await getAvatarsAvailable(player);
 
         const avatarActive = await Avatars.findById(player.selected_avatar);
         const avatarUrl = avatarActive.url
@@ -178,6 +93,8 @@ async function getPlayerInfo(req, res) {
             avatars: allAvatars.filter(avatar => !avatar.available && avatar.belongsTo === 'shop'),
         }
 
+        const battlePass = await getBattlePassPlayer(player.uid);
+
         req.response.success({
             playerAvatar: avatarUrl || "no lo encuentra",
             playerName: player.displayName || 'Jugador Anónimo',
@@ -185,11 +102,12 @@ async function getPlayerInfo(req, res) {
             playerExperience: player.player_level_progress,
             rol: player.rol,
             coins: player.coins || 0,
-            decks: allDecks,
-            maps: allMaps,
+            decks: allDecks || [],
+            maps: allMaps || [],
             news: newsFound || [],
-            avatars: allAvatars,
-            shop: shopItems
+            avatars: allAvatars || [],
+            shop: shopItems || [],
+            battlePass: battlePass || {},
         })
     } catch (error) {
         req.response.error(`Error al obtener información del jugador: ${error.message}`);

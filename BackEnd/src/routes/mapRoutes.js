@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { createMap } = require('../controllers/mapController');
+const { createMap, updateMap, getMaps, deleteMap } = require('../controllers/mapController');
 
 router.post('/createMap', createMap);
+router.put('/updateMap', updateMap);
+router.get('/getMaps', getMaps);
+router.post('/deleteMap', deleteMap);
 
 module.exports = router;
