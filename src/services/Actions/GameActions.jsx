@@ -448,25 +448,27 @@ export async function endTurn(selectedAttackCards, setGameData, gameData, setFlo
 
                 const hayAtacantes = rivalTable?.some(carta => carta.position === "attack");
 
-                if ((!userTable || userTable.length === 0) && hayAtacantes) {
-                  setTimeout(() => {
-                    setFloatingMessage('Daño automático, no hay criaturas en mesa');
-                  }, 2000);
+          let autoDefend = false;
+              let mensaje = "";
 
-                  setTimeout(() => {
-                    defense(setGameData, newGameData);
-                  }, 2000);
-                }
+              if ((!userTable || userTable.length === 0) && hayAtacantes) {
+                mensaje = "Daño automático, no hay criaturas en mesa";
+                autoDefend = true;
+              } else if (!hayAtacantes) {
+                mensaje = "no se han declarado atacantes";
+                autoDefend = true;
+              }
 
-                if ((hayAtacantes.length <= 0)) {
-                  setTimeout(() => {
-                    setFloatingMessage('no se han declarado atacantes');
-                  }, 2000);
+              if (autoDefend) {
+                setTimeout(() => {
+                  setFloatingMessage(mensaje);
+                }, 2000);
 
-                  setTimeout(() => {
-                    defense(setGameData, newGameData);
-                  }, 2000);
-                }
+                setTimeout(() => {
+                  defense(setGameData, newGameData);
+                }, 2000);
+              }
+
 
 
               return newGameData;
@@ -501,26 +503,27 @@ export async function endTurn(selectedAttackCards, setGameData, gameData, setFlo
 
               const hayAtacantes = rivalTable?.some(carta => carta.position === "attack");
 
-              if ((!userTable || userTable.length === 0) && hayAtacantes) {
-                setTimeout(() => {
-                  setFloatingMessage('Daño automático, no hay criaturas en mesa');
-                }, 2000);
+              let autoDefend = false;
+                let mensaje = "";
 
-                setTimeout(() => {
-                  defense(setGameData, newGameData);
-                }, 2000);
-              }
+                if ((!userTable || userTable.length === 0) && hayAtacantes) {
+                  mensaje = "Daño automático, no hay criaturas en mesa";
+                  autoDefend = true;
+                } else if (!hayAtacantes) {
+                  mensaje = "no se han declarado atacantes";
+                  autoDefend = true;
+                }
 
-
-                if ((!hayAtacantes)) {
+                if (autoDefend) {
                   setTimeout(() => {
-                    setFloatingMessage('no se han declarado atacantes');
+                    setFloatingMessage(mensaje);
                   }, 2000);
 
                   setTimeout(() => {
                     defense(setGameData, newGameData);
                   }, 2000);
                 }
+
 
               return newGameData;
             });
