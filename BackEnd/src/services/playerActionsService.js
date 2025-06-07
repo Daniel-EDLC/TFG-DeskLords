@@ -3,7 +3,7 @@ const Player = require('../models/Player');
 const { resolverCombate, chooseDefenders } = require('./combatService');
 const { nextTurn, drawCard, checkForGameOver, removeDeadCardsFromTables } = require('./turnService');
 const { placeCards, changeCardsPositionToAttack } = require('./IAService');
-const { handleCreatureCard, handleEquipementCard, handleSpellCard } = require('../utils/cardUtils');
+const { handleCreatureCard, handleEquipementCard, handleSpellCard, changeCardsPositionToWaiting } = require('../utils/cardUtils');
 
 async function useCard(req, res) {
   try {
@@ -140,33 +140,33 @@ async function attack(req, res) {
     }
 
     try {
-      console.log('\n----------------------------------------------------------Empieza el siguiente turno (llamada a nextTurn en attack)\n');
+      // console.log('\n----------------------------------------------------------Empieza el siguiente turno (llamada a nextTurn en attack)\n');
       await nextTurn({ game: updatedGameResponse1 });
     } catch (error) {
       return req.response.error(`Error al pasar al siguiente turno: ${error.message}`);
     }
 
-    console.log('\n----------------------------------------------------------Mano del rival ANTES de pasar al siguiente turno ==> \n', updatedGameResponse1.rivalHand);
+    // console.log('\n----------------------------------------------------------Mano del rival ANTES de pasar al siguiente turno ==> \n', updatedGameResponse1.rivalHand);
     const updatedGameNextTurn = await Game.findById(gameId);
-    console.log('\n----------------------------------------------------------Mano del rival DESPUÉS de pasar al siguiente turno ==> \n', updatedGameNextTurn.rivalHand);
+    // console.log('\n----------------------------------------------------------Mano del rival DESPUÉS de pasar al siguiente turno ==> \n', updatedGameNextTurn.rivalHand);
 
     try {
-      console.log('\n----------------------------------------------------------Empieza el robo de carta para el rival (llamada a drawCard en attack)\n');
+      // console.log('\n----------------------------------------------------------Empieza el robo de carta para el rival (llamada a drawCard en attack)\n');
       await drawCard({ game: updatedGameNextTurn, isAI: true });
     } catch (error) {
       return req.response.error(`Error al robar carta: ${error.message}`);
     }
 
-    console.log('\n----------------------------------------------------------Cartas ANTES de robar en la mano del rival ==> \n', updatedGameNextTurn.rivalHand);
-    console.log('\n----------------------------------------------------------Pending deck del rival ANTES de robar ==> ', updatedGameNextTurn.rivalPendingDeck.length);
+    // console.log('\n----------------------------------------------------------Cartas ANTES de robar en la mano del rival ==> \n', updatedGameNextTurn.rivalHand);
+    // console.log('\n----------------------------------------------------------Pending deck del rival ANTES de robar ==> ', updatedGameNextTurn.rivalPendingDeck.length);
 
     const updatedGameAfterDrawing = await Game.findById(gameId);
 
-    console.log('\n----------------------------------------------------------Cartas DESPUÉS de robar en la mano del rival ==> \n', updatedGameAfterDrawing.rivalHand);
-    console.log('\n----------------------------------------------------------Pending deck del rival DESPUÉS de robar ==> ', updatedGameAfterDrawing.rivalPendingDeck.length);
+    // console.log('\n----------------------------------------------------------Cartas DESPUÉS de robar en la mano del rival ==> \n', updatedGameAfterDrawing.rivalHand);
+    // console.log('\n----------------------------------------------------------Pending deck del rival DESPUÉS de robar ==> ', updatedGameAfterDrawing.rivalPendingDeck.length);
 
     try {
-      console.log('\n----------------------------------------------------------Colocando cartas (llamada a placeCards)\n');
+      // console.log('\n----------------------------------------------------------Colocando cartas (llamada a placeCards)\n');
       await placeCards(updatedGameAfterDrawing);
     } catch (error) {
       return req.response.error(`Error al colocar cartas y atacar: ${error.message}`);
@@ -322,7 +322,7 @@ async function defend(req, res) {
     }
 
     try {
-      console.log('\n----------------------------------------------------------Empieza el siguiente turno (llamada a nextTurn en defend)\n');
+      // console.log('\n----------------------------------------------------------Empieza el siguiente turno (llamada a nextTurn en defend)\n');
       await nextTurn({ game: updatedGame });
     } catch (error) {
       return req.response.error(`Error al pasar al siguiente turno: ${error.message}`);
@@ -341,25 +341,10 @@ async function defend(req, res) {
 
     const updatedGameAfterDrawing = await Game.findById(gameId);
 
+    console.log('\n----------------------------------------------------------Cartas de la mano del player DESPUÉS de robar ==> \n', updatedGameAfterDrawing.playerHand);
+
     try {
-      // Cambiar el campo position de todas las cartas de la mesa del player y del rival a 'waiting'
-      const updatedPlayerTable = updatedGameAfterDrawing.playerTable.map(card => ({
-        ...card.toObject?.() || card,
-        position: 'waiting'
-      }));
-      const updatedRivalTable = updatedGameAfterDrawing.rivalTable.map(card => ({
-        ...card.toObject?.() || card,
-        position: 'waiting'
-      }));
-      await Game.updateOne(
-        { _id: gameId },
-        {
-          $set: {
-            playerTable: updatedPlayerTable,
-            rivalTable: updatedRivalTable
-          }
-        }
-      );
+      await changeCardsPositionToWaiting(updatedGameAfterDrawing);
     } catch (error) {
       return req.response.error(`Error al cambiar posición de cartas a 'waiting': ${error.message}`);
     }
