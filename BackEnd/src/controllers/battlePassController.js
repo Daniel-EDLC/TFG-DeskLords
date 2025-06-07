@@ -1,4 +1,4 @@
-const { BattlePass } = require('../models/battlePass');
+const BattlePass = require('../models/battlePass');
 const Player = require('../models/Player');
 const { generateDefaultLevels } = require('../utils/battlePassUtils');
 
@@ -17,25 +17,30 @@ async function getBattlePass(req, res) {
     }
 }
 
-async function createBattlePass(req, res) {
+async function createBattlePass(idPlayer) {
     try {
-        const playerId = req.body.playerId;
+        const playerId = idPlayer;
 
         const existingBattlePass = await BattlePass.findOne({ playerId });
         if (existingBattlePass) {
-            return { error: 'Battle Pass already exists for this player' };
+            return req.response.error('Battle Pass already exists for this player');
         }
+
+        const levels = generateDefaultLevels();
 
         const newBattlePass = new BattlePass({
             playerId: playerId,
             actual_level: 0,
-            levels: generateDefaultLevels()
+            levels: levels
         });
-        await newBattlePass.save();
+
+        const battlePassSaved = await newBattlePass.save();
+
+        return { mensaje: 'Pase de batalla creado correctamente', battlePass: battlePassSaved };
     }
     catch (error) {
-        console.error('Error creating Battle Pass:', error);
-        return { error: 'Error creating Battle Pass' };
+        console.error('Error creando el pase de batalla:', error);
+        return { error: 'Error creando el pase de batalla' };
     }
 }
 
@@ -119,10 +124,9 @@ async function deleteBattlePass(playerId) {
         if (!battlePass) {
             return { error: 'Pase de batalla no encontrado para este jugador' };
         }
-        return { success: 'Pase de batalla eliminado correctamente' };
+        req.response.success({ message: 'Battle Pass deleted successfully' });
     } catch (error) {
-        console.error('Error deleting Battle Pass:', error);
-        return { error: 'Error deleting Battle Pass' };
+        req.response.error(`Error eliminando el pase de batalla: ${error.message}`);
     }
 }
 

@@ -11,11 +11,6 @@ const battlePassSchema = new mongoose.Schema({
     actual_level: { type: Number, default: 0 },
     levels: { type: [levelSchema], required: false },
 });
-
-const BattlePassLevels = mongoose.model('BattlePassLevels', levelSchema);
 const BattlePass = mongoose.model('BattlePass', battlePassSchema);
 
-module.exports = {
-    BattlePass,
-    BattlePassLevels
-};
+module.exports = BattlePass

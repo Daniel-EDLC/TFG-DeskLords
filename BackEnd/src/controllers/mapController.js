@@ -30,6 +30,47 @@ async function createMap(req, res) {
     }
 }
 
+async function getMaps(req, res) {
+    try {
+        const maps = await Map.find();
+        req.response.success({ maps });
+    } catch (error) {
+        req.response.error(`Error al obtener los mapas: ${error.message}`);
+    }
+}
+
+async function updateMap(req, res) {
+    try {
+        const mapId = req.params.id;
+        const updatedData = req.body.data;
+
+        const updatedMap = await Map.findByIdAndUpdate(mapId, updatedData, { new: true });
+        if (!updatedMap) {
+            return req.response.error('Mapa no encontrado');
+        }
+        req.response.success({ map: updatedMap });
+    } catch (error) {
+        req.response.error(`Error al actualizar el mapa: ${error.message}`);
+    }
+}
+
+async function deleteMap(req, res) {
+    try {
+        const mapId = req.params.id;
+
+        const deletedMap = await Map.findByIdAndDelete(mapId);
+        if (!deletedMap) {
+            return req.response.error('Mapa no encontrado');
+        }
+        req.response.success({ message: 'Mapa eliminado correctamente' });
+    } catch (error) {
+        req.response.error(`Error al eliminar el mapa: ${error.message}`);
+    }
+}
+
 module.exports = {
     createMap,
+    getMaps,
+    updateMap,
+    deleteMap
 };
