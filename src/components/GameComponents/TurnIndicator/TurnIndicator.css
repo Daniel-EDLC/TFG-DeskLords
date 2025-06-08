@@ -33,11 +33,13 @@
 
 
 .turn-indicator .icons {
+  cursor: pointer;
   display: flex;
   gap: 15rem;
   font-size: 3rem;
   transition: opacity 0.3s ease;
 }
+
 
 .turn-indicator .icon {
   color: #888;
@@ -45,6 +47,10 @@
   transition: color 0.9s, transform 0.3s;
 }
 
+.turn-indicator .icon:hover {
+  scale: 1.1;
+  transition: 0.4s ease;
+}
 .turn-indicator.player .icon.active {
   color: #29df18;
   transform: scale(1.2);
@@ -85,17 +91,67 @@
 }
 
 .phase-dialog .MuiButton-root {
-  color: white;
-  border: 1px solid white;
-  border-radius: 6px;
-  padding: 6px 12px;
-  font-weight: bold;
-  background-color: transparent;
-  transition: background-color 0.3s ease;
+   color: white !important;
+  border: 1px solid white !important;
+  border-radius: 6px !important;
+  padding: 6px 12px !important;
+  font-weight: bold !important;
+  background-color: transparent !important;
+  transition: background-color 0.3s ease  !important;
 }
 
 .phase-dialog .MuiButton-root:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.info-icon {
+
+  margin-left: 0.5rem;
+  color: #4253b4;
+}
+
+.dialog-content h3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.726);
+} 
+
+
+.custom-dialog {
+  background-color: rgba(36, 36, 36, 0.966) !important;
+  border: 2px solid rgba(255, 255, 255, 0.212) !important;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05) !important;
+  color: white !important;
+  border-radius: 12px !important;
+  padding: 1.5rem !important;
+}
+
+.dialog-close-button {
+   color: white !important;
+  border: 1px solid white !important;
+  border-radius: 6px !important;
+  padding: 6px 12px !important;
+  font-weight: bold !important;
+  background-color: transparent !important;
+  transition: background-color 0.3s ease  !important;
+}
+
+.dialog-close-button:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.info-icon {
+  margin-left: 0.5rem;
+  cursor: pointer;
+  vertical-align: middle;
+  transition: transform 0.2s ease;
+}
+
+.info-icon:hover {
+  transform: scale(1.2);
+  color: #ccc;
 }
 
 
@@ -137,7 +193,12 @@
     padding: 5px 10px;
   }
 
-
+.custom-dialog {
+  font-size: 0.7rem !important;
+  padding: 1rem !important;
+  background-color: rgb(19, 19, 19) !important;
+  z-index: 100000 !important;
+}
 
 
 

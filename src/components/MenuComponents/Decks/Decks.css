@@ -131,7 +131,7 @@
   scrollbar-width: none; /* Firefox */
 }
 
-.deck-card {
+.deck-card-view {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -148,13 +148,13 @@
   cursor: pointer;
 }
 
-.deck-card.disabled {
+.deck-card-view.disabled {
   opacity: 0.4;
   pointer-events: none;
   cursor: not-allowed;
 }
 
-.deck-card:hover {
+.deck-card-view:hover {
   
   border-color: #c9c611;
   
@@ -246,7 +246,7 @@
     max-height: 68vh;
   }
 
-  .deck-card {
+  .deck-card-view {
     
     width: 100px;
     padding: 8px;

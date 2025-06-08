@@ -95,7 +95,7 @@ async function handleEquipementCard(game, usedCard, target, req, res) {
 
     // 3. Recargar y marcar la tabla con la carta/equipamiento usado
     const updatedGame = await Game.findById(game._id);
-    
+
     // 4. Marcar nuevas cartas dependiendo de a quién se aplicó
     const markedTable = isRivalTarget
       ? markNewCards(updatedGame.rivalTable, [usedCard._id.toString()])
@@ -232,10 +232,36 @@ function mapEquipements(equipements, usedCardIds, isAi = false) {
   });
 }
 
+async function changeCardsPositionToWaiting(game) {
+  const gameUpdated = await Game.findById(game._id);
+  if (!gameUpdated) {
+    throw new Error('Game not found');
+  }
+
+  const updatedPlayerTable = gameUpdated.playerTable.map(card => ({
+    ...card.toObject?.() || card,
+    position: 'waiting'
+  }));
+  const updatedRivalTable = gameUpdated.rivalTable.map(card => ({
+    ...card.toObject?.() || card,
+    position: 'waiting'
+  }));
+  await Game.updateOne(
+    { _id: game._id },
+    {
+      $set: {
+        playerTable: updatedPlayerTable,
+        rivalTable: updatedRivalTable
+      }
+    }
+  );
+}
+
 module.exports = {
   sendUsedCardResponse,
   handleCreatureCard,
   handleEquipementCard,
   handleSpellCard,
-  markNewCards
+  markNewCards,
+  changeCardsPositionToWaiting,
 };

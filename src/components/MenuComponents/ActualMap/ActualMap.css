@@ -111,8 +111,8 @@
 
 
 .deck-options {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
   margin-top: 1rem;
   justify-items: center;
@@ -124,6 +124,8 @@
 
 .deck-card {
   background-color: #2f2f2f;
+  
+  border: 3px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: 0.75rem 1rem;
   color: white;
@@ -132,12 +134,13 @@
   cursor: pointer;
   transition: all 0.3s ease;
   width: 90%;
+  max-height: 100px;
   margin: 0 auto;
 }
 
 .deck-card:hover {
-  background-color: #e4e4e493;
-  border-color: rgb(0, 70, 0);
+  background-color: #d0d4004b;
+  border-color: rgb(163, 152, 0);
 }
 
 

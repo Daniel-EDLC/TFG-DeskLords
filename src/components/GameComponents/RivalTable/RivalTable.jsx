@@ -1,12 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
-import './RivalTable.css';
+import React, { useState, useEffect } from "react";
+import {
+  Box,
+  Paper,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+} from "@mui/material";
+import "./RivalTable.css";
 
-function RivalTable({ 
-  cartas, turn, battles, targetSpellCard, targetEquipmentCard, isSelectingTargetForSpell, 
-  isSelectingTargetForEquipment, mana, onCardClick, onPlayCard, draggingType, pendingCard, setPendingCard }) {
-
-  const [hiddenCards, setHiddenCards] = useState([]); 
+function RivalTable({
+  cartas,
+  turn,
+  battles,
+  targetSpellCard,
+  targetEquipmentCard,
+  isSelectingTargetForSpell,
+  isSelectingTargetForEquipment,
+  mana,
+  onCardClick,
+  onPlayCard,
+  draggingType,
+  pendingCard,
+  setPendingCard,
+}) {
+  const [hiddenCards, setHiddenCards] = useState([]);
   const [removedCards, setRemovedCards] = useState([]);
   const [hoveredCardId, setHoveredCardId] = useState(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
@@ -54,114 +73,148 @@ function RivalTable({
         {cartas.map((carta, index) => {
           if (removedCards.includes(carta._id)) return null;
 
-          const cardClass = (turn.whose === 'rival' && turn.phase === 'attack' && carta.position === 'attack') ? 'attack-position' : '';
+          const cardClass =
+            turn.whose === "rival" &&
+            turn.phase === "attack" &&
+            carta.position === "attack"
+              ? "attack-position"
+              : "";
 
-          const isInRivalBattle = battles.some(b => b.atacanteId === carta._id);
+          const isInRivalBattle = battles.some(
+            (b) => b.atacanteId === carta._id
+          );
           const isFadingOut = hiddenCards.includes(carta._id);
-
-      
 
           return (
             <div
               key={carta._id}
-              className={`rival-card-wrapper ${isFadingOut ? 'rival-card-fade-out' : ''}`}
+              className={`rival-card-wrapper ${
+                isFadingOut ? "rival-card-fade-out" : ""
+              }`}
             >
               <div className={`rival-card-table`}>
                 <Paper
                   className={`${cardClass} 
-                  ${isInRivalBattle ? 'rival-card-in-battle' : hoveredCardId === carta._id ? 'hovered' : ''} 
-                  ${longPressCardId === carta._id ? 'rival-long-pressed' : ''} 
-                  ${carta.new ? 'rival-card-new' : ''}
-                  ${draggingType === 'spell' || draggingType === 'equipement' ? 'rival-drop-hover' : ''}
-                  ${['spell', 'equipement'].includes(pendingCard?.type) ? 'rival-drop-hover' : ''}
+                  ${
+                    isInRivalBattle
+                      ? "rival-card-in-battle"
+                      : hoveredCardId === carta._id
+                      ? "hovered"
+                      : ""
+                  } 
+                  ${longPressCardId === carta._id ? "rival-long-pressed" : ""} 
+                  ${carta.new ? "rival-card-new" : ""}
+                  ${
+                    draggingType === "spell" || draggingType === "equipement"
+                      ? "rival-drop-hover"
+                      : ""
+                  }
+                  ${
+                    ["spell", "equipement"].includes(pendingCard?.type)
+                      ? "rival-drop-hover"
+                      : ""
+                  }
                 `}
-                  
                   elevation={10}
                   onClick={() => {
+                    if (
+                      pendingCard &&
+                      (pendingCard.type === "spell" ||
+                        pendingCard.type === "equipement") &&
+                      turn.whose === "user" &&
+                      turn.phase === "hand"
+                    ) {
+                      onPlayCard({
+                        _id: pendingCard.id,
+                        type: pendingCard.type,
+                        cost: pendingCard.cost,
+                        targetId: carta._id,
+                      });
 
-                        if (
-                            pendingCard &&
-                            (pendingCard.type === 'spell' || pendingCard.type === 'equipement') &&
-                            turn.whose === 'user' &&
-                            turn.phase === 'hand'
-                          ) {
-                            onPlayCard({
-                              _id: pendingCard.id,
-                              type: pendingCard.type,
-                              cost: pendingCard.cost,
-                              targetId: carta._id,
-                            });
-
-                            setPendingCard(null); // ✅ LIMPIA la carta pendiente después de usarla
-                            return;
-                          }
-
-
-
+                      setPendingCard(null); // ✅ LIMPIA la carta pendiente después de usarla
+                      return;
+                    }
 
                     if (isSelectingTargetForSpell && targetSpellCard) {
-                      if (turn.whose === 'user' && turn.phase === 'hand') {
+                      if (turn.whose === "user" && turn.phase === "hand") {
                         targetSpellCard(carta._id);
                       } else {
-                        alert("Solo puedes lanzar hechizos durante tu fase de mano.");
+                        alert(
+                          "Solo puedes lanzar hechizos durante tu fase de mano."
+                        );
                       }
                       return;
                     }
 
                     if (isSelectingTargetForEquipment && targetEquipmentCard) {
-                      if (turn.whose === 'user' && turn.phase === 'hand') {
-                        if (window.confirm("¿Estás seguro de que quieres equipar una carta del rival?")) {
+                      if (turn.whose === "user" && turn.phase === "hand") {
+                        if (
+                          window.confirm(
+                            "¿Estás seguro de que quieres equipar una carta del rival?"
+                          )
+                        ) {
                           targetEquipmentCard(carta._id);
                         }
                       } else {
-                        alert("Solo puedes lanzar equipamientos durante tu fase de mano.");
+                        alert(
+                          "Solo puedes lanzar equipamientos durante tu fase de mano."
+                        );
                       }
                       return;
                     }
 
-                    if ((turn.whose === 'rival' && turn.phase === 'attack') && onCardClick) {
+                    if (
+                      turn.whose === "rival" &&
+                      turn.phase === "attack" &&
+                      onCardClick
+                    ) {
                       onCardClick(carta);
                     }
                   }}
-
                   onDragOver={(e) => e.preventDefault()}
                   onDragEnter={() => setHoveredCardId(carta._id)}
                   onDragLeave={() => setHoveredCardId(null)}
                   onDrop={(e) => {
-                      e.preventDefault();
-                      setHoveredCardId(null);
+                    e.preventDefault();
+                    setHoveredCardId(null);
 
-                      const data = JSON.parse(e.dataTransfer.getData('application/json'));
+                    const data = JSON.parse(
+                      e.dataTransfer.getData("application/json")
+                    );
 
-                      if (turn.whose !== 'user' || turn.phase !== 'hand') {
-                        alert("Solo puedes lanzar cartas durante tu fase de mano");
-                        return;
-                      }
+                    if (turn.whose !== "user" || turn.phase !== "hand") {
+                      alert(
+                        "Solo puedes lanzar cartas durante tu fase de mano"
+                      );
+                      return;
+                    }
 
-                      if (data.type === 'creature') {
-                        alert("No puedes lanzar una criatura sobre una carta rival");
-                        return;
-                      }
+                    if (data.type === "creature") {
+                      alert(
+                        "No puedes lanzar una criatura sobre una carta rival"
+                      );
+                      return;
+                    }
 
-                      if (data.type === 'equipement') {
-                        setPendingCardData(data);
-                        setPendingEquipTarget(carta._id);
-                        setConfirmDialogOpen(true);
-                        setPendingCard(null);
-                        return;
-                      }
+                    if (data.type === "equipement") {
+                      setPendingCardData(data);
+                      setPendingEquipTarget(carta._id);
+                      setConfirmDialogOpen(true);
+                      setPendingCard(null);
+                      return;
+                    }
 
-                      if (data.type === 'spell') {
-                        onPlayCard({
-                          _id: data.id,
-                          type: data.type,
-                          cost: data.cost,
-                          targetId: carta._id,
-                        });
-                        setPendingCard(null);
-                        return;
-                      }
-                    }}
+                    if (data.type === "spell") {
+                      onPlayCard({
+                        _id: data.id,
+                        type: data.type,
+                        cost: data.cost,
+                        targetId: carta._id,
+                      });
+                      setPendingCard(null);
+                      return;
+                    }
+                  }}
                   onTouchStart={() => {
                     const timeoutId = setTimeout(() => {
                       setLongPressCardId(carta._id);
@@ -182,42 +235,64 @@ function RivalTable({
                     alt={`Carta ${index + 1}`}
                     className="rival-card-image"
                   />
-                      {typeof carta.atk === 'number' && typeof carta.hp === 'number' && (
-                        <div className="rival-card-center-stats">
-                          <div className="atk">
-                        {carta.atk}
-                        {/* {carta.atk + (carta.equipements?.reduce((sum, eq) => sum + (eq.atk || 0), 0) || 0)} */}
-                          </div>
-                          <div className="blnc">/</div>
-                          <div className="hp">
-                        {carta.hp}
-                        {/* {carta.hp + (carta.equipements?.reduce((sum, eq) => sum + (eq.hp || 0), 0) || 0)} */}
-                          </div>
+                  {typeof carta.atk === "number" &&
+                    typeof carta.hp === "number" && (
+                      <div className="rival-card-center-stats">
+                        <div className="atk">
+                          {carta.atk}
+                          {/* {carta.atk + (carta.equipements?.reduce((sum, eq) => sum + (eq.atk || 0), 0) || 0)} */}
                         </div>
-                      )}
-
-                  {carta.equipements?.length > 0 && (
-                      <>
-                        <div className="rival-equipment-count">{carta.equipements.length}</div>
-                        <div className="rival-equipment-preview">
-                          {carta.equipements.map((equipo) => (
-                            <div key={equipo._id} className="rival-equipment-wrapper">
-                              <img
-                                src={equipo.front_image}
-                                alt={equipo._id}
-                                className={`rival-equipment-image ${equipo.new ? 'rival-card-new' : ''}`}
-                              />
-                              {(typeof equipo.atk === 'number' || typeof equipo.hp === 'number') && (
-                                <div className="rival-equipment-bonus-overlay">
-                                  +{equipo.atk || 0} / +{equipo.hp || 0}
-                                </div>
-                              )}
-                            </div>
-                          ))}
+                        <div className="blnc">/</div>
+                        <div className="hp">
+                          {carta.hp}
+                          {/* {carta.hp + (carta.equipements?.reduce((sum, eq) => sum + (eq.hp || 0), 0) || 0)} */}
                         </div>
-                      </>
+                      </div>
                     )}
-
+                  {(carta.abilities?.length > 0 ||
+                    carta.temporaryAbilities?.length > 0) && (
+                    <div className="rival-ability-tags">
+                      {carta.abilities?.map((h, i) => (
+                        <div key={`perm-${i}`} className="rival-ability-tag">
+                          {h}
+                        </div>
+                      ))}
+                      {carta.temporaryAbilities?.map((h, i) => (
+                        <div key={`temp-${i}`} className="rival-ability-tag temp">
+                          {h}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {carta.equipements?.length > 0 && (
+                    <>
+                      <div className="rival-equipment-count">
+                        {carta.equipements.length}
+                      </div>
+                      <div className="rival-equipment-preview">
+                        {carta.equipements.map((equipo) => (
+                          <div
+                            key={equipo._id}
+                            className="rival-equipment-wrapper"
+                          >
+                            <img
+                              src={equipo.front_image}
+                              alt={equipo._id}
+                              className={`rival-equipment-image ${
+                                equipo.new ? "rival-card-new" : ""
+                              }`}
+                            />
+                            {(typeof equipo.atk === "number" ||
+                              typeof equipo.hp === "number") && (
+                              <div className="rival-equipment-bonus-overlay">
+                                +{equipo.atk || 0} / +{equipo.hp || 0}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </Paper>
               </div>
             </div>
@@ -228,11 +303,16 @@ function RivalTable({
       <Dialog open={confirmDialogOpen} onClose={cancelEquipOnRival}>
         <DialogTitle>¿Equipar carta rival?</DialogTitle>
         <DialogContent>
-          ¿Estás seguro de que quieres lanzar un equipamiento sobre una carta rival?
+          ¿Estás seguro de que quieres lanzar un equipamiento sobre una carta
+          rival?
         </DialogContent>
         <DialogActions>
           <Button onClick={cancelEquipOnRival}>Cancelar</Button>
-          <Button onClick={confirmEquipOnRival} color="primary" variant="contained">
+          <Button
+            onClick={confirmEquipOnRival}
+            color="primary"
+            variant="contained"
+          >
             Confirmar
           </Button>
         </DialogActions>

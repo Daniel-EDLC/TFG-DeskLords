@@ -146,10 +146,18 @@ async function changeCardsPositionToAttack(game) {
     throw new Error('Game not found');
   }
 
-  const rivalTable = gameUpdated.rivalTable.map(card => ({
-    ...card.toObject?.() || card,
-    position: 'attack'
-  }));
+  const rivalTable = gameUpdated.rivalTable.map(card => {
+    if (card.atk > 0) {
+      return {
+        ...(card.toObject?.() || card),
+        position: 'attack'
+      };
+    }
+    return {
+      ...(card.toObject?.() || card),
+      position: 'waiting'
+    };
+  });
 
   const playerTable = gameUpdated.playerTable.map(card => ({
     ...card.toObject?.() || card,

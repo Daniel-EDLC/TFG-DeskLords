@@ -55,9 +55,12 @@ async function resolverCombate({ gameId, assignments, isAI }) {
     // Determinar mesas según quién ataca
     const attackerTableArr = isAI ? rivalTable : playerTable;
     const defenderTableArr = isAI ? playerTable : rivalTable;
+
     const attackerId = assignment.attacker._id ? assignment.attacker._id.toString() : assignment.attacker.toString();
     const defenderId = assignment.defender && assignment.defender._id ? assignment.defender._id.toString() : assignment.defender?.toString();
+
     const isDirectAttack = assignment.defender === "player" || assignment.defender === "rival";
+
     const attackerObj = getCard(attackerTableArr, attackerId);
     const defenderObj = isDirectAttack ? null : getCard(defenderTableArr, defenderId);
 
@@ -105,11 +108,14 @@ async function resolverCombate({ gameId, assignments, isAI }) {
       if (defenderToqueMortal) result.attacker.hp = 0;
       else result.attacker.hp -= result.defender.atk;
     }
+
     // Brute force: exceso de daño al jugador
     if (attackerBruteForce && result.defender.hp <= 0 && !defenderInvulnerable) {
-      const excess = result.attacker.atk - (defenderHp > 0 ? defenderHp : 0);
+      const excess = result.attacker.atk - result.defender.hp;
+      console.log(`\n\n\n\n\nBrute force: ${result.attacker.atk} - ${result.defender.hp} = ${excess}\n\n\n\n\n\n\n`);
       if (excess > 0) result.dmgToPlayer = excess;
     }
+
     // No permitir vida negativa
     result.attacker.hp = Math.max(0, result.attacker.hp);
     result.defender.hp = Math.max(0, result.defender.hp);
