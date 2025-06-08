@@ -117,30 +117,36 @@ export default function TurnIndicator({ turn }) {
 <Dialog
   open={openInfoDialog}
   onClose={() => setOpenInfoDialog(false)}
-  className="info-dialog"
+  className="info-dialog "
   maxWidth="sm"
   fullWidth
   PaperProps={{
     className: "custom-dialog",
   }}
 >
-  <DialogTitle>GUIA</DialogTitle>
+  {/* <DialogTitle>GUIA</DialogTitle> */}
   <DialogContent className="dialog-content">
     <p>
       <h3>Criaturas</h3>
       Tienen fuerza, resistencia y habilidades (permanentes o temporales).
       <br />
-      Se juega dandole "click" o arrastrando a la mesa.
-      <br />
       <h3>Hechizos</h3>
-      Se pueden lanzar sobre cartas (objetivo) usando clic o arrastre.
-      <br />
-      Se juegan dando "click" primero al hechizo y despues al objetivo o arrastrando al objetivo directamente.
+      Ofrecen un efecto extra sobre una criatura durante un turno o asesina una criatura.
       <br />
       <h3>Equipamientos</h3>
-      Se asignan a cartas en mesa como objetivo.
+      Ofrecen un efecto extra sobre una criatura o aumenta su fuerza / resistencia (de manera permanente).
       <br />
-      Se juegan dando "click" primero al equipamiento y despues a la carta objetivo o arrastrando al objetivo directamente.
+      <h3>Funciones</h3>
+      Puedes jugar cualquier carta clicando en ella y despues sobre el objetivo o arrastrándola a la mesa o a su objetivo.
+      <br />
+      <h3>Habilidades</h3>
+      <span className="keyword">Volar</span> Puede atacar sin ser bloqueada por criaturas sin volar.
+      <br />
+      <span className="keyword">Fuerza bruta</span> al atacar, el daño restante a la resistencia del bloqueador pasara como daño al usuario.
+      <br />
+      <span className="keyword">Toque mortal</span> cualquier daño que inflija a una criatura es suficiente para destruirla.
+      <br />
+      <span className="keyword">Invulnerabilidad</span> no puede ser destruida por daño de criatura.
       <br />
       <h3>Dale click a los iconos de fase para saber mas sobre ellas</h3>
     </p>

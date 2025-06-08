@@ -15,7 +15,7 @@ export default function Auth() {
 
   const handleSwitchToLogin=async()=>{
     try {
-      // await signOut(auth); 
+      await signOut(auth); 
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
     }

@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
-import { buyProduct } from "../../../services/Actions/GameActions";
+import { buyProduct } from "../../../services/Actions/MenuActions";
 
 function Shop({ shop, coins }) {
   const [modalAbierto, setModalAbierto] = useState(false);
@@ -20,23 +20,23 @@ function Shop({ shop, coins }) {
   const [modalConfirmacionAbierto, setModalConfirmacionAbierto] =
     useState(false);
 
-  const handleCompra = async (producto) => {
-    if (coins < producto.price) {
-      alert("No tienes saldo suficiente para comprar este producto.");
-      return;
-    }
+  // const handleCompra = async (producto) => {
+  //   if (coins < producto.price) {
+  //     alert("No tienes saldo suficiente para comprar este producto.");
+  //     return;
+  //   }
 
-    try {
-      await buyProduct(producto.id, producto.type);
-      alert(`Has comprado: ${producto.name}`);
-      // Aquí puedes actualizar el balance, productos, etc.
-      // Por ejemplo:
-      // reloadShopData();
-    } catch (error) {
-      console.error("Error en la compra:", error);
-      alert("Hubo un error al procesar la compra.");
-    }
-  };
+  //   try {
+  //     await buyProduct(producto.id, producto.type);
+  //     alert(`Has comprado: ${producto.name}`);
+  //     // Aquí puedes actualizar el balance, productos, etc.
+  //     // Por ejemplo:
+  //     // reloadShopData();
+  //   } catch (error) {
+  //     console.error("Error en la compra:", error);
+  //     alert("Hubo un error al procesar la compra.");
+  //   }
+  // };
 
   const mazos = shop.decks
     .filter((deck) => deck.available === false)
@@ -209,14 +209,11 @@ function Shop({ shop, coins }) {
                       }
 
                       try {
-                        await buyProduct(
-                          productoSeleccionado.id,
-                          productoSeleccionado.type
-                        );
+                        await buyProduct( productoSeleccionado );
                         alert(`Has comprado: ${productoSeleccionado.name}`);
                         setModalConfirmacionAbierto(false);
                         setProductoSeleccionado(null);
-                        setModalAbierto(false); // opcional
+                        setModalAbierto(false);
                       } catch (error) {
                         console.error("Error en la compra:", error);
                         alert("Hubo un error al procesar la compra.");

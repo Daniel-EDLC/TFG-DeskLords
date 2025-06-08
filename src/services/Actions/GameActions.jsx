@@ -1,5 +1,6 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../firebaseConfig";
+import { ContactlessOutlined } from "@mui/icons-material";
 //  version real playCard
 
 export async function playCard(setGameData, gameData, card) {
@@ -680,11 +681,11 @@ export async function onSurrender(gameData) {
     });
   });
   const userToken = await user.getIdToken();
-
+  console.log("Enviando rendición para el juego:", gameData);
   try {
     const payload = {
       playerId: user.uid,
-      idpartida: gameData._idpartida,
+      gameId: gameData.gameId,
     };
 
     const response = await fetch(

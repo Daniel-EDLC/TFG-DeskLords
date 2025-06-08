@@ -119,13 +119,26 @@
 } 
 
 
+.dialog-content {
+  overflow: auto  !important;
+  scrollbar-width: none !important;
+} 
+
+
+.dialog-content::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari */
+}
+
+
 .custom-dialog {
+  height: 50vh;
   background-color: rgba(36, 36, 36, 0.966) !important;
   border: 2px solid rgba(255, 255, 255, 0.212) !important;
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.05) !important;
   color: white !important;
   border-radius: 12px !important;
   padding: 1.5rem !important;
+
 }
 
 .dialog-close-button {
@@ -154,10 +167,16 @@
   color: #ccc;
 }
 
-
-
+.keyword {
+  color: #c0b303; /* o el color que quieras */
+  font-weight: bold;
+}
 
 @media (max-width: 435px) {
+
+
+
+
 .turn-indicator .info-player {
   font-size: 0.9rem;
 }
@@ -194,6 +213,7 @@
   }
 
 .custom-dialog {
+    height: 35vh;
   font-size: 0.7rem !important;
   padding: 1rem !important;
   background-color: rgb(19, 19, 19) !important;
