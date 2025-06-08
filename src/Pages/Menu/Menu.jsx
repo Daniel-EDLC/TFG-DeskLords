@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
 import { useMediaQuery, Box, IconButton, Dialog } from "@mui/material";
 import SportsKabaddiIcon from "@mui/icons-material/SportsKabaddi";
-import { signOut, onAuthStateChanged } from "firebase/auth";
+import { signOut } from "firebase/auth";
 import { auth } from "../../../firebaseConfig";
+
+import Tutorial from "../../components/MenuComponents/Tutorial/Tutorial";
+
 
 import StorageIcon from "@mui/icons-material/Storage";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
@@ -54,14 +57,30 @@ function Menu() {
 
   // const [isHovered, setIsHovered] = useState(false);
 
+  const [tutorialCompletado, setTutorialCompletado] = useState(false);
+
+
   console.log("Menu data:", data);
 
-  useEffect(() => {
+useEffect(() => {
+  if (tutorialCompletado) {
+    setShowSplash(true);
     const timeout = setTimeout(() => {
       setShowSplash(false);
     }, 7000);
     return () => clearTimeout(timeout);
-  }, []);
+  }
+
+  // Solo si no hay tutorial activo
+  if (data && !data.tutorial?.mode) {
+    setShowSplash(true);
+    const timeout = setTimeout(() => {
+      setShowSplash(false);
+    }, 7000);
+    return () => clearTimeout(timeout);
+  }
+}, [tutorialCompletado, data]);
+
 
   useEffect(() => {
     const cargar = async () => {
@@ -103,9 +122,26 @@ function Menu() {
     }
   };
 
+  
+
   if (!data) {
     return null;
   }
+
+
+if (data.tutorial?.mode && !tutorialCompletado) {
+  return (
+    <Tutorial
+      tutorialDeck={data.tutorial.defaultDeckImage}
+      onFinish={() => {
+        setTutorialCompletado(true);
+        setShowSplash(true);
+        setTimeout(() => setShowSplash(false), 7000);
+      }}
+    />
+  );
+}
+
 
   const botones = [
     { id: "inicio", icon: <HomeIcon />, texto: "Inicio" },
@@ -113,9 +149,9 @@ function Menu() {
     { id: "perfil", icon: <AccountCircleIcon />, texto: "Perfil" },
     { id: "batalla", icon: <SportsKabaddiIcon />, texto: "Batalla" },
     {
-      id: data.rol === "admin" ? "gestionBBDD" : "gestionBBDD",
+      id: data.rol === "admin" ? "gestionBBDD" : "contacto",
       icon: <StorageIcon />,
-      texto: data.rol === "admin" ? "Gestión" : "Gestión",
+      texto: data.rol === "admin" ? "Gestión" : "Contacto",
     },
   ];
 console.log("datos:", data.shop.decks);
