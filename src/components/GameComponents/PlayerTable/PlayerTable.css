@@ -360,17 +360,7 @@
   }
 }
 
-.player-long-pressed {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(2.2);
-  z-index: 1000;
-  border-radius: 6px;
-  pointer-events: none;
-  animation: tableplayerMoveToCenter 0.4s ease forwards;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-}
+
 
 @keyframes tableplayerMoveToCenter {
   from {
@@ -557,6 +547,16 @@
   bottom:-1.7vh;
 }
 
-
+.player-long-pressed {
+   position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(2.2);
+  z-index: 10000;
+  border-radius: 6px;
+  pointer-events: none;
+  animation: tablerivalMoveToCenter 0.4s ease forwards;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
 
 }

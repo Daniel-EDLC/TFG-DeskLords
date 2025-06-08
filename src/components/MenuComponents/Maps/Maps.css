@@ -104,7 +104,7 @@
   .maps-wrapper {
     display: flex;
     align-items: center;
-    height: 30vh;
+    height: 25vh;
     color: white;
     width: calc(100% - 40px);
     padding: 0 5px;

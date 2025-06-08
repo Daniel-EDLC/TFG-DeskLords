@@ -6,7 +6,7 @@ import './PlayerTable.css';
 function PlayerTable({ 
   cartas, turn, handleSwitchPhase, handleEndTurn, handleDefense, targetEquipmentCard, targetSpellCard, 
   isSelectingTargetForEquipment, isSelectingTargetForSpell,  onCardClick, battles, onResetBattle , mana , onPlayCard, draggingType,
-  pendingCard, setPendingCard }) {
+  pendingCard, setPendingCard, rivalAttackers}) {
 
   const [selectedAttackCards, setselectedAttackCards] = useState([]);
   const [pendingCardId, setPendingCardId] = useState(null);
@@ -163,14 +163,37 @@ function PlayerTable({
           } else if (turn.whose === 'rival' && turn.phase === 'attack') {
             return (
               <Box className="phase-buttons-inner">
-                {battles.length > 0 ? (
-                  <>
-                    <Button variant="contained" className="resetBattle-button" color="primary" onClick={onResetBattle}>{isMobile ? 'Reiniciar' : 'Reiniciar batallas'}</Button>
-                    <Button variant="contained" className="phase-button" color="primary" onClick={handleDefenseClick}>{isMobile ? 'Defender' : 'Defender y empezar turno'}</Button>
-                  </>
-                ) : (
-                  <Button variant="contained" className="phase-button" color="primary" onClick={handleDefenseClick}>{isMobile ? 'No defender' : 'Empezar turno sin defender'}</Button>
-                )}
+{battles.length > 0 ? (
+  <>
+    <Button
+      variant="contained"
+      className="resetBattle-button"
+      color="primary"
+      onClick={onResetBattle}
+    >
+      {isMobile ? 'Reiniciar' : 'Reiniciar batallas'}
+    </Button>
+
+    <Button
+      variant="contained"
+      className="phase-button"
+      color="primary"
+      onClick={handleDefenseClick}
+    >
+      {isMobile ? 'Defender' : 'Defender y empezar turno'}
+    </Button>
+  </>
+) : rivalAttackers && cartas.length === 0 ? (
+  <Button
+    variant="contained"
+    className="phase-button"
+    color="primary"
+    onClick={handleDefenseClick}
+  >
+    {isMobile ? 'No defender' : 'Empezar turno sin defender'}
+  </Button>
+) : null}
+
               </Box>
             );
           }

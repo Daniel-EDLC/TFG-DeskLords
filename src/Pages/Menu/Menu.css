@@ -461,11 +461,6 @@ body {
 
   .play-card {
     display: none;
-    right: 0;
-    top: 0;
-    margin: 0;
-    width: 100%;
-    height: auto;
   }
 
   .play-card img {

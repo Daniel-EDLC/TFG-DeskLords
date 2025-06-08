@@ -112,6 +112,9 @@ function Game() {
   }
 };
 
+const rivalAttackers = gameData.rival.table.some(carta => carta.estado === "atacando");
+
+
   // const setPhase = (nuevaFase) => {
   //   setGameData((prevData) => ({
   //     ...prevData,
@@ -262,7 +265,8 @@ console.log("partida->",gameData.user.hand)
           onPlayCard={handlePlayCard}
           draggingType={draggingType}
           pendingCard={pendingCard}
-           setPendingCard={setPendingCard}
+          setPendingCard={setPendingCard}
+          rivalAttackers={rivalAttackers}
         />
       </div>
 

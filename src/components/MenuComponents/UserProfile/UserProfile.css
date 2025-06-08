@@ -186,14 +186,19 @@
 
 
 @media (max-width: 435px) {
+
   .profile-user-container {
     padding: 1.5rem;
     max-width: 90%;
+    
+  }
+  .profile-favorite-deck h3{
+    font-size: 0.8rem;
   }
 
   .profile-avatar {
-    width: 100px;
-    height: 100px;
+  width: 90px;
+  height: 90px;
   }
 
   .profile-name {
@@ -208,6 +213,7 @@
   .profile-stats {
     flex-direction: column;
     align-items: center;
+    
   }
 
   .profile-stats div {
@@ -215,12 +221,37 @@
     max-width: 300px;
   }
     .profile-wrapper {
-    flex-direction: column;
+      display: flex;
+    flex-direction: row;
     align-items: center;
   }
 
+  .profile-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 0rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
   .profile-box {
-    padding: 1.5rem;
-    max-width: 90%;
+    margin: 0px 15px;
+    padding: 1rem;
+    max-width: 50%;
+    height: 50vh;
   }
+
+  .circular-chart {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: conic-gradient(#c0b303 60%, rgba(255,255,255,0.1) 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 1rem;
+  box-shadow: 0 0 10px #c0b30377;
+}
 }

@@ -58,7 +58,6 @@
   margin: 4vh;
   width: 120%;
   object-fit: contain;
-  filter: drop-shadow(0 0 10px #cacacaa1);
  }
  .auth-card{
   margin-top: 7vh;
