@@ -6,7 +6,15 @@ async function nextTurn({ game }) {
   if (!game) throw new Error('Juego no encontrado');
 
   const newTurn = game.currentTurn + 1;
-  const newActualMana = game.manaPerTurn + game.actualMana;
+
+  let newPlayerMana = game.playerMana;
+  let newRivalmana = game.rivalMana;
+
+  if (newTurn % 2 !== 0) {
+    newPlayerMana = game.playerMana + game.manaPerTurn;
+    newRivalmana = game.rivalMana + game.manaPerTurn;
+  }
+
 
   // Limpiar spells de los equipements de cada carta en ambas mesas y pasarlos al graveyard correspondiente
   let spellsToGraveyardPlayer = [];
@@ -39,9 +47,8 @@ async function nextTurn({ game }) {
     {
       $set: {
         currentTurn: newTurn,
-        actualMana: newActualMana,
-        playerMana: newActualMana,
-        rivalMana: newActualMana,
+        playerMana: newPlayerMana,
+        rivalMana: newRivalmana,
         'playerTable.$[].temporaryAbilities': [],
         'rivalTable.$[].temporaryAbilities': [],
       },
@@ -114,7 +121,7 @@ async function drawCard({ game, isAI }) {
     );
   } else {
     const card = game[pendingDeckField][0];
-    
+
     // Forzar el _id a ObjectId para el $pull
     const cardId = typeof card._id === 'string' ? mongoose.Types.ObjectId(card._id) : card._id;
     await Game.updateOne(
