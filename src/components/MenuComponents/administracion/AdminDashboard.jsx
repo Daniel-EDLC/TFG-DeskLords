@@ -6,6 +6,7 @@ import MapsList from './map';
 import PlayersList from './player';
 import SetsList from './set';
 import GamesList from './game';
+import CommentsList from './comments';
 import './admin.css';
 
 function AdminDashboard() {
@@ -24,6 +25,7 @@ function AdminDashboard() {
             <button onClick={() => setView('players')}>Jugadores</button>
             <button onClick={() => setView('sets')}>Sets</button>
             <button onClick={() => setView('games')}>Games</button>
+            <button onClick={() => setView('comments')}>Comments</button>
           </div>
         </div>
 
@@ -35,6 +37,7 @@ function AdminDashboard() {
           {view === 'players' && <PlayersList />}
           {view === 'sets' && <SetsList />}
           {view === 'games' && <GamesList />}
+          {view === 'comments' && <CommentsList />}
         </div>
       </div>
     </div>

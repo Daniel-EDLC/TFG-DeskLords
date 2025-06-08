@@ -57,7 +57,7 @@ function Decks({ decks }) {
         {decksFiltrados.map((deck) => (
           <div
             key={deck._id}
-            className={`deck-card ${deck.available ? "" : "disabled"}`}
+            className={`deck-card-view ${deck.available ? "" : "disabled"}`}
            onClick={() => {
               if (deck.available) {
                 setDeckSeleccionado(deck);

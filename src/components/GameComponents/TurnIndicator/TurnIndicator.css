@@ -91,23 +91,92 @@
 }
 
 .phase-dialog .MuiButton-root {
-  color: white;
-  border: 1px solid white;
-  border-radius: 6px;
-  padding: 6px 12px;
-  font-weight: bold;
-  background-color: transparent;
-  transition: background-color 0.3s ease;
+   color: white !important;
+  border: 1px solid white !important;
+  border-radius: 6px !important;
+  padding: 6px 12px !important;
+  font-weight: bold !important;
+  background-color: transparent !important;
+  transition: background-color 0.3s ease  !important;
 }
 
 .phase-dialog .MuiButton-root:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.info-icon {
+
+  margin-left: 0.5rem;
+  color: #4253b4;
+}
+
+.dialog-content h3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.726);
+} 
+
+
+.dialog-content {
+  overflow: auto  !important;
+  scrollbar-width: none !important;
+} 
+
+
+.dialog-content::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari */
 }
 
 
+.custom-dialog {
+  height: 50vh;
+  background-color: rgba(36, 36, 36, 0.966) !important;
+  border: 2px solid rgba(255, 255, 255, 0.212) !important;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05) !important;
+  color: white !important;
+  border-radius: 12px !important;
+  padding: 1.5rem !important;
 
+}
+
+.dialog-close-button {
+   color: white !important;
+  border: 1px solid white !important;
+  border-radius: 6px !important;
+  padding: 6px 12px !important;
+  font-weight: bold !important;
+  background-color: transparent !important;
+  transition: background-color 0.3s ease  !important;
+}
+
+.dialog-close-button:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.info-icon {
+  margin-left: 0.5rem;
+  cursor: pointer;
+  vertical-align: middle;
+  transition: transform 0.2s ease;
+}
+
+.info-icon:hover {
+  transform: scale(1.2);
+  color: #ccc;
+}
+
+.keyword {
+  color: #c0b303; /* o el color que quieras */
+  font-weight: bold;
+}
 
 @media (max-width: 435px) {
+
+
+
+
 .turn-indicator .info-player {
   font-size: 0.9rem;
 }
@@ -143,7 +212,13 @@
     padding: 5px 10px;
   }
 
-
+.custom-dialog {
+    height: 35vh;
+  font-size: 0.7rem !important;
+  padding: 1rem !important;
+  background-color: rgb(19, 19, 19) !important;
+  z-index: 100000 !important;
+}
 
 
 

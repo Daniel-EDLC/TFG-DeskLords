@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { useMediaQuery, Box, IconButton, Dialog } from "@mui/material";
 import SportsKabaddiIcon from "@mui/icons-material/SportsKabaddi";
-import { signOut, onAuthStateChanged } from "firebase/auth";
+import { signOut } from "firebase/auth";
 import { auth } from "../../../firebaseConfig";
+
+import Tutorial from "../../components/MenuComponents/Tutorial/Tutorial";
 
 import StorageIcon from "@mui/icons-material/Storage";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
@@ -19,7 +21,7 @@ import Shop from "../../components/MenuComponents/Shop/Shop";
 import Missions from "../../components/MenuComponents/Missions/Missions";
 import BattlePass from "../../components/MenuComponents/BattlePass/BattlePass";
 import ContactUs from "../../components/MenuComponents/ContactUs/ContactUs";
-import AdminDashboard from '../../components/MenuComponents/administracion/AdminDashboard'
+import AdminDashboard from "../../components/MenuComponents/administracion/AdminDashboard";
 
 import {
   cargarPartida,
@@ -40,8 +42,6 @@ function Menu() {
   //   return () => unsubscribe();
   // }, [navigate]);
 
-
-
   const [showSplash, setShowSplash] = useState(true);
   const isMobile = useMediaQuery("(max-width:435px)");
   const navigate = useNavigate();
@@ -54,14 +54,28 @@ function Menu() {
 
   // const [isHovered, setIsHovered] = useState(false);
 
+  const [tutorialCompletado, setTutorialCompletado] = useState(false);
+
   console.log("Menu data:", data);
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      setShowSplash(false);
-    }, 7000);
-    return () => clearTimeout(timeout);
-  }, []);
+    if (tutorialCompletado) {
+      setShowSplash(true);
+      const timeout = setTimeout(() => {
+        setShowSplash(false);
+      }, 7000);
+      return () => clearTimeout(timeout);
+    }
+
+    // Solo si no hay tutorial activo
+    if (data && !data.tutorial?.mode) {
+      setShowSplash(true);
+      const timeout = setTimeout(() => {
+        setShowSplash(false);
+      }, 7000);
+      return () => clearTimeout(timeout);
+    }
+  }, [tutorialCompletado, data]);
 
   useEffect(() => {
     const cargar = async () => {
@@ -107,18 +121,31 @@ function Menu() {
     return null;
   }
 
+  if (data.tutorial?.mode && !tutorialCompletado) {
+    return (
+      <Tutorial
+        tutorialDeck={data.tutorial.defaultDeckImage}
+        onFinish={() => {
+          setTutorialCompletado(true);
+          setShowSplash(true);
+          setTimeout(() => setShowSplash(false), 7000);
+        }}
+      />
+    );
+  }
+
   const botones = [
     { id: "inicio", icon: <HomeIcon />, texto: "Inicio" },
     { id: "coleccion", icon: <CollectionsIcon />, texto: "Colección" },
     { id: "perfil", icon: <AccountCircleIcon />, texto: "Perfil" },
     { id: "batalla", icon: <SportsKabaddiIcon />, texto: "Batalla" },
     {
-      id: data.rol === "admin" ? "gestionBBDD" : "gestionBBDD",
+      id: data.rol === "admin" ? "gestionBBDD" : "contacto",
       icon: <StorageIcon />,
-      texto: data.rol === "admin" ? "Gestión" : "Gestión",
+      texto: data.rol === "admin" ? "Gestión" : "Contacto",
     },
   ];
-console.log("datos:", data.shop.decks);
+  console.log("datos battlepass:", data.battlePass);
   const renderContenido = () => {
     switch (seccionActiva) {
       case "inicio":
@@ -130,8 +157,7 @@ console.log("datos:", data.shop.decks);
                   <News noticias={data.news} />
                   <Shop shop={data.shop} />
                 </div>
-                <BattlePass nivelActual={6} />
-                
+                <BattlePass battlePass={data.battlePass} />
               </div>
             ) : (
               <div className="inicio-layout">
@@ -161,7 +187,7 @@ console.log("datos:", data.shop.decks);
                     <Shop shop={data.shop} coins={data.coins} />
                   </div>
                   <div className="inicio-battlePass">
-                    <BattlePass nivelActual={6} />
+                    <BattlePass battlePass={data.battlePass} />
                   </div>
                 </div>
               </div>
@@ -172,28 +198,26 @@ console.log("datos:", data.shop.decks);
         return <Decks decks={data.decks} />;
       case "perfil":
         return (
-          
           <div className="perfil-container">
-          <UserProfile
-            className="user-profile"
-            avatar={data.playerAvatar}
-            nickName={data.nickName}
-            name={data.playerName}
-            level={data.playerLevel}
-            experience={data.playerExperience}
-            coins={data.coins}
-            email={data.playerEmail || "No disponible"}
-            rol={data.rol || "No disponible"}
-            partidasGanadas={data.wins}
-            partidasPerdidas={data.loses}
-            mazoFavorito={data.favoriteDeck || "No disponible"}
-          />
-        </div>
-      );
-       case "gestionBBDD":
-         return (
-          <AdminDashboard />
-         );
+            <UserProfile
+              className="user-profile"
+              avatar={data.playerAvatar}
+              avatars={data.avatars}
+              nickName={data.nickName}
+              name={data.playerName}
+              level={data.playerLevel}
+              experience={data.playerExperience}
+              coins={data.coins}
+              email={data.playerEmail || "No disponible"}
+              rol={data.rol || "No disponible"}
+              partidasGanadas={data.wins}
+              partidasPerdidas={data.loses}
+              mazoFavorito={data.favoriteDeck || "No disponible"}
+            />
+          </div>
+        );
+      case "gestionBBDD":
+        return <AdminDashboard />;
       case "contacto":
         return <ContactUs />;
       case "batalla":

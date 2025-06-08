@@ -24,7 +24,7 @@ function PlayerProfile({ name, imageUrl, life, mana, deck, onSurrender }) {
         <Box className="profile-with-deck">
           <Box className="deck-preview">
             <img
-              src="https://storage.googleapis.com/imagenes-desklords/Imagenes_Cartas/Traseras/back_card.jpg"
+              src="https://storage.googleapis.com/imagenes-desklords/Imagenes_Cartas/Traseras/back_card.png"
               alt="Mazo"
               className="deck-card-image"
             />
@@ -43,7 +43,7 @@ function PlayerProfile({ name, imageUrl, life, mana, deck, onSurrender }) {
             <Typography className="profile-name">{name}</Typography>
             <Box className="mana-wrapper">
               <img
-                src="public/manaFinal2.gif"
+                src="/manaFinal2.gif"
                 alt="Mana"
                 className="mana-image"
               />
