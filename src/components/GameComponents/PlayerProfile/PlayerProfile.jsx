@@ -43,7 +43,7 @@ function PlayerProfile({ name, imageUrl, life, mana, deck, onSurrender }) {
             <Typography className="profile-name">{name}</Typography>
             <Box className="mana-wrapper">
               <img
-                src="public/manaFinal2.gif"
+                src="/manaFinal2.gif"
                 alt="Mana"
                 className="mana-image"
               />
