@@ -5,14 +5,15 @@ function chooseDefenders(attackingCards, rivalTable) {
   const assignments = [];
 
   for (const attacker of attackingCards) {
-    const attackerAbilities = new Set(attacker.abilities || []);
+    const attackerHabs = new Set(attacker.abilities || []);
     let validDefenders = availableDefenders.filter(defender => {
-      if (attackerAbilities.has("volar")) {
-        const defenderAbilities = new Set(defender.abilities || []);
-        return defenderAbilities.has("volar");
+      if (attackerHabs.has("volar")) {
+        const defenderHabs = new Set(defender.abilities || []);
+        return defenderHabs.has("volar");
       }
       return true;
     });
+    console.log(`\n\n\n\n\nAtacante: ${attacker._id}, defensores válidos: ${validDefenders.map(d => d._id)}\n\n\n\n`);
 
     if (validDefenders.length === 0) {
       assignments.push({ attacker, defender: "rival" });
@@ -64,6 +65,26 @@ async function resolverCombate({ gameId, assignments, isAI }) {
     const attackerObj = getCard(attackerTableArr, attackerId);
     const defenderObj = isDirectAttack ? null : getCard(defenderTableArr, defenderId);
 
+    // --- FLY LOGIC ---
+    const attackerAbilities = new Set(attackerObj.abilities || []);
+    const attackerHasFly = attackerAbilities.has("fly");
+    let defenderHasFly = false;
+    if (defenderObj) {
+      const defenderAbilities = new Set(defenderObj.abilities || []);
+      defenderHasFly = defenderAbilities.has("fly");
+    }
+
+    // Si el atacante vuela y el defensor no, el ataque es directo
+    if (!isDirectAttack && attackerHasFly && !defenderHasFly) {
+      // Daño directo
+      let hpField = null;
+      if (!isAI) hpField = "rivalHp";
+      else hpField = "playerHp";
+      let attackerAtk = attackerObj.atk || 0;
+      directDamage[hpField] += attackerAtk;
+      continue; // Saltar el combate normal
+    }
+
     if (isDirectAttack) {
       // Daño directo
       let hpField = null;
@@ -71,24 +92,26 @@ async function resolverCombate({ gameId, assignments, isAI }) {
       else if (isAI && assignment.defender === "player") hpField = "playerHp";
       if (hpField) {
         let attackerAtk = attackerObj.atk || 0;
-        if (Array.isArray(attackerObj.equipements)) {
-          for (const eq of attackerObj.equipements) attackerAtk += eq.atk || 0;
-        }
         directDamage[hpField] += attackerAtk;
       }
       continue;
     }
 
-    // Habilidades del atacante
+    // Recoger habilidades del atacante y defensor
     const attackerHabs = new Set(attackerObj.abilities || []);
+    console.log(`\n\n\n\n\nAtacante: ${attackerObj._id}, habilidades: ${Array.from(attackerHabs).join(", ")}\n\n\n\n`);
     const attackerTempHabs = new Set(attackerObj.temporaryAbilities || []);
+    console.log(`\n\n\n\n\nAtacante temporal: ${attackerObj._id}, habilidades temporales: ${Array.from(attackerTempHabs).join(", ")}\n\n\n\n`);
+    const defenderHabs = new Set(defenderObj.abilities || []);
+    console.log(`\n\n\n\n\nDefensor: ${defenderObj ? defenderObj._id : "N/A"}, habilidades: ${defenderObj ? Array.from(defenderHabs).join(", ") : "N/A"}\n\n\n\n`);
+    const defenderTempHabs = new Set(defenderObj.temporaryAbilities || []);
+
+    // Habilidades del atacante
     const attackerInvulnerable = attackerHabs.has("invulnerable") || attackerTempHabs.has("invulnerable");
     const attackerToqueMortal = attackerHabs.has("mortal touch");
     const attackerBruteForce = attackerHabs.has("brute force");
 
     // Habilidades del defensor
-    const defenderHabs = new Set(defenderObj.abilities || []);
-    const defenderTempHabs = new Set(defenderObj.temporaryAbilities || []);
     const defenderInvulnerable = defenderHabs.has("invulnerable") || defenderTempHabs.has("invulnerable");
     const defenderToqueMortal = defenderHabs.has("mortal touch");
 
@@ -104,10 +127,15 @@ async function resolverCombate({ gameId, assignments, isAI }) {
       if (attackerToqueMortal) result.defender.hp = 0;
       else result.defender.hp -= result.attacker.atk;
     }
+
+    console.log(`\n\n\n\n\nAtacante ANTES de calcular su daño: (vida: ${result.attacker.hp}),  defensor: (daño: ${result.defender.atk})\n\n\n\n`);
+
     if (!attackerInvulnerable) {
       if (defenderToqueMortal) result.attacker.hp = 0;
       else result.attacker.hp -= result.defender.atk;
     }
+
+    console.log(`\n\n\n\n\nAtacante DESPUÉS de calcular su daño: (vida: ${result.attacker.hp}),  defensor: (daño: ${result.defender.atk})\n\n\n\n`);
 
     // Brute force: exceso de daño al jugador
     if (attackerBruteForce && result.defender.hp <= 0 && !defenderInvulnerable) {

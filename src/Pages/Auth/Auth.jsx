@@ -15,7 +15,7 @@ export default function Auth() {
 
   const handleSwitchToLogin=async()=>{
     try {
-      // await signOut(auth); 
+      await signOut(auth); 
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
     }
@@ -26,7 +26,7 @@ export default function Auth() {
   return (
     <div className="auth-container">
       <div className="auth-menu-tittle">
-        <img className='auth-tittle-tittle' src="/public/LOGO.png" alt="" />
+        <img className='auth-tittle-tittle' src="/LOGO.png" alt="" />
       </div>
       <div className="auth-card">
         {isLogin ? (

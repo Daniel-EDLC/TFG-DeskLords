@@ -1,4 +1,4 @@
-const { startGame } = require('../services/gameStartService');
+const { startGame, surrender } = require('../services/gameService');
 const { attack, defend, switchPhase, useCard } = require('../services/playerActionsService');
 
 module.exports = {
@@ -7,4 +7,5 @@ module.exports = {
   attack,
   defend,
   switchPhase,
+  surrender
 };

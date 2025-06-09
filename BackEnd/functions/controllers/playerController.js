@@ -192,6 +192,8 @@ async function deletePlayer(req, res) {
     }
 }
 
+async function 
+
 module.exports = {
     createPlayer,
     getPlayerInfo,
