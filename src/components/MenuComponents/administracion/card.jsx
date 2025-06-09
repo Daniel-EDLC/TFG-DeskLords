@@ -385,7 +385,6 @@ function CardsList() {
                                         const res = await fetch('https://api-meafpnv6bq-ew.a.run.app/api/upload', {
                                             method: 'POST',
                                             headers: {
-                                                'Content-Type': 'multipart/form-data',
                                                 Authorization: `Bearer ${userToken}`
                                             },
                                             body: formDataImage

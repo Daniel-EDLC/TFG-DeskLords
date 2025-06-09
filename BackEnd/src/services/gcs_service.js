@@ -3,14 +3,15 @@ const path = require('path');
 const { Storage } = require('@google-cloud/storage');
 
 const storage = new Storage({
-    keyFilename: path.join(__dirname, '../config/firebase_credentials.json'),
+    keyFilename: path.join(__dirname, '../config/firebase-credentials.json'),
+    projectId: process.env.GCS_PROJECT_ID,
 });
 
 const bucketName = process.env.GCS_BUCKET;
 const bucket = storage.bucket(bucketName);
-console.log(`GCS Bucket: ${bucketName}`);
 
 const uploadFileToGCS = (file, type) => {
+    console.log(`Uploading file: ${file.originalname}, Type: ${type}`);
     try {
         return new Promise((resolve, reject) => {
             let folder = '';
@@ -25,7 +26,7 @@ const uploadFileToGCS = (file, type) => {
             const blobStream = blob.createWriteStream({
                 resumable: false,
                 contentType: file.mimetype,
-                public: true,
+                // public: true,
             });
 
             blobStream.on('error', (err) => reject(err));
