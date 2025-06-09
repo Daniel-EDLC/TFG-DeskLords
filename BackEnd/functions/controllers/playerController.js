@@ -98,6 +98,15 @@ async function getPlayerInfo(req, res) {
 
         const playerXp = player.player_level_progress;
 
+        let tutorial = false;
+        if (playerXp == 0 && player.player_level == 0) {
+            tutorial = true;
+            await Player.updateOne(
+                { uid: player.uid },
+                { $inc: { player_level_progress: 1 } }
+            );
+        }
+
         const defualtDeck = await Deck.findById(player.owned_decks[0]);
 
         const defaultDeckImage = defualtDeck.image;
@@ -115,7 +124,7 @@ async function getPlayerInfo(req, res) {
             avatars: allAvatars || [],
             shop: shopItems || [],
             battlePass: battlePass || {},
-            tutorial: { mode: playerXp == 0 && player.player_level == 0, defaultDeckImage: defaultDeckImage }
+            tutorial: { mode: tutorial, defaultDeckImage: defaultDeckImage }
         })
     } catch (error) {
         req.response.error(`Error al obtener información del jugador: ${error.message}`);
@@ -149,7 +158,7 @@ async function updatePlayer(req, res) {
 
 async function updatePlayerAvatar(req, res) {
     try {
-        const playerId = req.body.idPlayer;
+        const playerId = req.body.playerId;
         const avatarId = req.body.avatarId;
 
         if (!playerId || !avatarId) {
@@ -157,6 +166,8 @@ async function updatePlayerAvatar(req, res) {
         }
 
         const player = await Player.findById(playerId);
+
+        if (!player) return req.response.error('Jugador no encontrado');
 
         if (player.locked_avatars.includes(avatarId)) {
             return req.response.error('El avatar está bloqueado y no se puede seleccionar');
@@ -192,7 +203,59 @@ async function deletePlayer(req, res) {
     }
 }
 
-async function 
+async function buyItem(req, res) {
+    try {
+        const playerId = req.body.playerId;
+        const productId = req.body.productId;
+        const productType = req.body.productType;
+
+        const player = await Player.findOne({ uid: playerId });
+        if (!player) return req.response.error('Jugador no encontrado');
+
+        const playerCoins = player.coins || 0;
+
+        const product = await (productType === 'deck' ? Deck : Avatars).findById(productId);
+
+        switch (productType) {
+            case 'deck':
+                if (!product || !product.price) return req.response.error('Deck no encontrado o sin precio');
+
+                if (playerCoins < product.price) return req.response.error('No tienes suficientes monedas para comprar este deck');
+
+                await Player.updateOne(
+                    { uid: playerId },
+                    {
+                        $push: { owned_decks: productId },
+                        $pull: { locked_decks: productId },
+                        $inc: { coins: -product.price }
+                    }
+                );
+
+                break;
+            case 'avatar':
+                if (!product || !product.price) return req.response.error('Avatar no encontrado o sin precio');
+
+                if (playerCoins < product.price) return req.response.error('No tienes suficientes monedas para comprar este avatar');
+
+                await Player.updateOne(
+                    { uid: playerId },
+                    {
+                        $push: { unlocked_avatars: productId },
+                        $pull: { locked_avatars: productId },
+                        $inc: { coins: -product.price }
+                    }
+                );
+
+                break;
+            default:
+                return req.response.error('Tipo de producto no válido');
+        }
+
+        req.response.success({ message: 'Compra realizada con éxito' });
+    } catch (error) {
+        req.response.error(`Error al comprar el ítem: ${error.message}`);
+    }
+}
 
 module.exports = {
     createPlayer,
@@ -201,5 +264,6 @@ module.exports = {
     getPlayers,
     updatePlayer,
     deletePlayer,
-    updatePlayerAvatar
+    updatePlayerAvatar,
+    buyItem
 };
