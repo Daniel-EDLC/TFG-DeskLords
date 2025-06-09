@@ -78,7 +78,7 @@ function CardsList() {
             const url = isEdit
                 ? `https://api-meafpnv6bq-ew.a.run.app/api/updateCard`
                 : `https://api-meafpnv6bq-ew.a.run.app/api/createCard`;
-            const method = 'POST';
+            const method = isEdit ? 'PUT' : 'POST';
 
             const payload = isEdit
                 ? { idCard: editingCard._id, data: formData }
@@ -266,16 +266,50 @@ function CardsList() {
                             </select>
                         </div>
 
-                        {['effect', 'front_image', 'back_image'].map(field => (
-                            <div key={field}>
-                                <label>{field} (opcional):</label>
-                                <input
-                                    type="text"
-                                    value={formData[field]}
-                                    onChange={e => setFormData({ ...formData, [field]: e.target.value })}
-                                />
-                            </div>
-                        ))}
+                        <div>
+                            <label>effect (opcional):</label>
+                            <input
+                                type="text"
+                                value={formData.effect}
+                                onChange={e => setFormData({ ...formData, effect: e.target.value })}
+                            />
+                        </div>
+
+                        <div>
+                            <label>Imagen frontal (opcional):</label>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={async (e) => {
+                                    const file = e.target.files[0];
+                                    if (!file) return;
+
+                                    const formDataImage = new FormData();
+                                    formDataImage.append('file', file);
+
+                                    try {
+                                        const res = await fetch('http://localhost:3001/upload', {
+                                            method: 'POST',
+                                            body: formDataImage
+                                        });
+
+                                        if (res.ok) {
+                                            const data = await res.json();
+                                            setFormData(prev => ({ ...prev, front_image: data.url }));
+                                        } else {
+                                            console.error('Error al subir imagen:', await res.text());
+                                        }
+                                    } catch (err) {
+                                        console.error('Error al subir imagen:', err);
+                                    }
+                                }}
+                            />
+                            {formData.front_image && (
+                                <div style={{ marginTop: '10px' }}>
+                                    <img src={formData.front_image} alt="Preview" style={{ maxWidth: '150px', maxHeight: '150px' }} />
+                                </div>
+                            )}
+                        </div>
 
                         <div>
                             <label>Abilities:</label>
