@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../../../firebaseConfig";
 
 function BattlePassList() {
   const [battlePasses, setBattlePasses] = useState([]);
@@ -8,9 +10,25 @@ function BattlePassList() {
     fetchPlayers();
   }, []);
 
+  async function getUserToken() {
+    const user = await new Promise((resolve, reject) => {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        unsubscribe();
+        if (user) resolve(user);
+        else reject(new Error("Usuario no autenticado"));
+      });
+    });
+    return user.getIdToken();
+  }
+
   async function fetchPlayers() {
     try {
-      const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/getPlayers`);
+      const token = await getUserToken();
+      const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/getPlayers`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       const data = await res.json();
 
       if (!res.ok || !data?.data?.players) {
@@ -19,42 +37,55 @@ function BattlePassList() {
       }
 
       setPlayers(data.data.players);
-      fetchBattlePasses(data.data.players);
+      fetchBattlePasses(data.data.players, token);
     } catch (error) {
       console.error('Error al obtener jugadores (exception):', error);
     }
   }
 
-  async function fetchBattlePasses(playersList) {
-    try {
-      const battlePassResults = await Promise.all(playersList.map(async (player) => {
-        try {
-          const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/getBattlePass?playerId=${player.uid}`);
-          const data = await res.json();
+  async function fetchBattlePasses(playersList, token) {
+  try {
+    const battlePassResults = await Promise.all(playersList.map(async (player) => {
+      try {
+        const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/getBattlePass`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ playerId: player.uid })
+        });
 
-          if (!res.ok || !data?.data?.battlePass) {
-            console.warn(`No se encontró Battle Pass para el jugador ${player.uid}:`, data?.error ?? data);
-            return null;
-          }
+        const data = await res.json();
 
-          return data.data.battlePass;
-        } catch (err) {
-          console.error(`Error interno al buscar Battle Pass para ${player.uid}:`, err);
+        if (!res.ok || !data?.data?.battlePass) {
+          console.warn(`No se encontró Battle Pass para el jugador ${player.uid}:`, data?.error ?? data);
           return null;
         }
-      }));
 
-      const filtered = battlePassResults.filter(bp => bp !== null);
-      setBattlePasses(filtered);
-    } catch (error) {
-      console.error('Error general al obtener pases de batalla:', error);
-    }
+        return data.data.battlePass;
+      } catch (err) {
+        console.error(`Error interno al buscar Battle Pass para ${player.uid}:`, err);
+        return null;
+      }
+    }));
+
+    const filtered = battlePassResults.filter(bp => bp !== null);
+    setBattlePasses(filtered);
+  } catch (error) {
+    console.error('Error general al obtener pases de batalla:', error);
   }
+}
+
 
   async function deleteBattlePass(playerId) {
     try {
+      const token = await getUserToken();
       const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/deleteBattlePass/${playerId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
 
       if (res.ok) {

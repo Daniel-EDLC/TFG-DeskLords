@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../../../firebaseConfig";
 
 function NewsList() {
   const [newsList, setNewsList] = useState([]);
@@ -18,9 +20,25 @@ function NewsList() {
     fetchNews();
   }, []);
 
+  async function getUserToken() {
+    const user = await new Promise((resolve, reject) => {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        unsubscribe();
+        if (user) resolve(user);
+        else reject(new Error("Usuario no autenticado"));
+      });
+    });
+    return user.getIdToken();
+  }
+
   async function fetchNews() {
     try {
-      const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/getNews`);
+      const token = await getUserToken();
+      const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/getNews`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       const data = await res.json();
       setNewsList(data.data.news);
     } catch (error) {
@@ -30,9 +48,13 @@ function NewsList() {
 
   async function deleteNews(id) {
     try {
+      const token = await getUserToken();
       const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/deleteNews`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ idNews: id })
       });
       if (res.ok) {
@@ -47,18 +69,22 @@ function NewsList() {
     e.preventDefault();
     const isEdit = !!editingNews;
 
+    const url = isEdit
+      ? `https://api-meafpnv6bq-ew.a.run.app/api/updateNews`
+      : `https://api-meafpnv6bq-ew.a.run.app/api/createNews`;
+
+    const payload = isEdit
+      ? { idNews: editingNews._id, data: formData }
+      : formData;
+
     try {
-      const url = isEdit
-        ? `https://api-meafpnv6bq-ew.a.run.app/api/updateNews`
-        : `https://api-meafpnv6bq-ew.a.run.app/api/createNews`;
-
-      const payload = isEdit
-        ? { idNews: editingNews._id, data: formData }
-        : formData;
-
+      const token = await getUserToken();
       const res = await fetch(url, {
         method: isEdit ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(payload)
       });
 
