@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../../../firebaseConfig";
 
 function PlayersList() {
   const [players, setPlayers] = useState([]);
   const [editingPlayer, setEditingPlayer] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
   const [formData, setFormData] = useState(getEmptyForm());
-
-  const API_URL = import.meta.env.VITE_API_URL;
 
   function getEmptyForm() {
     return {
@@ -27,9 +27,25 @@ function PlayersList() {
     fetchPlayers();
   }, []);
 
+  async function getUserToken() {
+    const user = await new Promise((resolve, reject) => {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        unsubscribe();
+        if (user) resolve(user);
+        else reject(new Error("Usuario no autenticado"));
+      });
+    });
+    return user.getIdToken();
+  }
+
   async function fetchPlayers() {
     try {
-      const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/getPlayers`);
+      const token = await getUserToken();
+      const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/getPlayers`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       const data = await res.json();
       setPlayers(data.data.players);
     } catch (error) {
@@ -39,15 +55,15 @@ function PlayersList() {
 
   async function deletePlayer(id) {
     try {
-      const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/deletePlayer`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        }
-      );
+      const token = await getUserToken();
+      const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/deletePlayer`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ idPlayer: id })
+      });
       if (res.ok) {
         setPlayers(players.filter(p => p._id !== id));
       }
@@ -57,34 +73,37 @@ function PlayersList() {
   }
 
   async function savePlayer(e) {
-  e.preventDefault();
+    e.preventDefault();
+    if (!editingPlayer) return;
 
-  if (!editingPlayer) return;
+    try {
+      const token = await getUserToken();
+      const url = `https://api-meafpnv6bq-ew.a.run.app/api/updatePlayer`;
 
-  try {
-    const url = `https://api-meafpnv6bq-ew.a.run.app/api/updatePlayer`;
+      const payload = {
+        idPlayer: editingPlayer._id,
+        data: formData
+      };
 
-    const payload = {
-      idPlayer: editingPlayer._id,
-      data: formData
-    };
+      const res = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
 
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    if (res.ok) {
-      await fetchPlayers();
-      setEditingPlayer(null);
-      setIsCreating(false);
-      setFormData(getEmptyForm());
+      if (res.ok) {
+        await fetchPlayers();
+        setEditingPlayer(null);
+        setIsCreating(false);
+        setFormData(getEmptyForm());
+      }
+    } catch (error) {
+      console.error('Error al guardar jugador:', error);
     }
-  } catch (error) {
-    console.error('Error al guardar jugador:', error);
   }
-}
 
   function openEdit(player) {
     setEditingPlayer(player);
@@ -107,38 +126,38 @@ function PlayersList() {
     <div>
       <h2>Lista de Jugadores</h2>
       <div className="table-scroll-wrapper">
-      <table border="1" cellPadding="8" cellSpacing="0">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Usuario</th>
-            <th>Status</th>
-            <th>Nivel</th>
-            <th>Rol</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {players.map(player => (
-            <tr key={player._id}>
-              <td>{player.name} {player.surname}</td>
-              <td>{player.displayName}</td>
-              <td>{player.status}</td>
-              <td>{player.player_level ?? 0}</td>
-              <td>{player.rol}</td>
-              <td>
-                <button onClick={() => openEdit(player)}>Editar</button>
-                <button onClick={() => deletePlayer(player._id)}>Borrar</button>
-              </td>
+        <table border="1" cellPadding="8" cellSpacing="0">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Usuario</th>
+              <th>Status</th>
+              <th>Nivel</th>
+              <th>Rol</th>
+              <th>Acciones</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {players.map(player => (
+              <tr key={player._id}>
+                <td>{player.name} {player.surname}</td>
+                <td>{player.displayName}</td>
+                <td>{player.status}</td>
+                <td>{player.player_level ?? 0}</td>
+                <td>{player.rol}</td>
+                <td>
+                  <button onClick={() => openEdit(player)}>Editar</button>
+                  <button onClick={() => deletePlayer(player._id)}>Borrar</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       {(editingPlayer) && (
         <div className="modal-overlay">
-          <form onSubmit={savePlayer} >
+          <form onSubmit={savePlayer}>
             <h3>{editingPlayer ? 'Editar Jugador' : 'Nuevo Jugador'}</h3>
 
             <label>Nombre:</label>

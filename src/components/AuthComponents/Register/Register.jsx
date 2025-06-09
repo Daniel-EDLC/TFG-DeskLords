@@ -18,13 +18,20 @@ export default function Register({ onSwitch, googleData }) {
 
   //Funcion para validar los campos
   const validarCampos = () => {
-    // Validar que todos los campos estén rellenos
-    if (!username || !name || !surnames || !email || !password || !confirmPassword) {
-      setError('Todos los campos son obligatorios');
+  // Validar que todos los campos estén rellenos
+  if (!username || !email || !password || !confirmPassword) {
+    setError('Todos los campos son obligatorios');
+    return false;
+  }
+
+  // Solo validar nombre y apellidos si NO es usuario de Google
+  if (!isGoogleUser) {
+    if (!name || !surnames) {
+      setError('El nombre y apellidos son obligatorios');
       return false;
     }
 
-    // Validar que el nombre y apellidos no tengan números
+    // Validar que el nombre y apellidos no tengan números ni caracteres especiales
     const patronNombre = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s'-]{2,}$/;
     if (!patronNombre.test(name)) {
       setError('El nombre no debe contener números ni caracteres especiales');
@@ -36,23 +43,24 @@ export default function Register({ onSwitch, googleData }) {
       setError('Los apellidos no deben contener números ni caracteres especiales');
       return false;
     }
-
-    // Validar el formato del correo
-    const patronEmail = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
-    if (!patronEmail.test(email)) {
-      setError('El correo debe ser una dirección válida de @gmail.com');
-      return false;
-    }
-
-    // Validar que las contraseñas coincidan
-    if (password != confirmPassword) {
-      setError('Las contraseñas no coinciden');
-      return false;
-    }
-
-    // Si todo está bien devuelve true
-    return true;
   }
+
+  // Validar el formato del correo
+  const patronEmail = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+  if (!patronEmail.test(email)) {
+    setError('El correo debe ser una dirección válida de @gmail.com');
+    return false;
+  }
+
+  // Validar que las contraseñas coincidan
+  if (password !== confirmPassword) {
+    setError('Las contraseñas no coinciden');
+    return false;
+  }
+
+  return true;
+};
+
 
   //Registrarse normal
   const handleSubmit = async e => {

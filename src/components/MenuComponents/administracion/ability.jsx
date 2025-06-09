@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../../../firebaseConfig";
 
 function AbilitiesList() {
   const [abilities, setAbilities] = useState([]);
@@ -12,9 +14,27 @@ function AbilitiesList() {
     fetchAbilities();
   }, []);
 
+  async function getUserToken() {
+    const user = await new Promise((resolve, reject) => {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        unsubscribe();
+        if (user) resolve(user);
+        else reject(new Error("Usuario no autenticado"));
+      });
+    });
+    return await user.getIdToken();
+  }
+
   async function fetchAbilities() {
     try {
-      const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/getAbilities`);
+      const token = await getUserToken();
+      const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/getAbilities`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+      });
       const data = await res.json();
       setAbilities(data.data.abilities);
     } catch (error) {
@@ -24,15 +44,15 @@ function AbilitiesList() {
 
   async function deleteAbility(id) {
     try {
-      const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/deleteAbility`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        }
-      );
+      const token = await getUserToken();
+      const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/deleteAbility`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ idAbility: id })
+      });
       if (res.ok) {
         setAbilities(abilities.filter(a => a._id !== id));
       }
@@ -42,36 +62,39 @@ function AbilitiesList() {
   }
 
   async function handleSubmit(e) {
-  e.preventDefault();
-  const isEdit = !!editingAbility;
+    e.preventDefault();
+    const isEdit = !!editingAbility;
 
-  try {
-    const url = isEdit
-      ? `https://api-meafpnv6bq-ew.a.run.app/api/updateAbility`
-      : `https://api-meafpnv6bq-ew.a.run.app/api/createAbility`;
-    const method = 'POST';
+    try {
+      const token = await getUserToken();
+      const url = isEdit
+        ? `https://api-meafpnv6bq-ew.a.run.app/api/updateAbility`
+        : `https://api-meafpnv6bq-ew.a.run.app/api/createAbility`;
+      const method = isEdit ? 'PUT' : 'POST';
 
-    const payload = isEdit
-      ? { idAbility: editingAbility._id, data: formData }
-      : formData;
+      const payload = isEdit
+        ? { idAbility: editingAbility._id, data: formData }
+        : formData;
 
-    const res = await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+      const res = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
 
-    if (res.ok) {
-      await fetchAbilities();
-      setEditingAbility(null);
-      setIsCreating(false);
-      setFormData({ name: '', description: '' });
+      if (res.ok) {
+        await fetchAbilities();
+        setEditingAbility(null);
+        setIsCreating(false);
+        setFormData({ name: '', description: '' });
+      }
+    } catch (error) {
+      console.error('Error al guardar habilidad:', error);
     }
-  } catch (error) {
-    console.error('Error al guardar habilidad:', error);
   }
-}
-
 
   const openEdit = (ability) => {
     setEditingAbility(ability);
@@ -95,28 +118,28 @@ function AbilitiesList() {
       <button onClick={openCreate}>
         + Nueva Habilidad
       </button>
-    <div className="table-scroll-wrapper">
-      <table border="1" cellPadding="8" cellSpacing="0">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {abilities.map((ability) => (
-            <tr key={ability._id}>
-              <td>{ability.name}</td>
-              <td>{ability.description || '-'}</td>
-              <td>
-                <button onClick={() => openEdit(ability)}>Editar</button>
-                <button onClick={() => deleteAbility(ability._id)}>Borrar</button>
-              </td>
+      <div className="table-scroll-wrapper">
+        <table border="1" cellPadding="8" cellSpacing="0">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Acciones</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {abilities.map((ability) => (
+              <tr key={ability._id}>
+                <td>{ability.name}</td>
+                <td>{ability.description || '-'}</td>
+                <td>
+                  <button onClick={() => openEdit(ability)}>Editar</button>
+                  <button onClick={() => deleteAbility(ability._id)}>Borrar</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       {(editingAbility || isCreating) && (
@@ -147,7 +170,6 @@ function AbilitiesList() {
             <button
               type="button"
               onClick={() => { setEditingAbility(null); setIsCreating(false); }}
-              
             >
               Cancelar
             </button>

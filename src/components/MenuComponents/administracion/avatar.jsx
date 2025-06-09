@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../../../firebaseConfig";
 
 function AvatarManager() {
   const [avatars, setAvatars] = useState([]);
@@ -19,9 +21,25 @@ function AvatarManager() {
     fetchAvatars();
   }, []);
 
+  async function getUserToken() {
+    const user = await new Promise((resolve, reject) => {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        unsubscribe();
+        if (user) resolve(user);
+        else reject(new Error("Usuario no autenticado"));
+      });
+    });
+    return user.getIdToken();
+  }
+
   async function fetchAvatars() {
     try {
-      const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/getAvatars`);
+      const token = await getUserToken();
+      const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/getAvatars`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       const data = await res.json();
       setAvatars(data.data.avatars);
     } catch (error) {
@@ -31,9 +49,13 @@ function AvatarManager() {
 
   async function deleteAvatar(id) {
     try {
+      const token = await getUserToken();
       const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/deleteAvatar`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ idAvatar: id })
       });
       if (res.ok) {
@@ -45,50 +67,52 @@ function AvatarManager() {
   }
 
   async function saveAvatar(e) {
-  e.preventDefault();
-  const isEdit = !!editingAvatar;
+    e.preventDefault();
+    const isEdit = !!editingAvatar;
 
-  const trimmedUrl = formData.url.trim();
+    const trimmedUrl = formData.url.trim();
 
-  const baseData = {
-    url: trimmedUrl,
-    belongsTo: formData.belongsTo,
-    name: formData.name?.trim() || 'Avatar sin nombre'
-  };
+    const baseData = {
+      url: trimmedUrl,
+      belongsTo: formData.belongsTo,
+      name: formData.name?.trim() || 'Avatar sin nombre'
+    };
 
-  if (formData.belongsTo === 'store') {
-    baseData.price = parseFloat(formData.price) || 0;
-  }
-
-  const url = isEdit
-    ? `https://api-meafpnv6bq-ew.a.run.app/api/updateAvatar`
-    : `https://api-meafpnv6bq-ew.a.run.app/api/createAvatar`;
-
-  const method = isEdit ? 'PUT' : 'POST';
-
-  const payload = isEdit
-    ? { idAvatar: editingAvatar._id, data: baseData }
-    : baseData;
-
-  try {
-    const res = await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    if (res.ok) {
-      await fetchAvatars();
-      setEditingAvatar(null);
-      setIsCreating(false);
-      setFormData(getEmptyForm());
+    if (formData.belongsTo === 'store') {
+      baseData.price = parseFloat(formData.price) || 0;
     }
-  } catch (error) {
-    console.error('Error al guardar avatar:', error);
+
+    const url = isEdit
+      ? `https://api-meafpnv6bq-ew.a.run.app/api/updateAvatar`
+      : `https://api-meafpnv6bq-ew.a.run.app/api/createAvatar`;
+
+    const method = isEdit ? 'PUT' : 'POST';
+
+    const payload = isEdit
+      ? { idAvatar: editingAvatar._id, data: baseData }
+      : baseData;
+
+    try {
+      const token = await getUserToken();
+      const res = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        await fetchAvatars();
+        setEditingAvatar(null);
+        setIsCreating(false);
+        setFormData(getEmptyForm());
+      }
+    } catch (error) {
+      console.error('Error al guardar avatar:', error);
+    }
   }
-}
-
-
 
   function openEdit(avatar) {
     setEditingAvatar(avatar);
