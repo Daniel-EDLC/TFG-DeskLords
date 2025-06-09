@@ -12,7 +12,7 @@ async function getAvatars(req, res) {
 async function createAvatar(req, res) {
     try {
         
-        if (!url || !belongsTo) {
+        if (!req.body.url || !req.body.belongsTo) {
             return req.response.error('Faltan datos obligatorios');
         }
 
@@ -32,7 +32,7 @@ async function createAvatar(req, res) {
 
 async function updateAvatar(req, res) {
     try {
-        const avatarId = req.params.idAvatar;
+        const avatarId = req.body.idAvatar;
         const updatedData = req.body.data;
 
         const updatedAvatar = await Avatars.findByIdAndUpdate(avatarId, updatedData, { new: true });
@@ -49,7 +49,7 @@ async function updateAvatar(req, res) {
 
 async function deleteAvatar(req, res) {
     try {
-        const avatarId = req.params.idAvatar;
+        const avatarId = req.body.idAvatar;
         const deletedAvatar = await Avatars.findByIdAndDelete(avatarId);
         
         if (!deletedAvatar) {

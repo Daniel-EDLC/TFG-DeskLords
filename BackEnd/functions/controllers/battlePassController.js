@@ -2,11 +2,10 @@ const BattlePass = require('../models/battlePass');
 const Player = require('../models/Player');
 const { generateDefaultLevels } = require('../utils/battlePassUtils');
 
-async function getBattlePass(req, res) {
+async function getBattlePasses(req, res) {
     try {
-        const idPlayer = req.body.playerId;
-
-        const battlePass = await BattlePass.findOne({ playerId: idPlayer });
+        
+        const battlePass = await BattlePass.find();
         if (!battlePass) {
             return { error: 'Pase de batalla no encontrado' };
         }
@@ -131,7 +130,7 @@ async function deleteBattlePass(playerId) {
 }
 
 module.exports = {
-    getBattlePass,
+    getBattlePasses,
     createBattlePass,
     updateBattlePass,
     deleteBattlePass
