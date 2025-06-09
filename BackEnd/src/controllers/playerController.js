@@ -2,7 +2,7 @@ const Player = require('../models/Player');
 const Deck = require('../models/Deck');
 const News = require('../models/News');
 const Avatars = require('../models/Avatars');
-const { getMapsAvailable, getAvatarsAvailable, getDecksAvailable } = require('../utils/playerUtils');
+const { getMapsAvailable, getAvatarsAvailable, getDecksAvailable, getMostUsedDeck, getLostGames, getWinnedGames } = require('../utils/playerUtils');
 const { getBattlePassPlayer } = require('../utils/battlePassUtils');
 const { createBattlePass } = require('../controllers/battlePassController');
 
@@ -98,6 +98,12 @@ async function getPlayerInfo(req, res) {
 
         const playerXp = player.player_level_progress;
 
+        const mostUsedDeckId = await getMostUsedDeck(player);
+
+        const lostGames = await getLostGames(player);
+
+        const winnedGames = await getWinnedGames(player);
+
         let tutorial = false;
         if (playerXp == 0 && player.player_level == 0) {
             tutorial = true;
@@ -124,7 +130,10 @@ async function getPlayerInfo(req, res) {
             avatars: allAvatars || [],
             shop: shopItems || [],
             battlePass: battlePass || {},
-            tutorial: { mode: tutorial, defaultDeckImage: defaultDeckImage }
+            tutorial: { mode: tutorial, defaultDeckImage: defaultDeckImage },
+            favoriteDeck: mostUsedDeckId.name || null,
+            partidasPerdidas: lostGames || 0,
+            partidasGanadas: winnedGames || 0,
         })
     } catch (error) {
         req.response.error(`Error al obtener información del jugador: ${error.message}`);

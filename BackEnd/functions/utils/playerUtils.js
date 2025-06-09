@@ -1,6 +1,7 @@
 const Deck = require('../models/Deck');
 const Avatars = require('../models/Avatars');
 const Map = require('../models/Map');
+const Game = require('../models/Game');
 
 async function getMapsAvailable(player) {
 
@@ -85,8 +86,57 @@ async function getAvatarsAvailable(player) {
     return allAvatars;
 }
 
+async function getMostUsedDeck(player) {
+    console.log('getMostUsedDeck called with player:', player);
+    if (!player || !player.owned_decks || player.owned_decks.length === 0) {
+        return null;
+    }
+
+    const gamesPlayed = await Game.find({ playerId: player.uid })
+        .populate('playerDeck')
+        .exec();
+    
+    if (!gamesPlayed || gamesPlayed.length === 0) {
+        return null;
+    }
+
+    const deckUsageCount = gamesPlayed.reduce((acc, game) => {
+        if (game.playerDeck && game.playerDeck._id) {
+            acc[game.playerDeck._id] = (acc[game.playerDeck._id] || 0) + 1;
+        }
+        return acc;
+    }, {});
+
+    const mostUsedDeckId = Object.keys(deckUsageCount).reduce((a, b) =>
+        deckUsageCount[a] > deckUsageCount[b] ? a : b
+    );
+
+    return mostUsedDeckId ? await Deck.findById(mostUsedDeckId) : null;
+}
+
+async function getWinnedGames(player) {
+    const games = await Game.find({ playerId: player.uid, winner: "player" })
+        .populate('playerDeck')
+        .exec();
+
+        console.log('Winned games:', games);
+
+    return games.length;
+}
+
+async function getLostGames(player) {
+    const games = await Game.find({ playerId: player.uid, winner: "rival" })
+        .populate('playerDeck')
+        .exec();
+
+    return games.length;
+}
+
 module.exports = {
     getMapsAvailable,
     getDecksAvailable,
-    getAvatarsAvailable
+    getAvatarsAvailable,
+    getMostUsedDeck,
+    getWinnedGames,
+    getLostGames
 }
