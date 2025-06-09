@@ -7,6 +7,9 @@ import PlayersList from './player';
 import SetsList from './set';
 import GamesList from './game';
 import CommentsList from './comments';
+import AvatarManager from './avatar';
+import NewsList from './news';
+import BattlePassList from './battlepass';
 import './admin.css';
 
 function AdminDashboard() {
@@ -26,6 +29,9 @@ function AdminDashboard() {
             <button onClick={() => setView('sets')}>Sets</button>
             <button onClick={() => setView('games')}>Games</button>
             <button onClick={() => setView('comments')}>Comments</button>
+            <button onClick={() => setView('battlePass')}>Battle Pass</button>
+            <button onClick={() => setView('avatar')}>Avatar</button>
+            <button onClick={() => setView('news')}>News</button>
           </div>
         </div>
 
@@ -38,6 +44,9 @@ function AdminDashboard() {
           {view === 'sets' && <SetsList />}
           {view === 'games' && <GamesList />}
           {view === 'comments' && <CommentsList />}
+          {view == 'battlePass' && <BattlePassList />}
+          {view == 'avatar' && <AvatarManager />}
+          {view == 'news' && <NewsList />}
         </div>
       </div>
     </div>
