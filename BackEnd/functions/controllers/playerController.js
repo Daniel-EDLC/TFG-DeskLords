@@ -2,7 +2,7 @@ const Player = require('../models/Player');
 const Deck = require('../models/Deck');
 const News = require('../models/News');
 const Avatars = require('../models/Avatars');
-const { getMapsAvailable, getAvatarsAvailable, getDecksAvailable } = require('../utils/playerUtils');
+const { getMapsAvailable, getAvatarsAvailable, getDecksAvailable, getMostUsedDeck, getLostGames, getWinnedGames } = require('../utils/playerUtils');
 const { getBattlePassPlayer } = require('../utils/battlePassUtils');
 const { createBattlePass } = require('../controllers/battlePassController');
 
@@ -98,12 +98,28 @@ async function getPlayerInfo(req, res) {
 
         const playerXp = player.player_level_progress;
 
+        const mostUsedDeckId = await getMostUsedDeck(player);
+
+        const lostGames = await getLostGames(player);
+
+        const winnedGames = await getWinnedGames(player);
+
+        let tutorial = false;
+        if (playerXp == 0 && player.player_level == 0) {
+            tutorial = true;
+            await Player.updateOne(
+                { uid: player.uid },
+                { $inc: { player_level_progress: 1 } }
+            );
+        }
+
         const defualtDeck = await Deck.findById(player.owned_decks[0]);
 
         const defaultDeckImage = defualtDeck.image;
 
         req.response.success({
             playerAvatar: avatarUrl || "no lo encuentra",
+            avatars: allAvatars || [],
             playerName: player.displayName || 'Jugador Anónimo',
             playerLevel: player.player_level,
             playerExperience: player.player_level_progress,
@@ -112,10 +128,12 @@ async function getPlayerInfo(req, res) {
             decks: allDecks || [],
             maps: allMaps || [],
             news: newsFound || [],
-            avatars: allAvatars || [],
             shop: shopItems || [],
             battlePass: battlePass || {},
-            tutorial: { mode: playerXp == 0 && player.player_level == 0, defaultDeckImage: defaultDeckImage }
+            tutorial: { mode: tutorial, defaultDeckImage: defaultDeckImage },
+            favoriteDeck: mostUsedDeckId.name || null,
+            wins: winnedGames || 0,
+            loses: lostGames || 0,
         })
     } catch (error) {
         req.response.error(`Error al obtener información del jugador: ${error.message}`);
@@ -149,29 +167,43 @@ async function updatePlayer(req, res) {
 
 async function updatePlayerAvatar(req, res) {
     try {
-        const playerId = req.body.idPlayer;
+        const playerId = req.body.playerId;
         const avatarId = req.body.avatarId;
 
         if (!playerId || !avatarId) {
             return req.response.error('Faltan datos obligatorios');
         }
 
-        const player = await Player.findById(playerId);
+        const player = await Player.findOne({ uid: playerId });
+
+        const avatar = await Avatars.findById(avatarId);
+
+        if (!player) return req.response.error('Jugador no encontrado');
 
         if (player.locked_avatars.includes(avatarId)) {
             return req.response.error('El avatar está bloqueado y no se puede seleccionar');
         }
 
-        const updatedPlayer = await Player.findByIdAndUpdate(
-            playerId,
-            { selected_avatar: avatarId }
+        // 1. Añadir el avatar anterior a unlocked_avatars
+        await Player.updateOne(
+            { uid: playerId },
+            { $addToSet: { unlocked_avatars: player.selected_avatar } }
+        );
+
+        // 2. Quitar el avatar actual de unlocked_avatars y ponerlo como seleccionado
+        await Player.updateOne(
+            { uid: playerId },
+            {
+                $set: { selected_avatar: avatarId },
+                $pull: { unlocked_avatars: avatarId }
+            }
         );
 
         if (!updatedPlayer) {
             return req.response.error('Jugador no encontrado');
         }
 
-        req.response.success({ player: updatedPlayer });
+        req.response.success({ imagen: avatar.url });
     } catch (error) {
         req.response.error(`Error al actualizar el avatar del jugador: ${error.message}`);
     }
@@ -192,6 +224,76 @@ async function deletePlayer(req, res) {
     }
 }
 
+async function buyItem(req, res) {
+    try {
+        const playerId = req.body.playerId;
+        const productId = req.body.productId;
+        const productType = req.body.productType;
+
+        console.log('productType', productType);
+
+        const player = await Player.findOne({ uid: playerId });
+        if (!player) return req.response.error('Jugador no encontrado');
+
+        const playerCoins = player.coins || 0;
+        console.log('playerCoins', playerCoins);
+
+        const product = await (productType === 'deck' ? Deck : Avatars).findById(productId);
+        console.log('product', product);
+
+        switch (productType) {
+            case 'Deck':
+                try {
+                    if (!product || !product.price) return req.response.error('Deck no encontrado o sin precio');
+
+                    if (playerCoins < product.price) return req.response.error('No tienes suficientes monedas para comprar este deck');
+
+                    await Player.updateOne(
+                        { uid: playerId },
+                        {
+                            $push: { owned_decks: productId },
+                            $pull: { locked_decks: productId },
+                            $inc: { coins: -product.price }
+                        }
+                    );
+
+                    req.response.success({ message: 'Compra realizada con éxito' });
+                } catch (error) {
+                    return req.response.error(`Error al comprar el deck: ${error.message}`);
+                }
+
+                break;
+            case 'Avatar':
+                try {
+                    if (!product || !product.price) return req.response.error('Avatar no encontrado o sin precio');
+
+                    if (playerCoins < product.price) return req.response.error('No tienes suficientes monedas para comprar este avatar');
+
+                    await Player.updateOne(
+                        { uid: playerId },
+                        {
+                            $push: { unlocked_avatars: productId },
+                            $pull: { locked_avatars: productId },
+                            $inc: { coins: -product.price }
+                        }
+                    );
+
+                    console.log('Avatar comprado:', productId);
+
+                    req.response.success({ message: 'Compra realizada con éxito' });
+                } catch (error) {
+                    return req.response.error(`Error al comprar el avatar: ${error.message}`);
+                }
+
+                break;
+            default:
+                return req.response.error('Tipo de producto no válido');
+        }
+    } catch (error) {
+        req.response.error(`Error al comprar el ítem: ${error.message}`);
+    }
+}
+
 module.exports = {
     createPlayer,
     getPlayerInfo,
@@ -199,5 +301,6 @@ module.exports = {
     getPlayers,
     updatePlayer,
     deletePlayer,
-    updatePlayerAvatar
+    updatePlayerAvatar,
+    buyItem
 };

@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { getBattlePass, createBattlePass, deleteBattlePass } = require('../controllers/battlePassController');
+const { getBattlePasses, createBattlePass, deleteBattlePass } = require('../controllers/battlePassController');
 
-router.get('/getBattlePass', getBattlePass);
+router.get('/getBattlePasses', getBattlePasses);
 router.post('/createBattlePass', createBattlePass);
 router.post('/deleteBattlePass', deleteBattlePass);
 

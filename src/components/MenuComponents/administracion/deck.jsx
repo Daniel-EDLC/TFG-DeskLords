@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../../../../firebaseConfig';
 
 function DecksList() {
   const [decks, setDecks] = useState([]);
@@ -8,8 +10,6 @@ function DecksList() {
   const [editingDeck, setEditingDeck] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
   const [formData, setFormData] = useState(getEmptyForm());
-
-  const API_URL = import.meta.env.VITE_API_URL;
 
   function getEmptyForm() {
     return {
@@ -27,9 +27,26 @@ function DecksList() {
     fetchSets();
   }, []);
 
+  async function getUserToken() {
+    const user = await new Promise((resolve, reject) => {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        unsubscribe();
+        if (user) resolve(user);
+        else reject(new Error("Usuario no autenticado"));
+      });
+    });
+    return await user.getIdToken();
+  }
+
   async function fetchDecks() {
     try {
-      const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/getDecks`);
+      const token = await getUserToken();
+      const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/getDecks`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+      });
       const data = await res.json();
       setDecks(data.data.decks);
     } catch (error) {
@@ -39,7 +56,13 @@ function DecksList() {
 
   async function fetchCards() {
     try {
-      const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/getCards`);
+      const token = await getUserToken();
+      const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/getCards`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+      });
       const data = await res.json();
       setAllCards(data.data.cards);
     } catch (error) {
@@ -49,7 +72,13 @@ function DecksList() {
 
   async function fetchSets() {
     try {
-      const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/getSets`);
+      const token = await getUserToken();
+      const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/getSets`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+      });
       const data = await res.json();
       setSets(data.data.sets);
     } catch (error) {
@@ -58,20 +87,20 @@ function DecksList() {
   }
 
   async function deleteDeck(id) {
-    const payload = {
-      userId: '',
-      idDeck: id
-    }
     try {
-      const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/deleteDeck`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        }
-      );
+      const token = await getUserToken();
+      const payload = {
+        userId: '',
+        idDeck: id
+      };
+      const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/deleteDeck`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
       if (res.ok) {
         setDecks(decks.filter(deck => deck._id !== id));
       }
@@ -85,42 +114,47 @@ function DecksList() {
     const isEdit = !!editingDeck;
 
     try {
+      const token = await getUserToken();
+
       const url = isEdit
         ? `https://api-meafpnv6bq-ew.a.run.app/api/updateDeck`
         : `https://api-meafpnv6bq-ew.a.run.app/api/createDeck`;
 
-      const method = 'POST';
+      const method = isEdit ? 'PUT' : 'POST';
 
       const fullCards = isEdit
         ? formData.cards.map(cardId => {
-          const found = allCards.find(card => card._id === cardId);
-          return found || { _id: cardId };
-        })
+            const found = allCards.find(card => card._id === cardId);
+            return found || { _id: cardId };
+          })
         : formData.cards.map(cardId => String(cardId));
 
       const payload = isEdit
         ? {
-          userId: '',
-          idDeck: editingDeck._id,
-          data: {
+            userId: '',
+            idDeck: editingDeck._id,
+            data: {
+              name: formData.name,
+              description: formData.description,
+              image: formData.image,
+              cards: fullCards,
+              set: formData.set
+            }
+          }
+        : {
             name: formData.name,
             description: formData.description,
             image: formData.image,
             cards: fullCards,
             set: formData.set
-          }
-        }
-        : {
-          name: formData.name,
-          description: formData.description,
-          image: formData.image,
-          cards: fullCards,
-          set: formData.set
-        };
+          };
 
       const res = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
         body: JSON.stringify(payload)
       });
 
@@ -275,7 +309,6 @@ function DecksList() {
             <button
               type="button"
               onClick={() => { setEditingDeck(null); setIsCreating(false); }}
-              
             >
               Cancelar
             </button>

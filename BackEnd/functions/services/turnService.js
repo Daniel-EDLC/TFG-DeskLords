@@ -6,7 +6,15 @@ async function nextTurn({ game }) {
   if (!game) throw new Error('Juego no encontrado');
 
   const newTurn = game.currentTurn + 1;
-  const newActualMana = game.manaPerTurn + game.actualMana;
+
+  let newPlayerMana = game.playerMana;
+  let newRivalmana = game.rivalMana;
+
+  if (newTurn % 2 !== 0) {
+    newPlayerMana = game.playerMana + game.manaPerTurn;
+    newRivalmana = game.rivalMana + game.manaPerTurn;
+  }
+
 
   // Limpiar spells de los equipements de cada carta en ambas mesas y pasarlos al graveyard correspondiente
   let spellsToGraveyardPlayer = [];
@@ -39,9 +47,8 @@ async function nextTurn({ game }) {
     {
       $set: {
         currentTurn: newTurn,
-        actualMana: newActualMana,
-        playerMana: newActualMana,
-        rivalMana: newActualMana,
+        playerMana: newPlayerMana,
+        rivalMana: newRivalmana,
         'playerTable.$[].temporaryAbilities': [],
         'rivalTable.$[].temporaryAbilities': [],
       },
@@ -114,7 +121,7 @@ async function drawCard({ game, isAI }) {
     );
   } else {
     const card = game[pendingDeckField][0];
-    
+
     // Forzar el _id a ObjectId para el $pull
     const cardId = typeof card._id === 'string' ? mongoose.Types.ObjectId(card._id) : card._id;
     await Game.updateOne(
@@ -147,23 +154,23 @@ async function removeDeadCardsFromTables(gameId, playerTable, rivalTable) {
 async function checkForGameOver(game) {
   if (game.playerHp <= 0 || game.rivalHp <= 0) {
     const winner = game.playerHp > 0 ? 'player' : 'rival';
-    await Game.updateOne(
-      { _id: game._id },
-      { $set: { winner } }
-    );
+    await Game.updateOne({ _id: game._id }, { $set: { winner } });
 
-    // Experiencia y nivelado
     const player = await Player.findOne({ uid: game.playerId });
     if (player) {
       let expToAdd = winner === 'player' ? 200 : 100;
       let newProgress = (player.player_level_progress || 0) + expToAdd;
       let newLevel = player.player_level || 0;
-      // Sube de nivel si llega a 1000 o más
+
+      let leveledUp = false;
+
       if (newProgress >= 1000) {
         const levelsToAdd = Math.floor(newProgress / 1000);
         newLevel += levelsToAdd;
         newProgress = newProgress % 1000;
+        leveledUp = true;
       }
+
       await Player.updateOne(
         { uid: game.playerId },
         {
@@ -173,9 +180,16 @@ async function checkForGameOver(game) {
           }
         }
       );
+
+      // Solo actualiza el pase de batalla si subió de nivel
+      if (leveledUp) {
+        await updateBattlePass(game.playerId);
+      }
     }
+
     return true; // El juego ha terminado
   }
+
   return false; // El juego sigue activo
 }
 

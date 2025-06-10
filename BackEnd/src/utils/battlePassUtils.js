@@ -2,16 +2,16 @@ const BattlePass = require('../models/battlePass');
 
 function generateDefaultLevels() {
   return [
-    { type: 'coins', rewards: { coins: 50, image: ""} },
-    { type: 'coins', rewards: { coins: 100, image: "" } },
-    { type: 'coins', rewards: { coins: 150, image: "" } },
-    { type: 'coins', rewards: { coins: 200, image: "" } },
-    { type: 'avatar', rewards: { avatarId: 'IdDocumento', image: "" } },
-    { type: 'coins', rewards: { coins: 250 }, image: "" },
-    { type: 'coins', rewards: { coins: 300 }, image: "" },
-    { type: 'coins', rewards: { coins: 350 }, image: "" },
-    { type: 'coins', rewards: { coins: 400 }, image: "" },
-    { type: 'deck', rewards: { deckId: '22222', image: "" } },
+    { type: 'coins', rewards: { coins: 50, image: "https://storage.googleapis.com/imagenes-desklords/Imagenes_Monedas/icono_moneda-battlepass.png"} },
+    { type: 'coins', rewards: { coins: 100, image: "https://storage.googleapis.com/imagenes-desklords/Imagenes_Monedas/icono_moneda-battlepass.png" } },
+    { type: 'coins', rewards: { coins: 150, image: "https://storage.googleapis.com/imagenes-desklords/Imagenes_Monedas/icono_moneda-battlepass.png" } },
+    { type: 'coins', rewards: { coins: 200, image: "https://storage.googleapis.com/imagenes-desklords/Imagenes_Monedas/icono_moneda-battlepass.png" } },
+    { type: 'avatar', rewards: { avatarId: '68409ca43db01d0ce3925bf9', image: "https://storage.googleapis.com/imagenes-desklords/Imagenes_Perfil/Avatar%205.png" } },
+    { type: 'coins', rewards: { coins: 250, image: "https://storage.googleapis.com/imagenes-desklords/Imagenes_Monedas/icono_moneda-battlepass.png" } },
+    { type: 'coins', rewards: { coins: 300, image: "https://storage.googleapis.com/imagenes-desklords/Imagenes_Monedas/icono_moneda-battlepass.png" } },
+    { type: 'coins', rewards: { coins: 350, image: "https://storage.googleapis.com/imagenes-desklords/Imagenes_Monedas/icono_moneda-battlepass.png" } },
+    { type: 'coins', rewards: { coins: 400, image: "https://storage.googleapis.com/imagenes-desklords/Imagenes_Monedas/icono_moneda-battlepass.png" } },
+    { type: 'deck', rewards: { deckId: '68445462751c23f738012ae9', image: "https://storage.googleapis.com/imagenes-desklords/Imagenes_Decks/Reino.png" } },
   ];
 }
 
@@ -24,7 +24,6 @@ async function getBattlePassPlayer(idPlayer) {
     actualLevel: battlePassData.actual_level,
     totalLevels: battlePassData.levels.length,
     completedLevels: battlePassData.completed_levels,
-    rewards: battlePassData.rewards || []
   };
 
   return playerBattlePass;

@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../../../firebaseConfig"
 
 
 function CardsList() {
@@ -8,6 +10,7 @@ function CardsList() {
     const [editingCard, setEditingCard] = useState(null);
     const [isCreating, setIsCreating] = useState(false);
     const [formData, setFormData] = useState(getEmptyForm());
+
 
     const API_URL = import.meta.env.VITE_API_URL;
 
@@ -26,8 +29,27 @@ function CardsList() {
     }
 
     async function fetchCards() {
+        const user = await new Promise((resolve, reject) => {
+            const unsubscribe = onAuthStateChanged(auth, (user) => {
+                unsubscribe();
+                if (user) resolve(user);
+                else reject(new Error("Usuario no autenticado"));
+            });
+        });
+
+        const userToken = await user.getIdToken();
+
+
         try {
-            const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/getCards`);
+            const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/getCards`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${userToken}`
+                    }
+                }
+            );
             const data = await res.json();
             setCards(data.data.cards);
         } catch (error) {
@@ -36,8 +58,25 @@ function CardsList() {
     }
 
     async function fetchAbilities() {
+        const user = await new Promise((resolve, reject) => {
+            const unsubscribe = onAuthStateChanged(auth, (user) => {
+                unsubscribe();
+                if (user) resolve(user);
+                else reject(new Error("Usuario no autenticado"));
+            });
+        });
+
+        const userToken = await user.getIdToken();
         try {
-            const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/getAbilities`);
+            const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/getAbilities`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${userToken}`
+                    }
+                }
+            );
             const data = await res.json();
             setAbilitiesList(data.data.abilities);
         } catch (error) {
@@ -46,8 +85,25 @@ function CardsList() {
     }
 
     async function fetchSets() {
+        const user = await new Promise((resolve, reject) => {
+            const unsubscribe = onAuthStateChanged(auth, (user) => {
+                unsubscribe();
+                if (user) resolve(user);
+                else reject(new Error("Usuario no autenticado"));
+            });
+        });
+
+        const userToken = await user.getIdToken();
         try {
-            const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/getSets`);
+            const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/getSets`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${userToken}`
+                    }
+                }
+            );
             const data = await res.json();
             setSetsList(data.data.sets);
         } catch (error) {
@@ -56,10 +112,23 @@ function CardsList() {
     }
 
     async function deleteCard(id) {
+        const user = await new Promise((resolve, reject) => {
+            const unsubscribe = onAuthStateChanged(auth, (user) => {
+                unsubscribe();
+                if (user) resolve(user);
+                else reject(new Error("Usuario no autenticado"));
+            });
+        });
+
+        const userToken = await user.getIdToken();
+
         try {
             const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/deleteCard`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${userToken}`
+                },
                 body: JSON.stringify({ id })
             });
             if (res.ok) {
@@ -71,6 +140,16 @@ function CardsList() {
     }
 
     async function saveCard(e) {
+
+        const user = await new Promise((resolve, reject) => {
+            const unsubscribe = onAuthStateChanged(auth, (user) => {
+                unsubscribe();
+                if (user) resolve(user);
+                else reject(new Error("Usuario no autenticado"));
+            });
+        });
+
+        const userToken = await user.getIdToken();
         e.preventDefault();
         const isEdit = !!editingCard;
 
@@ -78,7 +157,7 @@ function CardsList() {
             const url = isEdit
                 ? `https://api-meafpnv6bq-ew.a.run.app/api/updateCard`
                 : `https://api-meafpnv6bq-ew.a.run.app/api/createCard`;
-            const method = 'POST';
+            const method = isEdit ? 'PUT' : 'POST';
 
             const payload = isEdit
                 ? { idCard: editingCard._id, data: formData }
@@ -86,7 +165,11 @@ function CardsList() {
 
             const res = await fetch(url, {
                 method,
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${userToken}`
+                },
+
                 body: JSON.stringify(payload)
             });
 
@@ -266,16 +349,64 @@ function CardsList() {
                             </select>
                         </div>
 
-                        {['effect', 'front_image', 'back_image'].map(field => (
-                            <div key={field}>
-                                <label>{field} (opcional):</label>
-                                <input
-                                    type="text"
-                                    value={formData[field]}
-                                    onChange={e => setFormData({ ...formData, [field]: e.target.value })}
-                                />
-                            </div>
-                        ))}
+                        <div>
+                            <label>effect (opcional):</label>
+                            <input
+                                type="text"
+                                value={formData.effect}
+                                onChange={e => setFormData({ ...formData, effect: e.target.value })}
+                            />
+                        </div>
+
+                        <div>
+                            <label>Imagen frontal (opcional):</label>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={async (e) => {
+                                    const file = e.target.files[0];
+                                    if (!file) return;
+
+                                    const formDataImage = new FormData();
+                                    formDataImage.append('file', file);
+                                    formDataImage.append('type', 'card');
+
+                                    const user = await new Promise((resolve, reject) => {
+                                        const unsubscribe = onAuthStateChanged(auth, (user) => {
+                                            unsubscribe();
+                                            if (user) resolve(user);
+                                            else reject(new Error("Usuario no autenticado"));
+                                        });
+                                    });
+
+                                    const userToken = await user.getIdToken();
+
+                                    try {
+                                        const res = await fetch('https://api-meafpnv6bq-ew.a.run.app/api/upload', {
+                                            method: 'POST',
+                                            headers: {
+                                                Authorization: `Bearer ${userToken}`
+                                            },
+                                            body: formDataImage
+                                        });
+
+                                        if (res.ok) {
+                                            const data = await res.json();
+                                            setFormData(prev => ({ ...prev, front_image: data.url }));
+                                        } else {
+                                            console.error('Error al subir imagen:', await res.text());
+                                        }
+                                    } catch (err) {
+                                        console.error('Error al subir imagen:', err);
+                                    }
+                                }}
+                            />
+                            {formData.front_image && (
+                                <div style={{ marginTop: '10px' }}>
+                                    <img src={formData.front_image} alt="Preview" style={{ maxWidth: '150px', maxHeight: '150px' }} />
+                                </div>
+                            )}
+                        </div>
 
                         <div>
                             <label>Abilities:</label>

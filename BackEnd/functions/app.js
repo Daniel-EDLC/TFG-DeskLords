@@ -21,6 +21,7 @@ const newsRoutes = require('./routes/newsRoutes');
 const commentsRoutes = require('./routes/commentsRoutes');
 const battlePassRoutes = require('./routes/battlePassRoutes');
 const avatarsRoutes = require('./routes/avatarsRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
 
 app.use(express.json());
 app.use(connectDB);
@@ -47,5 +48,6 @@ app.use('/api', newsRoutes);
 app.use('/api', commentsRoutes);
 app.use('/api', battlePassRoutes);
 app.use('/api', avatarsRoutes);
+app.use('/api', uploadRoutes);
 
 module.exports = app;

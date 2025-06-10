@@ -71,3 +71,7 @@
 .auth-switch button:hover {
   color: white;
 }
+
+input:disabled {
+  cursor: not-allowed;
+}

@@ -3,7 +3,7 @@ const deckSchema = require('./Deck').schema;
 const cardSchema = require('./Card').schema;
 
 const gameSchema = new mongoose.Schema({
-    status: {type: String, required: true, enum: ['in-progress', 'abandoned', 'finished'], default: 'in-progress'},
+    status: {type: String, required: true, enum: ['in-progress', 'surrendered', 'finished'], default: 'in-progress'},
     startTime: {type: Date, required: true, default: Date.now, immutable: true},
     endTime: {type: Date, required: false},
     playerId: {type: String, required: true},
@@ -24,8 +24,7 @@ const gameSchema = new mongoose.Schema({
     rivalPendingDeck: {type: [cardSchema], required: false},
     rivalMana: {type: Number, required: true, default: 1},
     mapId: {type: String, required: true},
-    manaPerTurn: {type: Number, required: true, default: 1},
-    actualMana: {type: Number, required: true, default: 1}
+    manaPerTurn: {type: Number, required: true, default: 2}
     // turnTimeLimit: {type: Number, required: true}, PODEMOS LLEGAR A AÑADIRLO
     // gameTimeLimit: {type: Number, required: true}, PODEMOS LLEGAR A AÑADIRLO
 })
