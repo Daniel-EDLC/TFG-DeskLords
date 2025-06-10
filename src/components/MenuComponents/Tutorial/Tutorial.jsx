@@ -28,7 +28,7 @@ const Tutorial = ({ tutorialDeck, onFinish }) => {
   return (
     <div className="tutorial-container">
       {step === 5 && tutorialDeck && (
-        <div className="tutorial-deck-preview">
+        <div className="tutorial-deck-preview-tutorial">
           <img
             src={typeof tutorialDeck === 'string' ? tutorialDeck : tutorialDeck.image}
             alt="Deck desbloqueado"
@@ -47,7 +47,7 @@ const Tutorial = ({ tutorialDeck, onFinish }) => {
   key={`front-${step}`}
   src={scenes[step].img}
   alt="scene"
-  className={`tutorial-image ${scenes[step].className} `}
+  className={`tutorial-image-tutorial ${scenes[step].className} `}
 />
 
 

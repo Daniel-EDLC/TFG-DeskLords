@@ -142,7 +142,9 @@
 }
 
 .avatar-modal {
-  background: #1e1e1e;
+  background-color: rgba(48, 48, 48, 0.911) !important;
+  border: 2px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05) !important;
   padding: 20px;
   border-radius: 12px;
   color: white;
@@ -186,14 +188,19 @@
 
 
 @media (max-width: 435px) {
+
   .profile-user-container {
     padding: 1.5rem;
     max-width: 90%;
+    
+  }
+  .profile-favorite-deck h3{
+    font-size: 0.8rem;
   }
 
   .profile-avatar {
-    width: 100px;
-    height: 100px;
+  width: 90px;
+  height: 90px;
   }
 
   .profile-name {
@@ -208,19 +215,78 @@
   .profile-stats {
     flex-direction: column;
     align-items: center;
+    
   }
 
   .profile-stats div {
     width: 100%;
     max-width: 300px;
   }
-    .profile-wrapper {
-    flex-direction: column;
-    align-items: center;
+
+
+  .profile-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 0rem;
+  justify-content: center;
+  margin-top: 2rem;
+  height: 500px;
+  overflow: auto;
+  
+}
+  .profile-box {
+    margin: 0px 15px;
+    padding: 1rem;
+    max-width: 50%;
+    height: 50vh;
   }
 
-  .profile-box {
-    padding: 1.5rem;
-    max-width: 90%;
-  }
+  .circular-chart {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: conic-gradient(#c0b303 60%, rgba(255,255,255,0.1) 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 1rem;
+  box-shadow: 0 0 10px #c0b30377;
+}
+
+.logout-container {
+  position: absolute;
+  height: 100px;
+  width: 100px;
+  bottom: 10vh;
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+z-index: 1000;
+background-color: #c0b303;
+}
+
+
+.logout-btn-mobile {
+  background-color: #8d0000a8;
+  color: white;
+  position: fixed;
+  bottom: 15vh;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1.8vh 20vw;
+  font-size: 0.9rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+
+
+
+
 }

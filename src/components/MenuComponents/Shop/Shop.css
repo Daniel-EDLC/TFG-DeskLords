@@ -1,5 +1,5 @@
 .tienda-container {
-  padding: 2rem;
+  padding-top: 1vh;
   text-align: center;
   color: #f0f0f0;
   font-family: 'Georgia', serif;
@@ -33,6 +33,7 @@ align-items: center;
   border: 2px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
   overflow: hidden;
+  
 }
 
 .mazo-card img {
@@ -284,6 +285,8 @@ align-items: center;
 @media (max-width: 435px) {
 
 .tienda-container {
+  
+  padding: 2rem;
   width: 50%;
   height: auto;
   text-align: center;

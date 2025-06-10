@@ -18,12 +18,12 @@ function RivalTable({
   targetEquipmentCard,
   isSelectingTargetForSpell,
   isSelectingTargetForEquipment,
-  mana,
   onCardClick,
   onPlayCard,
   draggingType,
   pendingCard,
   setPendingCard,
+  highlightedCardId
 }) {
   const [hiddenCards, setHiddenCards] = useState([]);
   const [removedCards, setRemovedCards] = useState([]);
@@ -114,6 +114,7 @@ function RivalTable({
                       ? "rival-drop-hover"
                       : ""
                   }
+                  ${carta._id === highlightedCardId?._id ? "rival-highlighted" : ""}
                 `}
                   elevation={10}
                   onClick={() => {
