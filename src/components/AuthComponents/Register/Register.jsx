@@ -114,7 +114,7 @@ export default function Register({ onSwitch, googleData }) {
 
     const data = await response.json();
 
-    alert('Usuario registrado correctamente. ¡Bienvenido!');
+    if (data.result) alert('Usuario registrado correctamente. ¡Bienvenido!');
   } catch (err) {
     console.error('Error al enviar el usuario a la base de datos:', err);
     setError('No se pudo guardar el usuario en la base de datos');

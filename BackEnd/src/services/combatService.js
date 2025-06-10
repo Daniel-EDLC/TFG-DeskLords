@@ -7,9 +7,10 @@ function chooseDefenders(attackingCards, rivalTable) {
   for (const attacker of attackingCards) {
     const attackerHabs = new Set(attacker.abilities || []);
     let validDefenders = availableDefenders.filter(defender => {
+      const defenderHabs = new Set(defender.abilities || []);
       if (attackerHabs.has("volar")) {
-        const defenderHabs = new Set(defender.abilities || []);
-        return defenderHabs.has("volar");
+        // Puede ser defendido por "volar" o "ranged"
+        return defenderHabs.has("volar") || defenderHabs.has("ranged");
       }
       return true;
     });
@@ -69,13 +70,15 @@ async function resolverCombate({ gameId, assignments, isAI }) {
     const attackerAbilities = new Set(attackerObj.abilities || []);
     const attackerHasFly = attackerAbilities.has("fly");
     let defenderHasFly = false;
+    let defenderHasRanged = false;
     if (defenderObj) {
       const defenderAbilities = new Set(defenderObj.abilities || []);
       defenderHasFly = defenderAbilities.has("fly");
+      defenderHasRanged = defenderAbilities.has("ranged");
     }
 
-    // Si el atacante vuela y el defensor no, el ataque es directo
-    if (!isDirectAttack && attackerHasFly && !defenderHasFly) {
+    // Si el atacante vuela y el defensor no tiene ni fly ni ranged, el ataque es directo
+    if (!isDirectAttack && attackerHasFly && !defenderHasFly && !defenderHasRanged) {
       // Daño directo
       let hpField = null;
       if (!isAI) hpField = "rivalHp";
@@ -107,6 +110,7 @@ async function resolverCombate({ gameId, assignments, isAI }) {
     const attackerInvulnerable = attackerHabs.has("invulnerable") || attackerTempHabs.has("invulnerable");
     const attackerToqueMortal = attackerHabs.has("mortal touch");
     const attackerBruteForce = attackerHabs.has("brute force");
+    const attackerRanged = attackerHabs.has("ranged");
 
     // Habilidades del defensor
     const defenderInvulnerable = defenderHabs.has("invulnerable") || defenderTempHabs.has("invulnerable");
@@ -125,7 +129,8 @@ async function resolverCombate({ gameId, assignments, isAI }) {
       else result.defender.hp -= result.attacker.atk;
     }
 
-    if (!attackerInvulnerable) {
+    // Si el atacante tiene ranged o invulnerable, el defensor NO le hace daño
+    if (!attackerInvulnerable && !attackerRanged) {
       if (defenderToqueMortal) result.attacker.hp = 0;
       else result.attacker.hp -= result.defender.atk;
     }

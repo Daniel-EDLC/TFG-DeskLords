@@ -40,7 +40,7 @@ async function createPlayer(req, res) {
         const defaultMap = await allMaps.find(map => map._id.toString() === '6844266481c1452e06b9d8dc');
         if (!defaultMap) return req.response.error("No se encontró el mapa por defecto");
 
-        const lockedMaps = allMaps.filter(map => map._id.toString() === '6844266481c1452e06b9d8dc');
+        const lockedMaps = allMaps.filter(map => map._id.toString() !== '6844266481c1452e06b9d8dc');
         if (!lockedMaps || lockedMaps.length === 0) return req.response.error("No se encontraron mapas bloqueados");
 
         const newPlayer = new Player({

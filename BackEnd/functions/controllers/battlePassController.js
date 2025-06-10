@@ -61,6 +61,8 @@ async function updateBattlePass(playerId) {
             return { error: 'Ya has alcanzado el nivel máximo del Pase de Batalla' };
         }
 
+        let rewardsObtained = [];
+
         if (playerLevel > battlePass.actual_level) {
             const startLevel = battlePass.actual_level;
             const endLevel = playerLevel;
@@ -70,16 +72,17 @@ async function updateBattlePass(playerId) {
             const rewardHandlers = {
                 coins: reward => {
                     player.coins = (player.coins || 0) + (reward.coins || 0);
+                    rewardsObtained.push({ type: 'coins', ...reward });
                 },
                 avatar: reward => {
                     const avatarId = reward.avatarId;
                     player.unlocked_avatars.push(avatarId);
-                    
+
                     let idx = player.locked_avatars.indexOf(avatarId);
                     if (idx !== -1) {
                         player.locked_avatars.splice(idx, 1);
                     }
-
+                    rewardsObtained.push({ type: 'avatar', ...reward });
                 },
                 deck: reward => {
                     player.decks = player.decks || [];
@@ -90,6 +93,7 @@ async function updateBattlePass(playerId) {
                             player.locked_decks.splice(idx, 1);
                         }
                     }
+                    rewardsObtained.push({ type: 'deck', ...reward });
                 }
                 // Puedes agregar más handlers si añades tipos nuevos
             };
@@ -110,6 +114,8 @@ async function updateBattlePass(playerId) {
             // Guardar ambos documentos
             await Promise.all([player.save(), battlePass.save()]);
         }
+
+        return { rewards: rewardsObtained };
 
     } catch (error) {
         console.error('Error updating Battle Pass:', error);
