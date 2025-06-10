@@ -20,10 +20,10 @@ async function createBattlePass(idPlayer) {
     try {
         const playerId = idPlayer;
 
-        const existingBattlePass = await BattlePass.findOne({ playerId });
-        if (existingBattlePass) {
-            return req.response.error('Battle Pass already exists for this player');
-        }
+        // const existingBattlePass = await BattlePass.findOne({ playerId });
+        // if (existingBattlePass) {
+        //     return req.response.error('Battle Pass already exists for this player');
+        // }
 
         const levels = generateDefaultLevels();
 
