@@ -90,8 +90,7 @@ async function startGame(req, res) {
             rivalDeck: map.deck,
             rivalHand: rivalStarterHand,
             rivalPendingDeck: rivalPendingDeck,
-            mapId: map._id,
-            manaPerTurn: 1,
+            mapId: map._id
         });
 
         const gameSaved = await newGame.save();
@@ -118,7 +117,8 @@ async function startGame(req, res) {
                 pending_deck: gameSaved.rivalPendingDeck.length,
                 health: gameSaved.rivalHp,
                 mana: gameSaved.rivalMana
-            }
+            },
+            action: 'welcome'
         });
     } catch (error) {
         req.response.error(`Error al iniciar el juego: ${error.message}`);

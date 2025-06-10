@@ -1,4 +1,5 @@
 const Game = require('../models/Game');
+const { markNewCards } = require('../utils/cardUtils');
 
 async function placeCards(game) {
   let rivalHand = [...game.rivalHand];
@@ -18,6 +19,7 @@ async function placeCards(game) {
       const spell = rivalHand[spellIdx];
       const idx = playerTable.reduce((maxIdx, c, i, arr) => c.cost > arr[maxIdx].cost ? i : maxIdx, 0);
 
+      spell.target = { ...(playerTable[idx].toObject?.() || playerTable[idx]) };
       playerTable[idx].alive = false;
       playerTable[idx].equipements = [...(playerTable[idx].equipements || []), spell];
 
@@ -103,26 +105,8 @@ async function placeCards(game) {
   // ---------------------
   rivalHand = rivalHand.filter(c => !usedCards.includes(c._id.toString()));
 
-  // Marcar cartas nuevas
-  const markNewCards = (table) =>
-    table.map(card => {
-      const base = card.toObject?.() || card;
-      const equipements = (base.equipements || []).map(eq => {
-        const eqBase = eq.toObject?.() || eq;
-        return {
-          ...eqBase,
-          new: usedCards.includes(eqBase._id.toString())
-        };
-      });
-      return {
-        ...base,
-        equipements,
-        new: usedCards.includes(card._id.toString())
-      };
-    });
-
-  playerTable = markNewCards(playerTable);
-  rivalTable = markNewCards(rivalTable);
+  playerTable = markNewCards(playerTable, usedCards);
+  rivalTable = markNewCards(rivalTable, usedCards);
 
   await Game.updateOne(
     { _id: game._id },
@@ -136,7 +120,12 @@ async function placeCards(game) {
     }
   );
 
-  console.log('\n-----------------------------------------------------------------------Cartas utilizadas:\n', usedCards);
+  usedCardsObjects = usedCards.map(id => {
+    const card = game.rivalHand.find(c => c._id.toString() === id);
+    return card ? { ...card.toObject?.() || card } : null;
+  });
+
+  return usedCardsObjects;
 }
 
 

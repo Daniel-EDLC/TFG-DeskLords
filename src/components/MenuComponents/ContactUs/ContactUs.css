@@ -1,6 +1,6 @@
 .contacto-container {
   max-width: 600px;
-  margin: 0 auto;
+  margin: 3.5vh auto;
   padding: 2rem;
   background-color: #1e1e1e7c;
   border: 1px solid #9c9c9c67;
@@ -59,30 +59,37 @@
 
 @media (max-width: 435px) {
   .contacto-container {
-    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.1rem;
+    padding-top: 0%;
     border-radius: 10px;
     font-size: 0.95rem;
+    margin: 2rem;
   }
 
   .contacto-container h4 {
-    font-size: 1.5rem;
+    font-size: 1rem;
     text-align: center;
   }
 
   .contacto-info {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     text-align: center;
   }
 
   .contacto-textarea {
-    font-size: 0.95rem;
+    margin-top: 0%;
+    font-size: 0.8rem;
+    width: 100%;
     padding: 0.8rem;
   }
 
   .contacto-button {
     width: 100%;
     padding: 0.75rem;
-    font-size: 1rem;
+    font-size: 0.8rem;
     margin-top: 1rem;
   }
 }

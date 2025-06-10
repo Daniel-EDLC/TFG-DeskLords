@@ -172,10 +172,26 @@
   font-weight: bold;
 }
 
+
+
+
 @media (max-width: 435px) {
 
 
+.info-label {
+  display: none;
+}
+.info-icon {
+  transform: translateY(100%) translateX(650%);
+}
 
+/* .info-icon:hover {
+  transform: scale(1.2);
+  color: #ccc;
+} */
+/* .turn-indicator {
+  display: flex;
+} */
 
 .turn-indicator .info-player {
   font-size: 0.9rem;

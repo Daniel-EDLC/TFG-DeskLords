@@ -3,7 +3,6 @@ import './maps.css';
 
 const Maps = ({ mapas, onSelect }) => {
   const [selectedMap, setSelectedMap] = useState(null);
-console.log("mapas ->", mapas)
 useEffect(() => {
     if (!selectedMap && mapas.length > 0) {
       const firstAvailable = mapas.find((m) => m.available);

@@ -254,7 +254,7 @@
 
   .deck-controls{
       max-width: 80vw;
-      max-height: 50vh;
+      height: 11%;
       min-height: 9vh;
   }
   
@@ -273,7 +273,7 @@
   }
 
   .deck-name {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
   }
 
   .lock-icon {

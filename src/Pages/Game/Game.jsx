@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Container, Box, Typography } from '@mui/material';
-import PlayerProfile from '../../components/GameComponents/PlayerProfile/PlayerProfile';
-import RivalProfile from '../../components/GameComponents/RivalProfile/RivalProfile';
-import PlayerHand from '../../components/GameComponents/PlayerHand/PlayerHand';
-import RivalHand from '../../components/GameComponents/RivalHand/RivalHand';
-import RivalTable from '../../components/GameComponents/RivalTable/RivalTable';
-import PlayerTable from '../../components/GameComponents/PlayerTable/PlayerTable';
-import Announcement from '../../components/GameComponents/Announcement/Announcement';
-import TurnIndicator from '../../components/GameComponents/TurnIndicator/TurnIndicator';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useMemo } from "react";
+import { Container, Box, Typography } from "@mui/material";
+import PlayerProfile from "../../components/GameComponents/PlayerProfile/PlayerProfile";
+import RivalProfile from "../../components/GameComponents/RivalProfile/RivalProfile";
+import PlayerHand from "../../components/GameComponents/PlayerHand/PlayerHand";
+import RivalHand from "../../components/GameComponents/RivalHand/RivalHand";
+import RivalTable from "../../components/GameComponents/RivalTable/RivalTable";
+import PlayerTable from "../../components/GameComponents/PlayerTable/PlayerTable";
+import Announcement from "../../components/GameComponents/Announcement/Announcement";
+import TurnIndicator from "../../components/GameComponents/TurnIndicator/TurnIndicator";
+import { useLocation } from "react-router-dom";
 
-import './Game.css';
-import useLoadMatch from '../../services/LoadMatch/LoadMatch';
+import "./Game.css";
+// import useLoadMatch from "../../services/LoadMatch/LoadMatch";
 import {
   playCard,
   switchPhase,
@@ -20,45 +20,107 @@ import {
   defense,
   resetBattle,
   getBattle,
-  onSurrender
-} from '../../services/Actions/GameActions';
+  onSurrender,
+} from "../../services/Actions/GameActions";
 
 function Game() {
-  
   const location = useLocation();
   const partida = location.state?.partida;
 
-
   const [gameData, setGameData] = useState(partida);
 
-  
+  console.log("iniciando partida", gameData);
+
+  if (gameData.usedCards) {
+    
+  console.log("IMG--------------------------------------:", gameData.usedCards.front_image)
+  }
+
+  const announcementMode = useMemo(() => {
+    if (!gameData) return null;
+
+    if (gameData.action === "welcome") {
+      return "vs";
+    }
+    if (
+      gameData.user?.health === 0 ||
+      gameData.rival?.health === 0 ||
+      gameData.action === "finish"
+    ) {
+      if (gameData.user?.health > 0) return "victory";
+      if (gameData.rival?.health > 0) return "defeat";
+
+      return "daw";
+    }
+
+    return null;
+  }, [gameData]);
+
   const phaseTurn = gameData?.turn?.phase;
   const whoseTurn = gameData?.turn?.whose;
 
   const [battles, setBattles] = useState([]);
-  const [selectedTableCardIdForEquipment, setSelectedTableCardIdForEquipment] = useState(null);
-  const [selectedTableCardIdforSpell, setSelectedTableCardIdforSpell] = useState(null);
+  const [selectedTableCardIdForEquipment, setSelectedTableCardIdForEquipment] =
+    useState(null);
+  const [selectedTableCardIdforSpell, setSelectedTableCardIdforSpell] =
+    useState(null);
   const [pendingEquipementCard, setPendingEquipementCard] = useState(null);
   const [pendingSpellCard, setPendingSpellCard] = useState(null);
   const [attackers, setAttackers] = useState([]);
-  const [pendingCard, setPendingCard] = useState(null); // { id, type }
+  console.log(attackers);
+  const [pendingCard, setPendingCard] = useState(null);
+  const [playedCard, setPlayedCard] = useState(null);
 
-  const [announcementLink, setAnnouncementLink] = useState('');
   const [showAnnouncement, setShowAnnouncement] = useState(false);
-  const [gameEnded, setGameEnded] = useState(false);
-  const [isWinner, setIsWinner] = useState(null);
-
 
   const [draggingType, setDraggingType] = useState(null);
 
-  const [floatingMessage, setFloatingMessage] = useState('');
+  const [floatingMessage, setFloatingMessage] = useState("");
   const [isFading, setIsFading] = useState(false);
+
+  const highlightedCardId = gameData?.usedCards?.target || null;
+
+  // const [highlightBg, setHighlightBg] = useState(false);
+
+  const [showUsedCard, setShowUsedCard] = useState(false);
+
+useEffect(() => {
+  if (
+    gameData?.usedCards?.front_image &&
+    gameData.usedCards.type !== "creature"
+  ) {
+    setShowUsedCard(true);
+    const timer = setTimeout(() => setShowUsedCard(false), 2500); // dura como la animación
+    return () => clearTimeout(timer);
+  }
+}, [gameData?.usedCards?.front_image, gameData?.usedCards?.type]);
+
+
+
+console.log("target-----------------------", highlightedCardId)
+
+  console.log("carta jugada con exito: ", playedCard);
+
+// useEffect(() => {
+//   if (gameData?.usedCards?.target) {
+//     const delay = setTimeout(() => {
+//       setHighlightBg(true);
+
+//       setTimeout(() => {
+//         setHighlightBg(false);
+//       }, 1000); // 1 segundo de fondo amarillo
+//     }, 1500); // Esperar 1.5 segundos tras la carta
+
+//     return () => clearTimeout(delay);
+//   }
+// }, [gameData]);
+
 
   useEffect(() => {
     if (floatingMessage) {
       setIsFading(false);
       const fadeTimer = setTimeout(() => setIsFading(true), 2500);
-      const removeTimer = setTimeout(() => setFloatingMessage(''), 3000);
+      const removeTimer = setTimeout(() => setFloatingMessage(""), 3000);
       return () => {
         clearTimeout(fadeTimer);
         clearTimeout(removeTimer);
@@ -66,12 +128,9 @@ function Game() {
     }
   }, [floatingMessage]);
 
-
-
-
   const handleRivalCardClick = (card) => {
-    if (card.position !== 'attack') {
-      alert('la carta no puede entrar en batalla');
+    if (card.position !== "attack") {
+      alert("la carta no puede entrar en batalla");
       return;
     }
     const addedBattle = addCardToBattle(card);
@@ -79,8 +138,8 @@ function Game() {
   };
 
   const handlePlayerCardClick = (card) => {
-    if (card.position !== 'defense') {
-      alert('la carta no puede entrar en batalla');
+    if (card.position !== "defense") {
+      alert("la carta no puede entrar en batalla");
       return;
     }
     const addedBattle = addCardToBattle(card);
@@ -88,29 +147,44 @@ function Game() {
   };
 
   const handlePlayCard = (card) => {
-    if (card.type === 'equipement' && !card.targetId) {
+    if (card.type === "equipement" && !card.targetId) {
       setPendingEquipementCard(card);
       return;
     }
-    if (card.type === 'spell' && !card.targetId) {
+    if (card.type === "spell" && !card.targetId) {
       setPendingSpellCard(card);
       return;
     }
+
+    if (card.type === "creature" && gameData.user.table.length >= 5) {
+      setFloatingMessage("Ya tienes 5 criaturas en mesa");
+      return;
+    }
+
     playCard(setGameData, gameData, card);
   };
 
   const handleSwitchPhase = () => switchPhase(setGameData, gameData);
-  const handleEndTurn = async (selectedAttackCards) => await endTurn(selectedAttackCards, setGameData, gameData, setFloatingMessage);
+  const handleEndTurn = async (selectedAttackCards) =>
+    await endTurn(
+      selectedAttackCards,
+      setGameData,
+      gameData,
+      setFloatingMessage
+    );
   const handleDefense = async () => {
-  try {
-    await defense(setGameData, gameData);
-    resetBattle();
-    setBattles([]);
-  } catch (error) {
-    console.error('Error al ejecutar defense:', error);
-    // Aquí puedes manejar errores si quieres mostrar un mensaje al usuario
-  }
-};
+    try {
+      await defense(setGameData, gameData);
+      resetBattle();
+      setBattles([]);
+    } catch (error) {
+      console.error("Error al ejecutar defense:", error);
+    }
+  };
+
+  const rivalAttackers = gameData.rival.table.some(
+    (carta) => carta.position === "attack"
+  );
 
   // const setPhase = (nuevaFase) => {
   //   setGameData((prevData) => ({
@@ -123,10 +197,24 @@ function Game() {
   // };
 
   useEffect(() => {
+    if (announcementMode) {
+      setShowAnnouncement(true);
+
+      // (opcional) si es "welcome", lo limpiamos después
+      if (announcementMode === "vs") {
+        const timeout = setTimeout(() => {
+          setGameData((prev) => ({ ...prev, action: null }));
+        }, 3000);
+        return () => clearTimeout(timeout);
+      }
+    }
+  }, [announcementMode]);
+
+  useEffect(() => {
     if (pendingEquipementCard && selectedTableCardIdForEquipment) {
       playCard(setGameData, gameData, {
         ...pendingEquipementCard,
-        targetId: selectedTableCardIdForEquipment
+        targetId: selectedTableCardIdForEquipment,
       });
       setPendingEquipementCard(null);
       setSelectedTableCardIdForEquipment(null);
@@ -137,7 +225,7 @@ function Game() {
     if (pendingSpellCard && selectedTableCardIdforSpell) {
       playCard(setGameData, gameData, {
         ...pendingSpellCard,
-        targetId: selectedTableCardIdforSpell
+        targetId: selectedTableCardIdforSpell,
       });
       setPendingSpellCard(null);
       setSelectedTableCardIdforSpell(null);
@@ -146,42 +234,13 @@ function Game() {
 
   useEffect(() => {
     if (!gameData || !gameData.rival) return;
-    const nuevasCartas = gameData.rival.table.filter(carta => carta.position === 'attack');
+    const nuevasCartas = gameData.rival.table.filter(
+      (carta) => carta.position === "attack"
+    );
     if (nuevasCartas.length > 0) {
-      console.log(attackers);
       setAttackers(nuevasCartas);
     }
   }, [gameData]);
-
-  useEffect(() => {
-    if (!gameData?.turn?.phase) return;
-
-    if (gameData.user.health <= 0 || gameData.rival.health <= 0) {
-      setGameEnded(true);
-      setIsWinner(gameData.user.health > 0);
-      return;
-    }
-
-    //  let link = '';
-    // switch (gameData.turn.phase) {
-    //   case 'hand':
-    //     link = gameData.turn.whose === 'user' ? '/FASEMANOPLAYERFINAL.png' : '/FASEMANORIVALFINAL.png';
-    //     break;
-    //   case 'attack':
-    //     link = '/FASEATAQUEFINAL.png';
-    //     break;
-    //   case 'defense':
-    //     link = '/FASEDEFENSAFINAL.png';
-    //     break;
-    //   default:
-    //     link = '';
-    // }
-
-    // if (link) {
-    //   setAnnouncementLink(link);
-    //   setShowAnnouncement(true);
-    // }
-  }, [phaseTurn, whoseTurn, gameData?.user?.health, gameData?.rival?.health]);
 
   const updateBattles = () => {
     const currentBattles = getBattle();
@@ -194,14 +253,12 @@ function Game() {
   };
 
   const handleSurrenderClick = async () => {
-  try {
-    await onSurrender(gameData); 
-    setGameEnded(true);
-    setIsWinner(false);
-  } catch (error) {
-    console.error('No se pudo rendir');
-  }
-};
+    try {
+      await onSurrender(gameData);
+    } catch (error) {
+      console.error("No se pudo rendir", error);
+    }
+  };
 
   if (!gameData || !gameData.rival || !gameData.user || !gameData.turn) {
     return (
@@ -213,13 +270,16 @@ function Game() {
       </div>
     );
   }
-console.log("partida->",gameData.user.hand)
   return (
-    <div className="app-container">
+    <div className={`app-container`}>
+       {/* ${highlightBg ? "highlight-bg" : ""} */}
       <RivalProfile
         className="rival-profile"
-        name="Rival"
-        imageUrl="https://m.media-amazon.com/images/I/51hPfLUZE0L._AC_UL1002_.jpg"
+        name={gameData.rival.name || "Rival"}
+        imageUrl={
+          gameData.rival.avatar ||
+          "https://m.media-amazon.com/images/I/51hPfLUZE0L._AC_UL1002_.jpg"
+        }
         life={gameData.rival.health}
         mana={gameData.rival.mana}
         deck={gameData.rival.pending_deck}
@@ -241,7 +301,8 @@ console.log("partida->",gameData.user.hand)
           onPlayCard={handlePlayCard}
           draggingType={draggingType}
           pendingCard={pendingCard}
-           setPendingCard={setPendingCard}
+          setPendingCard={setPendingCard}
+          highlightedCardId={highlightedCardId}
         />
 
         <PlayerTable
@@ -262,7 +323,9 @@ console.log("partida->",gameData.user.hand)
           onPlayCard={handlePlayCard}
           draggingType={draggingType}
           pendingCard={pendingCard}
-           setPendingCard={setPendingCard}
+          setPendingCard={setPendingCard}
+          rivalAttackers={rivalAttackers}
+          highlightedCardId={highlightedCardId}
         />
       </div>
 
@@ -280,8 +343,11 @@ console.log("partida->",gameData.user.hand)
 
       <PlayerProfile
         className="player-profile"
-        name="Jugador 1"
-        imageUrl="https://img.freepik.com/fotos-premium/angel-cara-angel-alas_901383-148607.jpg"
+        name={gameData.user.name || "Player"}
+        imageUrl={
+          gameData.user.avatar ||
+          "https://img.freepik.com/fotos-premium/angel-cara-angel-alas_901383-148607.jpg"
+        }
         life={gameData.user.health}
         mana={gameData.user.mana}
         deck={gameData.user.pending_deck}
@@ -290,47 +356,43 @@ console.log("partida->",gameData.user.hand)
 
       <TurnIndicator turn={gameData.turn} />
 
-     {showAnnouncement && (
+      {showAnnouncement && (
         <Announcement
-          link={announcementLink}
-          duration={2000}
-          onFinish={() => setShowAnnouncement(false)}
+          data={gameData}
+          duration={3000}
+          mode={announcementMode}
+          onFinish={() => {
+            if (announcementMode === "vs") setShowAnnouncement(false);
+          }}
         />
       )}
-      {gameEnded && (
-        <div className="end-overlay">
+      
+        {showUsedCard && (
+          
           <img
-            src={isWinner ? "/VICTORIAFINAL.png" : "/DERROTAFINAL.png"}
-            alt={isWinner ? "Victoria" : "Derrota"}
-            className="end-logo"
+            src={gameData.usedCards.front_image}
+            alt={gameData.usedCards.name}
+            className="spell-animation"
           />
-          {isWinner ? (
-            <button className="end-button" onClick={() => window.location.href = "/menu"}>
-              Volver al menú
-            </button>
-          ) : (
-            <div className="end-buttons-container">
-              <button className="end-button" onClick={() => window.location.reload()}>
-                Reiniciar partida
-              </button>
-              <button className="end-button" onClick={() => window.location.href = "/menu"}>
-                Volver al menú
-              </button>
-            </div>
-          )}
-        </div>
-      )} 
+        )}
+
+
       {floatingMessage && (
-  <div className={`floating-overlay ${isFading ? 'fade-out' : ''}`}>
-    <div className="floating-message">{floatingMessage}</div>
-  </div>
-)}
+        <div className={`floating-overlay ${isFading ? "fade-out" : ""}`}>
+          <div className="floating-message">{floatingMessage}</div>
+        </div>
+      )}
+      {playedCard && (
+        <div className="jugada-overlay">
+          <img
+            src={playedCard.front_image}
+            alt={playedCard.name}
+            className="jugada-carta"
+          />
+        </div>
+      )}
     </div>
-    
   );
 }
 
 export default Game;
-
-
-

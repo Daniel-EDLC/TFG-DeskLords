@@ -141,7 +141,8 @@
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
-  height: 4.5vh;
+  height: auto;
+  max-height: 4.5vh;
   gap: 4px;
   z-index: 3;
   justify-content: flex-start;
@@ -306,22 +307,34 @@ border: 2px solid rgba(255, 0, 0, 0.8);
 
 @keyframes rival-card-enter-from-center {
   0% {
-    transform: translate(-50%, -150%) scale(4);
+    transform: translate(-50%, 175%) scale(4);
     opacity: 0;
   }
   70% {
     opacity: 1;
-    transform: translate(-50%, -150%) scale(4);
+    transform: translate(-50%, 175%) scale(4);
   }
   100% {
     transform: translate(0, 0) scale(1);
   }
 }
 
+@keyframes tablerivalMoveForward {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+
 
 .rival-card-new {
   position: relative;
-  animation: player-card-enter-from-center 1.5s ease-out;
+  animation: rival-card-enter-from-center 1.5s ease-out;
   z-index: 100;
 }
 
@@ -382,6 +395,21 @@ border: 2px solid rgba(255, 0, 0, 0.8);
 
 
 
+@keyframes glow {
+  0%   { box-shadow: 0 0 0px yellow; }
+  50%  { box-shadow: 0 0 20px 10px yellow; }
+  100% { box-shadow: 0 0 0px yellow; }
+}
+
+.rival-highlighted {
+  
+  animation: glow 1s ease-out;
+  animation-delay: 1.5s;
+  z-index: 10;
+}
+
+
+
 
 @media (max-width: 435px) {
   .rival-table-container {
@@ -418,7 +446,8 @@ border: 2px solid rgba(255, 0, 0, 0.8);
 .rival-ability-tags{
     position: absolute;
   top: 4vh;
-  height: 4.5vh;
+  height: auto;
+  max-height: 4.5vh;
 }
 .ability-tag {
   font-size: 0.5rem;
@@ -444,23 +473,10 @@ border: 2px solid rgba(255, 0, 0, 0.8);
 }
 
 
-@keyframes rival-card-enter-from-center {
-  0% {
-    transform: translate(-50%, -150%) scale(4);
-    opacity: 0;
-  }
-  70% {
-    opacity: 1;
-    transform: translate(-50%, -150%) scale(4);
-  }
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-}
 
 .rival-card-new {
   position: relative;
-  animation: rival-card-enter-from-center 1.5s ease-out;
+  animation: tablerivalMoveForward 1.5s ease-out;
   z-index: 1000000;
 }
 

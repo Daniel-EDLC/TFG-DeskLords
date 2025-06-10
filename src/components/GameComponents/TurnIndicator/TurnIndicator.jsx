@@ -54,9 +54,8 @@ export default function TurnIndicator({ turn }) {
     <>
       <div className={`turn-indicator ${!isPlayerTurn ? "rival" : "player"}`}>
         <div className={isPlayerTurn ? "info-player" : "info-rival"}>
-          {isPlayerTurn ? "Player" : "Rival"}
+          <span className="info-label">{isPlayerTurn ? "Player" : "Rival"}</span>
           <InfoOutlinedIcon className="info-icon" onClick={() => setOpenInfoDialog(true)} />
-
         </div>
 
         <div className="icons">

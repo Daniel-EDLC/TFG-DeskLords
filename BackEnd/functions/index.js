@@ -24,5 +24,7 @@ exports.api = onRequest({
     enviromentVariables: {
         MONGODB_URI: process.env.MONGODB_URI,
         APPLICATION_CREDENTIALS: process.env.APPLICATION_CREDENTIALS,
+        GCS_PROJECT_ID: process.env.GCS_PROJECT_ID,
+        GCS_BUCKET: process.env.GCS_BUCKET,
     }
 }, app);
