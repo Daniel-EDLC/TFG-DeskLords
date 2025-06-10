@@ -65,16 +65,7 @@
   z-index: 100;
 }
 
-.player-card-inner.selected::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-bottom: 12px solid rgba(19, 128, 0, 0.8);
-}
+
 
 .player-card-inner.selected::before {
   content: 'ATACANDO';
@@ -106,16 +97,7 @@
   box-shadow: 0 0 30px rgb(220, 20, 203);
 }
 
-.player-card-in-battle::after {
-  content: '';
-  position: absolute;
-  top: 0%;
-  left: 50%;
-  transform: translateX(-50%);
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-bottom: 12px solid rgb(220, 20, 203);
-}
+
 
 .player-card-in-battle::before {
   content: 'BATALLA';

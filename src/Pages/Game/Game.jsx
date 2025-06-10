@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Container, Box, Typography } from "@mui/material";
 import PlayerProfile from "../../components/GameComponents/PlayerProfile/PlayerProfile";
 import RivalProfile from "../../components/GameComponents/RivalProfile/RivalProfile";
@@ -32,8 +32,10 @@ function Game() {
   console.log("iniciando partida", gameData);
 
   if (gameData.usedCards) {
-    
-  console.log("IMG--------------------------------------:", gameData.usedCards.front_image)
+    console.log(
+      "IMG--------------------------------------:",
+      gameData.usedCards.front_image
+    );
   }
 
   const announcementMode = useMemo(() => {
@@ -56,8 +58,8 @@ function Game() {
     return null;
   }, [gameData]);
 
-  const phaseTurn = gameData?.turn?.phase;
-  const whoseTurn = gameData?.turn?.whose;
+  // const phaseTurn = gameData?.turn?.phase;
+  // const whoseTurn = gameData?.turn?.whose;
 
   const [battles, setBattles] = useState([]);
   const [selectedTableCardIdForEquipment, setSelectedTableCardIdForEquipment] =
@@ -78,43 +80,99 @@ function Game() {
   const [floatingMessage, setFloatingMessage] = useState("");
   const [isFading, setIsFading] = useState(false);
 
-  const highlightedCardId = gameData?.usedCards?.target || null;
-
-  // const [highlightBg, setHighlightBg] = useState(false);
-
   const [showUsedCard, setShowUsedCard] = useState(false);
 
+  const [battleResultAttackPlayer, setBattleResultAttackPlayer] = useState([]);
+
+
+
+
+  const [enemyUsedQueue, setEnemyUsedQueue] = useState([]);
+  const [currentEnemyCard, setCurrentEnemyCard] = useState(null);
+
+const prevUsedCardsRef = useRef(null);
+
+const [highlightedCardId, setHighlightedCardId] = useState(null);
+
 useEffect(() => {
-  if (
-    gameData?.usedCards?.front_image &&
-    gameData.usedCards.type !== "creature"
-  ) {
+  const used = gameData?.usedCards;
+  if (!used) return;
+
+  const isSameReference = used === prevUsedCardsRef.current;
+  if (isSameReference) return;
+
+  prevUsedCardsRef.current = used;
+
+  if (Array.isArray(used)) {
+    const spellsOrEquips = used.filter(
+      (card) => card.type !== "creature" && card.front_image
+    );
+    if (spellsOrEquips.length > 0) {
+      setCurrentEnemyCard(null);
+      setEnemyUsedQueue(spellsOrEquips);
+    }
+  } else if (used.type !== "creature" && used.front_image) {
     setShowUsedCard(true);
-    const timer = setTimeout(() => setShowUsedCard(false), 2500); // dura como la animación
+    const timer = setTimeout(() => setShowUsedCard(false), 2500);
     return () => clearTimeout(timer);
   }
-}, [gameData?.usedCards?.front_image, gameData?.usedCards?.type]);
+}, [gameData?.usedCards]);
 
 
 
-console.log("target-----------------------", highlightedCardId)
+useEffect(() => {
+  if (enemyUsedQueue.length > 0 && !currentEnemyCard) {
+    const [next, ...rest] = enemyUsedQueue;
+    setCurrentEnemyCard(next);
+    setEnemyUsedQueue(rest);
+
+    const timer = setTimeout(() => {
+      setCurrentEnemyCard(null);
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }
+}, [enemyUsedQueue, currentEnemyCard]);
+
+
+
+
+
+
+useEffect(() => {
+  if (Array.isArray(gameData?.usedCards)) {
+    if (currentEnemyCard?.target) {
+      setHighlightedCardId(currentEnemyCard.target);
+    }
+  } else if (gameData?.usedCards?.target) {
+    setHighlightedCardId(gameData.usedCards.target);
+  }
+
+  const timer = setTimeout(() => {
+    setHighlightedCardId(null);
+  }, 2600);
+
+  return () => clearTimeout(timer);
+}, [currentEnemyCard, gameData?.usedCards]);
+
+
+  console.log("target-----------------------", highlightedCardId);
 
   console.log("carta jugada con exito: ", playedCard);
 
-// useEffect(() => {
-//   if (gameData?.usedCards?.target) {
-//     const delay = setTimeout(() => {
-//       setHighlightBg(true);
+  // useEffect(() => {
+  //   if (gameData?.usedCards?.target) {
+  //     const delay = setTimeout(() => {
+  //       setHighlightBg(true);
 
-//       setTimeout(() => {
-//         setHighlightBg(false);
-//       }, 1000); // 1 segundo de fondo amarillo
-//     }, 1500); // Esperar 1.5 segundos tras la carta
+  //       setTimeout(() => {
+  //         setHighlightBg(false);
+  //       }, 1000); // 1 segundo de fondo amarillo
+  //     }, 1500); // Esperar 1.5 segundos tras la carta
 
-//     return () => clearTimeout(delay);
-//   }
-// }, [gameData]);
-
+  //     return () => clearTimeout(delay);
+  //   }
+  // }, [gameData]);
 
   useEffect(() => {
     if (floatingMessage) {
@@ -196,11 +254,27 @@ console.log("target-----------------------", highlightedCardId)
   //   }));
   // };
 
+
+  useEffect(() => {
+  const result = gameData?.battle_result;
+  console.log("🧪 battle_result recibido:", result);
+
+  if (Array.isArray(result) && result.length > 0) {
+    setBattleResultAttackPlayer(result);
+
+    const timer = setTimeout(() => {
+      setBattleResultAttackPlayer([]);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }
+}, [gameData?.battle_result]);
+
+
   useEffect(() => {
     if (announcementMode) {
       setShowAnnouncement(true);
 
-      // (opcional) si es "welcome", lo limpiamos después
       if (announcementMode === "vs") {
         const timeout = setTimeout(() => {
           setGameData((prev) => ({ ...prev, action: null }));
@@ -254,7 +328,7 @@ console.log("target-----------------------", highlightedCardId)
 
   const handleSurrenderClick = async () => {
     try {
-      await onSurrender(gameData);
+      await onSurrender(gameData, setGameData);
     } catch (error) {
       console.error("No se pudo rendir", error);
     }
@@ -272,7 +346,7 @@ console.log("target-----------------------", highlightedCardId)
   }
   return (
     <div className={`app-container`}>
-       {/* ${highlightBg ? "highlight-bg" : ""} */}
+      {/* ${highlightBg ? "highlight-bg" : ""} */}
       <RivalProfile
         className="rival-profile"
         name={gameData.rival.name || "Rival"}
@@ -303,6 +377,7 @@ console.log("target-----------------------", highlightedCardId)
           pendingCard={pendingCard}
           setPendingCard={setPendingCard}
           highlightedCardId={highlightedCardId}
+          battleResultAttackPlayer={battleResultAttackPlayer}
         />
 
         <PlayerTable
@@ -326,6 +401,7 @@ console.log("target-----------------------", highlightedCardId)
           setPendingCard={setPendingCard}
           rivalAttackers={rivalAttackers}
           highlightedCardId={highlightedCardId}
+          battleResultAttackPlayer={battleResultAttackPlayer}
         />
       </div>
 
@@ -366,17 +442,21 @@ console.log("target-----------------------", highlightedCardId)
           }}
         />
       )}
-      
-        {showUsedCard && (
-          
-          <img
-            src={gameData.usedCards.front_image}
-            alt={gameData.usedCards.name}
-            className="spell-animation"
-          />
-        )}
 
-
+      {showUsedCard && (
+        <img
+          src={gameData.usedCards.front_image}
+          alt={gameData.usedCards.name}
+          className="spell-animation"
+        />
+      )}
+      {currentEnemyCard && (
+        <img
+          src={currentEnemyCard.front_image}
+          alt={currentEnemyCard.name}
+          className="spell-animation"
+        />
+      )}
       {floatingMessage && (
         <div className={`floating-overlay ${isFading ? "fade-out" : ""}`}>
           <div className="floating-message">{floatingMessage}</div>

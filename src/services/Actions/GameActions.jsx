@@ -11,7 +11,6 @@ export async function playCard(setGameData, gameData, card) {
     return;
   }
 
-
   const user = await new Promise((resolve, reject) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       unsubscribe();
@@ -385,7 +384,6 @@ export async function attack(selectedAttackCards, setGameData) {
 */
 
 //version real attack
-
 export async function endTurn(
   selectedAttackCards,
   setGameData,
@@ -427,33 +425,41 @@ export async function endTurn(
     }
 
     const data = await response.json();
+    console.log("Respuesta completa de ataque:", data);
 
+    const battle = data?.data?.battle === true;
+    const action1 = data?.data?.action1;
+    const action2 = data?.data?.action2;
+    const action3 = data?.data?.action3;
 
-    if (data.data.battle === true) {
-
+    if (battle && action1 && action2 && action3) {
       setGameData((prev) => ({
         ...prev,
-        turn: { ...prev.turn, ...data.data.action1.turn },
-        user: { ...prev.user, ...data.data.action1.user },
-        rival: { ...prev.rival, ...data.data.action1.rival },
+        turn: { ...prev.turn, ...action1.turn },
+        user: { ...prev.user, ...action1.user },
+        rival: { ...prev.rival, ...action1.rival },
+        battle_result: action1.battle_result || [],
       }));
-      setTimeout(() => {
 
+      setTimeout(() => {
         setGameData((prev) => ({
           ...prev,
-          turn: { ...prev.turn, ...data.data.action2.turn },
-          user: { ...prev.user, ...data.data.action2.user },
-          rival: { ...prev.rival, ...data.data.action2.rival },
+          usedCards: Array.isArray(action2.usedCards)
+            ? [...action2.usedCards]
+            : { ...action2.usedCards },
+          turn: { ...prev.turn, ...action2.turn },
+          user: { ...prev.user, ...action2.user },
+          rival: { ...prev.rival, ...action2.rival },
         }));
       }, 5000);
-      setTimeout(() => {
 
+      setTimeout(() => {
         setGameData((prev) => {
           const newGameData = {
             ...prev,
-            turn: { ...prev.turn, ...data.data.action3.turn },
-            user: { ...prev.user, ...data.data.action3.user },
-            rival: { ...prev.rival, ...data.data.action3.rival },
+            turn: { ...prev.turn, ...action3.turn },
+            user: { ...prev.user, ...action3.user },
+            rival: { ...prev.rival, ...action3.rival },
           };
 
           const userTable = newGameData.user.table;
@@ -485,23 +491,25 @@ export async function endTurn(
           return newGameData;
         });
       }, 10000);
-    } else {
-
+    } else if (action2 && action3) {
       setGameData((prev) => ({
         ...prev,
-        turn: { ...prev.turn, ...data.data.action2.turn },
-        user: { ...prev.user, ...data.data.action2.user },
-        rival: { ...prev.rival, ...data.data.action2.rival },
+        usedCards: Array.isArray(action2.usedCards)
+          ? [...action2.usedCards]
+          : { ...action2.usedCards },
+        turn: { ...prev.turn, ...action2.turn },
+        user: { ...prev.user, ...action2.user },
+        rival: { ...prev.rival, ...action2.rival },
       }));
 
+      // ACTION 3
       setTimeout(() => {
-
         setGameData((prev) => {
           const newGameData = {
             ...prev,
-            turn: { ...prev.turn, ...data.data.action3.turn },
-            user: { ...prev.user, ...data.data.action3.user },
-            rival: { ...prev.rival, ...data.data.action3.rival },
+            turn: { ...prev.turn, ...action3.turn },
+            user: { ...prev.user, ...action3.user },
+            rival: { ...prev.rival, ...action3.rival },
           };
 
           const userTable = newGameData.user.table;
@@ -533,9 +541,11 @@ export async function endTurn(
           return newGameData;
         });
       }, 5000);
+    } else {
+      console.error("La estructura de la respuesta no es válida:", data);
     }
   } catch (error) {
-    console.error("Error simulado al enviar ataque:", error);
+    console.error("Error al enviar ataque:", error);
   }
 }
 
@@ -591,6 +601,8 @@ export async function defense(setGameData, gameData) {
 }*/
 
 // version real defense
+
+
 
 export async function defense(setGameData, gameData) {
   const battle = getBattle();
@@ -668,7 +680,9 @@ export async function defense(setGameData, gameData) {
   }
 }
 
-export async function onSurrender(gameData) {
+
+
+export async function onSurrender(gameData, setGameData) {
   const user = await new Promise((resolve, reject) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       unsubscribe();
@@ -700,14 +714,31 @@ export async function onSurrender(gameData) {
       throw new Error("Error al rendirse");
     }
 
-    const result = await response.json();
-    console.log("Rendición procesada correctamente:", result);
+    const data = await response.json();
+    console.log("Rendición procesada correctamente:", data);
+        setGameData((prev) => ({
+      ...prev,
+      turn: {
+        ...prev.turn,
+        ...data.data.turn,
+      },
+      user: {
+        ...prev.user,
+        ...data.data.user,
+      },
+      rival: {
+        ...prev.rival,
+        ...data.data.rival,
+      },
+    }));
   } catch (error) {
     console.error("Error al enviar rendición:", error);
   }
 }
 
-// services/shopService.js
+
+
+
 export const buyProduct = async (id, tipo) => {
   const response = await fetch(`/api/tienda/comprar`, {
     method: "POST",
