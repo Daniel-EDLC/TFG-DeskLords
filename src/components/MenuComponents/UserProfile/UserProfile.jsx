@@ -1,6 +1,12 @@
-import React, { useState } from 'react';
-import './UserProfile.css';
-import { setAvatarPrincipal } from '../../../services/Actions/MenuActions';
+import React, { useState } from "react";
+import "./UserProfile.css";
+import { setAvatarPrincipal } from "../../../services/Actions/MenuActions";
+import { signOut } from "firebase/auth";
+import { useMediaQuery } from "@mui/material";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+
+import { auth } from "../../../../firebaseConfig";
+import { useNavigate } from "react-router-dom";
 
 const UserProfile = ({
   avatar,
@@ -12,18 +18,26 @@ const UserProfile = ({
   rol,
   partidasGanadas,
   partidasPerdidas,
-  mazoFavorito,
-  userId, // asegúrate de pasar esto desde el componente padre
-  onAvatarChange, // opcional, para recargar avatar tras cambio
+  favoriteDeck,
+  userId,
+  onAvatarChange,
 }) => {
   const [modalAbierto, setModalAbierto] = useState(false);
 
   const experienciaPorNivel = 100;
-  const progreso = Math.min((experience % experienciaPorNivel) / experienciaPorNivel * 100, 100);
+  const progreso = Math.min(
+    ((experience % experienciaPorNivel) / experienciaPorNivel) * 100,
+    100
+  );
   const totalPartidas = partidasGanadas + partidasPerdidas;
-  const victoryPercent = totalPartidas > 0 ? Math.round((partidasGanadas / totalPartidas) * 100) : 0;
+  const victoryPercent =
+    totalPartidas > 0 ? Math.round((partidasGanadas / totalPartidas) * 100) : 0;
 
-  const avatarsDisponibles = avatars.filter(a => a.available);
+  const avatarsDisponibles = avatars.filter((a) => a.available);
+  const navigate = useNavigate();
+  const isMobile = useMediaQuery("(max-width:435px)");
+
+
 
   const handleSeleccionarAvatar = async (avatarId) => {
     try {
@@ -35,18 +49,20 @@ const UserProfile = ({
       alert("Error al cambiar el avatar");
     }
   };
+  
+ console.log("isMobile", isMobile);
 
   return (
-    <div className="profile-wrapper">
-      {/* Caja 1: Información personal */}
-      <div className="profile-box">
-        <div className="profile-header">
-          <img
-            src={avatar}
-            alt="avatar"
-            className="profile-avatar"
-            onClick={() => setModalAbierto(true)}
-            style={{ cursor: "pointer" }}
+      <div className="profile-wrapper">
+        {/* Caja 1: Información personal */}
+        <div className="profile-box">
+          <div className="profile-header">
+            <img
+              src={avatar}
+              alt="avatar"
+              className="profile-avatar"
+              onClick={() => setModalAbierto(true)}
+              style={{ cursor: "pointer" }}
           />
           <div className="profile-info">
             <h2 className="profile-name">{name}</h2>
@@ -56,7 +72,7 @@ const UserProfile = ({
         </div>
         <div className="profile-favorite-deck">
           <h3>Mazo más usado</h3>
-          <p>{mazoFavorito}</p>
+          <p>{favoriteDeck}</p>
         </div>
       </div>
 
@@ -65,15 +81,23 @@ const UserProfile = ({
         <div className="profile-level">
           <p>Nivel {level}</p>
           <div className="progress-bar">
-            <div className="progress-fill" style={{ width: `${progreso}%` }}></div>
+            <div
+              className="progress-fill"
+              style={{ width: `${progreso}%` }}
+            ></div>
           </div>
-          <span>{experience % experienciaPorNivel} / {experienciaPorNivel} XP</span>
+          <span>
+            {experience % experienciaPorNivel} / {experienciaPorNivel} XP
+          </span>
         </div>
 
         <div className="profile-stats-circular">
-          <div className="circular-chart" style={{
-            background: `conic-gradient(#c0b303 ${victoryPercent}%, rgba(255,255,255,0.1) 0)`
-          }}>
+          <div
+            className="circular-chart"
+            style={{
+              background: `conic-gradient(#c0b303 ${victoryPercent}%, rgba(255,255,255,0.1) 0)`,
+            }}
+          >
             <span>{victoryPercent}%</span>
           </div>
           <div className="circular-legend">
@@ -83,25 +107,45 @@ const UserProfile = ({
         </div>
       </div>
 
+        {isMobile && (
+          <button
+            className="logout-btn-mobile"
+            onClick={() => signOut(auth) && navigate("/")}
+          >
+            salir
+          </button>
+        )}
+
       {/* Modal de selección de avatar */}
       {modalAbierto && (
-        <div className="avatar-modal-overlay" onClick={() => setModalAbierto(false)}>
+        <div
+          className="avatar-modal-overlay"
+          onClick={() => setModalAbierto(false)}
+        >
           <div className="avatar-modal" onClick={(e) => e.stopPropagation()}>
             <h2>Selecciona tu avatar</h2>
             <div className="avatar-grid">
-              {avatarsDisponibles.map(a => (
-                console.log(a._id, a.url) || (
-                  <img
-                    key={a._id}
-                    src={a.url}
-                    alt="avatar"
-                    className="avatar-option"
-                    onClick={() => handleSeleccionarAvatar(a._id)}
-                  />
-                )
-              ))}
+              {avatarsDisponibles.map(
+                (a) =>
+                  console.log(a._id, a.url) || (
+                    <img
+                      key={a._id}
+                      src={a.url}
+                      alt="avatar"
+                      className="avatar-option"
+                      onClick={() => handleSeleccionarAvatar(a._id)}
+                    />
+                  )
+              )}
             </div>
-            <button className="avatar-close-btn" onClick={() => setModalAbierto(false)}>Cerrar</button>
+
+            <button
+              className="avatar-close-btn"
+              onClick={() => setModalAbierto(false)}
+            >
+              Cerrar
+            </button>
+
           </div>
         </div>
       )}

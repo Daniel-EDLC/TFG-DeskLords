@@ -205,7 +205,8 @@
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
-  height: 4.5vh;
+  height: auto;
+  max-height: 4.5vh;
   gap: 4px;
   z-index: 3;
   justify-content: flex-start;
@@ -360,6 +361,17 @@
   }
 }
 
+@keyframes player-card-enter-mobile {
+  0% {
+    opacity: 0;
+    transform: translateY(30%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
 
 @keyframes tableplayerMoveToCenter {
@@ -395,22 +407,23 @@
 }
 
 .phase-button,
-.noDefense-button {
+.noDefense-button,
+.end-turn-button {
   font-size: 1rem;
   text-transform: none;
-  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
-  background-color: #ffffff !important;
+  background-color: #cfba00d8 !important;
+  color: rgb(0, 0, 0) !important;
   z-index: 100;
 }
 
-.phase-button {
-  color: green !important;
+.phase-button:hover,
+.noDefense-button:hover,
+.end-turn-button:hover {
+  background-color: #2d8f00 !important;
+  color: rgb(255, 255, 255) !important;
 }
 
-.phase-button:hover {
-  color: white !important;
-  background-color: #1ba300 !important;
-}
+
 
 .noDefense-button {
   color: rgb(128, 0, 0) !important;
@@ -451,6 +464,21 @@
 } */
 
 
+@keyframes glow {
+  0%   { box-shadow: 0 0 0px yellow; }
+  50%  { box-shadow: 0 0 20px 10px yellow; }
+  100% { box-shadow: 0 0 0px yellow; }
+}
+
+.player-highlighted {
+  
+  animation: glow 1s ease-out;
+  animation-delay: 1.5s;
+  z-index: 10;
+}
+
+
+
 /* Móvil */
 @media (max-width: 435px) {
   .player-table-container {
@@ -479,7 +507,7 @@
 
   .player-card-new {
   position: relative;
-  animation: rival-card-enter-from-center 1.5s ease-out;
+  animation: player-card-enter-mobile 1.5s ease-out;
   z-index: 1000000;
 }
   .player-card-table:hover {
@@ -493,7 +521,8 @@
 .player-ability-tags {
   position: absolute;
   top: 4vh;
-  height: 4.5vh;
+  height: auto;
+  max-height: 4.5vh;
 }
 
 .ability-tag {
@@ -547,6 +576,18 @@
   bottom:-1.7vh;
 }
 
+
+@keyframes tableplayerMoveToCenter {
+  from {
+    transform: translateY(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
 .player-long-pressed {
    position: fixed;
   top: 50%;
@@ -555,7 +596,7 @@
   z-index: 10000;
   border-radius: 6px;
   pointer-events: none;
-  animation: tablerivalMoveToCenter 0.4s ease forwards;
+  animation: tableplayerMoveToCenter 0.4s ease forwards;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 

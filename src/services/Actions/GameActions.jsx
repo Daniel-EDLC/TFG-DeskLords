@@ -5,6 +5,13 @@ import { ContactlessOutlined } from "@mui/icons-material";
 
 export async function playCard(setGameData, gameData, card) {
   console.log("jugando carta ->", card);
+
+  if (card.type === "creature" && gameData.user.table.length >= 5) {
+    alert("¡Ya tienes el máximo de 5 criaturas en mesa!");
+    return;
+  }
+
+
   const user = await new Promise((resolve, reject) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       unsubscribe();
@@ -67,6 +74,7 @@ export async function playCard(setGameData, gameData, card) {
     console.log("Respuesta del servidor:", result);
     setGameData((prev) => ({
       ...prev,
+      usedCards: result.data.usedCards,
       rival: result.data.rival,
       user: result.data.user,
       turn: result.data.turn,
@@ -299,7 +307,6 @@ export function addCardToBattle(carta) {
     };
     battle.push(fight);
     console.log("Pelea añadida:", fight);
-    console.log("Estado de la batalla:", battle);
     pendingFight = {
       atacanteId: null,
       defensorId: null,
@@ -421,11 +428,8 @@ export async function endTurn(
 
     const data = await response.json();
 
-    console.log(data);
 
     if (data.data.battle === true) {
-      console.log("defensa del rival");
-      console.log(data.data);
 
       setGameData((prev) => ({
         ...prev,
@@ -434,8 +438,6 @@ export async function endTurn(
         rival: { ...prev.rival, ...data.data.action1.rival },
       }));
       setTimeout(() => {
-        console.log("mano del rival");
-        console.log(data.data);
 
         setGameData((prev) => ({
           ...prev,
@@ -445,8 +447,6 @@ export async function endTurn(
         }));
       }, 5000);
       setTimeout(() => {
-        console.log("ataque del rival");
-        console.log(data.data);
 
         setGameData((prev) => {
           const newGameData = {
@@ -486,8 +486,6 @@ export async function endTurn(
         });
       }, 10000);
     } else {
-      console.log("mano del rival (sin acción 1)");
-      console.log(data.data);
 
       setGameData((prev) => ({
         ...prev,
@@ -497,8 +495,6 @@ export async function endTurn(
       }));
 
       setTimeout(() => {
-        console.log("ataque del rival");
-        console.log(data.data);
 
         setGameData((prev) => {
           const newGameData = {

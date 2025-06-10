@@ -11,6 +11,8 @@ import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import CollectionsIcon from "@mui/icons-material/Collections";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import HomeIcon from "@mui/icons-material/Home";
+import ContactMailIcon from "@mui/icons-material/ContactMail";
+
 
 import ActualMap from "../../components/MenuComponents/ActualMap/ActualMap";
 import Maps from "../../components/MenuComponents/Maps/Maps";
@@ -56,7 +58,6 @@ function Menu() {
 
   const [tutorialCompletado, setTutorialCompletado] = useState(false);
 
-  console.log("Menu data:", data);
 
   useEffect(() => {
     if (tutorialCompletado) {
@@ -134,18 +135,22 @@ function Menu() {
     );
   }
 
-  const botones = [
-    { id: "inicio", icon: <HomeIcon />, texto: "Inicio" },
-    { id: "coleccion", icon: <CollectionsIcon />, texto: "Colección" },
-    { id: "perfil", icon: <AccountCircleIcon />, texto: "Perfil" },
-    { id: "batalla", icon: <SportsKabaddiIcon />, texto: "Batalla" },
-    {
-      id: data.rol === "admin" ? "gestionBBDD" : "contacto",
-      icon: <StorageIcon />,
-      texto: data.rol === "admin" ? "Gestión" : "Contacto",
-    },
-  ];
-  console.log("datos battlepass:", data.battlePass);
+const botones = [
+  { id: "inicio", icon: <HomeIcon />, texto: "Inicio" },
+  { id: "coleccion", icon: <CollectionsIcon />, texto: "Colección" },
+  { id: "perfil", icon: <AccountCircleIcon />, texto: "Perfil" },
+  { id: "batalla", icon: <SportsKabaddiIcon />, texto: "Batalla" },
+  { id: "contacto", icon: <ContactMailIcon />, texto: "Contacto" },
+];
+
+if (data.rol === "admin") {
+  botones.push({
+    id: "gestionBBDD",
+    icon: <StorageIcon />,
+    texto: "Gestión",
+  });
+}
+
   const renderContenido = () => {
     switch (seccionActiva) {
       case "inicio":
@@ -172,7 +177,7 @@ function Menu() {
                     >
                       <div className="card-image-wrapper">
                         <img
-                          src="/imageBattle.png"
+                          src="Battle/imageBattle.png"
                           alt="estática"
                           className="static-img"
                         />
@@ -212,7 +217,7 @@ function Menu() {
               rol={data.rol || "No disponible"}
               partidasGanadas={data.wins}
               partidasPerdidas={data.loses}
-              mazoFavorito={data.favoriteDeck || "No disponible"}
+              favoriteDeck={data.favoriteDeck || "No disponible"}
             />
           </div>
         );

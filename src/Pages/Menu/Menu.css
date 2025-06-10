@@ -46,6 +46,7 @@ body {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  
 }
 
 .bottom-nav {
@@ -185,6 +186,9 @@ body {
   background-color: rgba(255, 255, 255, 0.05);
   border: 2px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+  
+  margin-top: 10vh;
+  margin-left: 0;
 
 }
 
@@ -254,6 +258,12 @@ body {
   width: auto;
 }
 
+.inicio-battlePass{
+    position: absolute;
+    margin-top: 40vh;
+    margin-left: 0vw;
+    align-items: center;
+  }
 
 .maps-container{
   display: flex;

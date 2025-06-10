@@ -15,7 +15,7 @@
   overflow: hidden;
 }
 
-.tutorial-deck-preview {
+.tutorial-deck-preview-tutorial {
   position: absolute;
   top: 70%;
   left: 50%;
@@ -28,7 +28,7 @@
   z-index: 1000;
 }
 
-.deck-image {
+.deck-image-tutorial {
   width: 200px;
   height: auto;
   border-radius: 10px;
