@@ -79,10 +79,13 @@ async function attack(req, res) {
     const resultWinner = await checkForGameOver(updatedGameResponse1);
 
     if (resultWinner) {
+
+      const finishedGame = await Game.findById(gameId);
+      
       return req.response.success({
         action1: {
           turn: {
-            number: updatedGameResponse1.currentTurn,
+            number: finishedGame.currentTurn,
             whose: "player",
             phase: "defense"
           },
@@ -91,20 +94,20 @@ async function attack(req, res) {
             defender: a.defender === "player" ? "player" : a.defender._id,
           })),
           user: {
-            table: updatedGameResponse1.playerTable,
-            health: updatedGameResponse1.playerHp,
+            table: finishedGame.playerTable,
+            health: finishedGame.playerHp,
           },
           rival: {
-            hand: updatedGameResponse1.rivalHand.length,
-            table: updatedGameResponse1.rivalTable,
-            pending_deck: updatedGameResponse1.rivalPendingDeck.length,
-            health: updatedGameResponse1.rivalHp,
-            mana: updatedGameResponse1.rivalMana
+            hand: finishedGame.rivalHand.length,
+            table: finishedGame.rivalTable,
+            pending_deck: finishedGame.rivalPendingDeck.length,
+            health: finishedGame.rivalHp,
+            mana: finishedGame.rivalMana
           }
         },
         gameId: req.body.gameId,
         gameOver: true,
-        winner: updatedGameResponse1.winner
+        winner: finishedGame.winner
       });
     }
 
@@ -148,8 +151,10 @@ async function attack(req, res) {
 
     const updatedGameAfterDrawing = await Game.findById(gameId);
 
+    let usedCards = [];
+
     try {
-      await placeCards(updatedGameAfterDrawing);
+      usedCards = await placeCards(updatedGameAfterDrawing);
     } catch (error) {
       return req.response.error(`Error al colocar cartas y atacar: ${error.message}`);
     }
@@ -158,6 +163,7 @@ async function attack(req, res) {
 
     // action 2 response
     const action2Response = {
+      usedCards: usedCards,
       turn: {
         number: updatedGameResponse2.currentTurn,
         whose: "rival",

@@ -15,7 +15,6 @@ async function nextTurn({ game }) {
     newRivalmana = game.rivalMana + game.manaPerTurn;
   }
 
-
   // Limpiar spells de los equipements de cada carta en ambas mesas y pasarlos al graveyard correspondiente
   let spellsToGraveyardPlayer = [];
   let spellsToGraveyardRival = [];
@@ -38,10 +37,16 @@ async function nextTurn({ game }) {
   const updatedPlayerTable = cleanEquipements(game.playerTable, true);
   const updatedRivalTable = cleanEquipements(game.rivalTable, false);
 
-  // console.log('\n----------------------------------------------------------------------\nPlayerTable sin spells en equipements ==> ', updatedPlayerTable);
-  // console.log('\n----------------------------------------------------------------------\nRivalTable sin spells en equipements ==> ', updatedRivalTable);
-
   // 1. Limpiar temporaryAbilities de todas las cartas
+  const playerTableCleared = updatedPlayerTable.map(card => ({
+    ...card,
+    temporaryAbilities: []
+  }));
+  const rivalTableCleared = updatedRivalTable.map(card => ({
+    ...card,
+    temporaryAbilities: []
+  }));
+
   await Game.updateOne(
     { _id: game._id },
     {
@@ -49,8 +54,8 @@ async function nextTurn({ game }) {
         currentTurn: newTurn,
         playerMana: newPlayerMana,
         rivalMana: newRivalmana,
-        'playerTable.$[].temporaryAbilities': [],
-        'rivalTable.$[].temporaryAbilities': [],
+        playerTable: playerTableCleared,
+        rivalTable: rivalTableCleared,
       },
     }
   );
@@ -159,6 +164,7 @@ async function checkForGameOver(game) {
     const player = await Player.findOne({ uid: game.playerId });
     if (player) {
       let expToAdd = winner === 'player' ? 200 : 100;
+      let coinsToAdd = winner === 'player' ? 50 : 20;
       let newProgress = (player.player_level_progress || 0) + expToAdd;
       let newLevel = player.player_level || 0;
 
@@ -177,13 +183,15 @@ async function checkForGameOver(game) {
           $set: {
             player_level: newLevel,
             player_level_progress: newProgress
-          }
+          },
+          $inc: { coins: coinsToAdd }
         }
       );
 
       // Solo actualiza el pase de batalla si subió de nivel
       if (leveledUp) {
-        await updateBattlePass(game.playerId);
+        const result = await updateBattlePass(game.playerId);
+        if (result?.error) console.error(`Battle Pass error for player ${game.playerId}: ${result.error}`);
       }
     }
 

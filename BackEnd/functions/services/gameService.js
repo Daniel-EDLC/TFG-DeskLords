@@ -90,8 +90,7 @@ async function startGame(req, res) {
             rivalDeck: map.deck,
             rivalHand: rivalStarterHand,
             rivalPendingDeck: rivalPendingDeck,
-            mapId: map._id,
-            manaPerTurn: 1
+            mapId: map._id
         });
 
         const gameSaved = await newGame.save();
