@@ -1,6 +1,7 @@
 const Game = require('../models/Game');
 const Player = require('../models/Player');
 const mongoose = require('mongoose');
+const { updateBattlePass } = require('../controllers/battlePassController');
 
 async function nextTurn({ game }) {
   if (!game) throw new Error('Juego no encontrado');
@@ -14,7 +15,6 @@ async function nextTurn({ game }) {
     newPlayerMana = game.playerMana + game.manaPerTurn;
     newRivalmana = game.rivalMana + game.manaPerTurn;
   }
-
 
   // Limpiar spells de los equipements de cada carta en ambas mesas y pasarlos al graveyard correspondiente
   let spellsToGraveyardPlayer = [];
@@ -38,10 +38,16 @@ async function nextTurn({ game }) {
   const updatedPlayerTable = cleanEquipements(game.playerTable, true);
   const updatedRivalTable = cleanEquipements(game.rivalTable, false);
 
-  // console.log('\n----------------------------------------------------------------------\nPlayerTable sin spells en equipements ==> ', updatedPlayerTable);
-  // console.log('\n----------------------------------------------------------------------\nRivalTable sin spells en equipements ==> ', updatedRivalTable);
-
   // 1. Limpiar temporaryAbilities de todas las cartas
+  const playerTableCleared = updatedPlayerTable.map(card => ({
+    ...card,
+    temporaryAbilities: []
+  }));
+  const rivalTableCleared = updatedRivalTable.map(card => ({
+    ...card,
+    temporaryAbilities: []
+  }));
+
   await Game.updateOne(
     { _id: game._id },
     {
@@ -49,8 +55,8 @@ async function nextTurn({ game }) {
         currentTurn: newTurn,
         playerMana: newPlayerMana,
         rivalMana: newRivalmana,
-        'playerTable.$[].temporaryAbilities': [],
-        'rivalTable.$[].temporaryAbilities': [],
+        playerTable: playerTableCleared,
+        rivalTable: rivalTableCleared,
       },
     }
   );
@@ -114,6 +120,24 @@ async function drawCard({ game, isAI }) {
     return; // No se puede robar más cartas
   }
 
+  // Si la mano tiene 3 cartas y ninguna es creature, buscar una creature en el pendingDeck
+  if (game[handField].length === 3 && !game[handField].some(card => card.type === 'creature')
+  ) {
+    const creatureCardIndex = game[pendingDeckField].findIndex(card => card.type === 'creature');
+    if (creatureCardIndex !== -1) {
+      const creatureCard = game[pendingDeckField][creatureCardIndex];
+      const cardId = typeof creatureCard._id === 'string' ? mongoose.Types.ObjectId(creatureCard._id) : creatureCard._id;
+      await Game.updateOne(
+        { _id: game._id },
+        {
+          $push: { [handField]: creatureCard },
+          $pull: { [pendingDeckField]: { _id: cardId } }
+        }
+      );
+      return;
+    }
+  }
+
   if (game[pendingDeckField].length === 0) {
     await Game.updateOne(
       { _id: game._id },
@@ -157,8 +181,18 @@ async function checkForGameOver(game) {
     await Game.updateOne({ _id: game._id }, { $set: { winner } });
 
     const player = await Player.findOne({ uid: game.playerId });
+    let rewards = {
+      exp: 0,
+      coins: 0,
+      leveledUp: false,
+      unlockedDeck: null,
+      unlockedMap: null
+    };
+    let battlePassRewards = null;
+
     if (player) {
       let expToAdd = winner === 'player' ? 200 : 100;
+      let coinsToAdd = winner === 'player' ? 50 : 20;
       let newProgress = (player.player_level_progress || 0) + expToAdd;
       let newLevel = player.player_level || 0;
 
@@ -177,20 +211,55 @@ async function checkForGameOver(game) {
           $set: {
             player_level: newLevel,
             player_level_progress: newProgress
-          }
+          },
+          $inc: { coins: coinsToAdd }
         }
       );
 
+      rewards.exp = expToAdd;
+      rewards.coins = coinsToAdd;
+      rewards.leveledUp = leveledUp;
+
       // Solo actualiza el pase de batalla si subió de nivel
       if (leveledUp) {
-        await updateBattlePass(game.playerId);
+        const result = await updateBattlePass(game.playerId);
+        if (result?.error) {
+          console.error(`Battle Pass error for player ${game.playerId}: ${result.error}`);
+        } else if (result?.rewards) {
+          battlePassRewards = result.rewards;
+        }
+      }
+
+      // Añadir mazo del mapa al owned_decks del jugador
+      if (game.rivalDeck && !player.owned_decks.includes(game.rivalDeck._id.toString())) {
+        await Player.updateOne(
+          { uid: game.playerId },
+          {
+            $addToSet: { owned_decks: game.rivalDeck._id },
+            $pull: { locked_decks: game.rivalDeck._id }
+          }
+        );
+        rewards.unlockedDeck = game.rivalDeck._id;
+      }
+
+      // añadir el siguiente mapa de locked_maps al jugador
+      if (player.locked_maps && player.locked_maps.length > 0) {
+        const nextMapId = player.locked_maps[0];
+        await Player.updateOne(
+          { uid: game.playerId },
+          {
+            $addToSet: { owned_maps: nextMapId },
+            $pull: { locked_maps: nextMapId }
+          }
+        );
+        rewards.unlockedMap = nextMapId;
       }
     }
 
-    return true; // El juego ha terminado
+    return { gameOver: true, winner, rewards, battlePassRewards };
   }
 
-  return false; // El juego sigue activo
+  return { gameOver: false };
 }
 
 module.exports = { nextTurn, drawCard, checkForGameOver, removeDeadCardsFromTables };

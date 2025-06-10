@@ -4,6 +4,7 @@ const { resolverCombate, chooseDefenders } = require('./combatService');
 const { nextTurn, drawCard, checkForGameOver, removeDeadCardsFromTables } = require('./turnService');
 const { placeCards, changeCardsPositionToAttack } = require('./IAService');
 const { handleCreatureCard, handleEquipementCard, handleSpellCard, changeCardsPositionToWaiting } = require('../utils/cardUtils');
+const generateWinResponse = require('../utils/gameUtils');
 
 async function useCard(req, res) {
   try {
@@ -19,6 +20,9 @@ async function useCard(req, res) {
     } catch (error) {
       return req.response.error(`Error al eliminar cartas muertas: ${error.message}`);
     }
+
+    // const updatedGame = await Game.findById(gameId);
+    // if (updatedGame.playerTable.length === 5) return req.response.error('No se pueden jugar más cartas en la mesa del jugador');
 
     const usedCard = game.playerHand.find(card => card._id.toString() === cardId);
     const targetedCard = [...game.playerTable, ...game.rivalTable]
@@ -78,34 +82,13 @@ async function attack(req, res) {
 
     const resultWinner = await checkForGameOver(updatedGameResponse1);
 
-    if (resultWinner) {
-      return req.response.success({
-        action1: {
-          turn: {
-            number: updatedGameResponse1.currentTurn,
-            whose: "player",
-            phase: "defense"
-          },
-          battle_result: assignments.map(a => ({
-            attacker: a.attacker._id,
-            defender: a.defender === "player" ? "player" : a.defender._id,
-          })),
-          user: {
-            table: updatedGameResponse1.playerTable,
-            health: updatedGameResponse1.playerHp,
-          },
-          rival: {
-            hand: updatedGameResponse1.rivalHand.length,
-            table: updatedGameResponse1.rivalTable,
-            pending_deck: updatedGameResponse1.rivalPendingDeck.length,
-            health: updatedGameResponse1.rivalHp,
-            mana: updatedGameResponse1.rivalMana
-          }
-        },
-        gameId: req.body.gameId,
-        gameOver: true,
-        winner: updatedGameResponse1.winner
-      });
+    if (resultWinner.gameOver) {
+
+      const finishedGame = await Game.findById(gameId);
+
+      const response = generateWinResponse(finishedGame, assignments, resultWinner.rewards, resultWinner.battlePassRewards);
+
+      return req.response.success(response);
     }
 
     // Action 1 response
@@ -148,8 +131,10 @@ async function attack(req, res) {
 
     const updatedGameAfterDrawing = await Game.findById(gameId);
 
+    let usedCards = [];
+
     try {
-      await placeCards(updatedGameAfterDrawing);
+      usedCards = await placeCards(updatedGameAfterDrawing);
     } catch (error) {
       return req.response.error(`Error al colocar cartas y atacar: ${error.message}`);
     }
@@ -158,6 +143,7 @@ async function attack(req, res) {
 
     // action 2 response
     const action2Response = {
+      usedCards: usedCards,
       turn: {
         number: updatedGameResponse2.currentTurn,
         whose: "rival",
@@ -269,34 +255,39 @@ async function defend(req, res) {
 
     const resultWinner = await checkForGameOver(updatedGame);
 
-    if (resultWinner) {
+    if (resultWinner.gameOver) {
+
+      const finishedGame = await Game.findById(gameId);
+
       return req.response.success({
         battle: combats.map(combat => ({
           attacker: combat.attacker,
           defender: combat.defender
         })),
         turn: {
-          number: updatedGame.currentTurn,
+          number: finishedGame.currentTurn,
           whose: "user",
           phase: "hand"
         },
         user: {
-          hand: updatedGame.playerHand,
-          table: updatedGame.playerTable,
-          pending_deck: updatedGame.playerPendingDeck.length,
-          health: updatedGame.playerHp,
-          mana: updatedGame.playerMana
+          hand: finishedGame.playerHand,
+          table: finishedGame.playerTable,
+          pending_deck: finishedGame.playerPendingDeck.length,
+          health: finishedGame.playerHp,
+          mana: finishedGame.playerMana
         },
         rival: {
-          hand: updatedGame.rivalHand.length,
-          table: updatedGame.rivalTable,
-          pending_deck: updatedGame.rivalPendingDeck.length,
-          health: updatedGame.rivalHp,
-          mana: updatedGame.rivalMana
+          hand: finishedGame.rivalHand.length,
+          table: finishedGame.rivalTable,
+          pending_deck: finishedGame.rivalPendingDeck.length,
+          health: finishedGame.rivalHp,
+          mana: finishedGame.rivalMana
         },
-        gameId: req.body.gameId,
+        gameId: gameId,
         gameOver: true,
-        winner: updatedGame.winner
+        winner: finishedGame.winner,
+        rewards: resultWinner.rewards || [],
+        battlePassRewards: resultWinner.battlePass || [],
       });
     }
 

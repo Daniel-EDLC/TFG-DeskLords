@@ -4,12 +4,12 @@ const Deck = require('../models/Deck');
 const Map = require('../models/Map');
 
 function shuffleCards(array, size) {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled.slice(0, size);
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled.slice(0, size);
 }
 
 async function startGame(req, res) {
@@ -34,7 +34,7 @@ async function startGame(req, res) {
 
         // Barajar el mazo del jugador y del rival
         let playerDeckShuffled = [];
-        
+
         try {
             playerDeckShuffled = shuffleCards(playerDeck.cards, 15);
         } catch (error) {
@@ -64,8 +64,8 @@ async function startGame(req, res) {
         // El resto de cartas para el pending deck
         const playerPendingDeck = playerDeckShuffled.filter(card => !playerStarterHand.includes(card));
 
-        
-        
+
+
         // Seleccionar la mano inicial del rival igual que la del jugador
         let rivalStarterHand = [];
         let rivalCreatures = rivalDeckShuffled.filter(card => card.type === 'creature');
@@ -90,8 +90,7 @@ async function startGame(req, res) {
             rivalDeck: map.deck,
             rivalHand: rivalStarterHand,
             rivalPendingDeck: rivalPendingDeck,
-            mapId: map._id,
-            manaPerTurn: 1
+            mapId: map._id
         });
 
         const gameSaved = await newGame.save();
@@ -140,7 +139,7 @@ async function surrender(req, res) {
 
         if (game.status !== 'in-progress') return req.response.error('El juego no está en progreso');
 
-        const gameSaved = await Game.updateOne(
+        await Game.updateOne(
             { _id: game._id },
             {
                 $set: {
@@ -151,11 +150,34 @@ async function surrender(req, res) {
             }
         );
 
+        const gamefinished = await Game.findById(game._id);
+        if (!gamefinished) return req.response.error('Error al actualizar el estado del juego');
+
         req.response.success({
-            message: 'Te has rendido correctamente',
-            gameId: gameSaved._id,
-            status: gameSaved.status,
-            endTime: gameSaved.endTime
+            turn: {
+                number: gamefinished.currentTurn,
+                whose: "user",
+                phase: "hand"
+            },
+            user: {
+                hand: gamefinished.playerHand,
+                table: gamefinished.playerTable,
+                pending_deck: gamefinished.playerPendingDeck.length ? gamefinished.playerPendingDeck.length : 0,
+                health: 0,
+                mana: gamefinished.playerMana
+            },
+            rival: {
+                hand: gamefinished.rivalHand.length ? gamefinished.rivalHand.length : 0,
+                table: gamefinished.rivalTable,
+                pending_deck: gamefinished.rivalPendingDeck.length ? gamefinished.rivalPendingDeck.length : 0,
+                health: gamefinished.rivalHp,
+                mana: gamefinished.rivalMana
+            },
+            gameId: gameId,
+            gameOver: true,
+            winner: gamefinished.winner,
+            status: gamefinished.status,
+            endTime: gamefinished.endTime
         });
 
     } catch (error) {

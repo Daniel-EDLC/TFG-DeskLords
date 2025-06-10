@@ -24,24 +24,27 @@ async function createPlayer(req, res) {
             return req.response.error(`Error al crear el pase de batalla: ${battlePassCreated.error}`);
         }
 
+        const allDecks = await Deck.find();
+
+        const defaultDeck = allDecks.find(deck => deck.name === 'Mazo del reino');
+
+        const lockedDecks = allDecks.filter(deck => deck.name !== 'Mazo del reino');
+
+        const allMaps = await Maps.find();
+
+        const defaultMap = allMaps.find(map => map.name === 'Mapa del luz');
+
+        const lockedMaps = allMaps.filter(map => map.name !== 'Mapa del luz');
+
         const newPlayer = new Player({
             uid: req.body.uid,
             name: req.body.name,
             surname: req.body.surnames,
             displayName: req.body.displayName,
-            owned_decks: [
-                "68389e882a7841f9396d8e9b",
-            ],
-            locked_decks: [
-                "68389e292a7841f9396d8e7b",
-                "68389ef02a7841f9396d8ebb"
-            ],
-            maps_unlocked: [
-                "6838a2bc36599377ad700412",
-            ],
-            maps_locked: [
-                "6838a30436599377ad700434",
-            ],
+            owned_decks: [defaultDeck._id],
+            locked_decks: lockedDecks.map(deck => deck._id),
+            maps_unlocked: [defaultMap._id],
+            maps_locked: lockedMaps.map(map => map._id),
             selected_avatar: defaultAvatar._id,
             locked_avatars: lockedAvatarsFiltered.map(avatar => avatar._id),
         });
@@ -57,7 +60,6 @@ async function createPlayer(req, res) {
 
 async function checkPlayerExists(req, res) {
     try {
-
         const playerExists = await Player.exists({ uid: req.body.idPlayer });
 
         if (playerExists) {
@@ -132,8 +134,8 @@ async function getPlayerInfo(req, res) {
             battlePass: battlePass || {},
             tutorial: { mode: tutorial, defaultDeckImage: defaultDeckImage },
             favoriteDeck: mostUsedDeckId.name || null,
-            partidasPerdidas: lostGames || 0,
-            partidasGanadas: winnedGames || 0,
+            loses: lostGames || 0,
+            wins: winnedGames || 0,
         })
     } catch (error) {
         req.response.error(`Error al obtener información del jugador: ${error.message}`);

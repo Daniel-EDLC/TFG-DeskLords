@@ -93,32 +93,34 @@ export default function Register({ onSwitch, googleData }) {
   };
 
   const createPlayer = async (uid, token, name, surnames, username) => {
-    try {
-      const response = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/createPlayer`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          uid: uid,
-          name: name,
-          surnames: surnames,
-          displayName: username,
-        })
-      });
+  try {
+    const response = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/createPlayer`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        uid: uid,
+        name: name,
+        surnames: surnames,
+        displayName: username,
+      })
+    });
 
-      if (!response.ok) {
-        throw new Error('Error al guardar el usuario en la base de datos');
-      }
-
-      const data = await response.json();
-      console.log('Usuario guardado en la base de datos:', data);
-    } catch (err) {
-      console.error('Error al enviar el usuario a la base de datos:', err);
-      setError('No se pudo guardar el usuario en la base de datos');
+    if (!response.ok) {
+      throw new Error('Error al guardar el usuario en la base de datos');
     }
-  };
+
+    const data = await response.json();
+
+    if (data.result) alert('Usuario registrado correctamente. ¡Bienvenido!');
+  } catch (err) {
+    console.error('Error al enviar el usuario a la base de datos:', err);
+    setError('No se pudo guardar el usuario en la base de datos');
+  }
+};
+
 
   return (
     <form className="register-form" onSubmit={handleSubmit}>

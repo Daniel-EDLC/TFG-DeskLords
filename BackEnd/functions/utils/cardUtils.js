@@ -5,7 +5,7 @@ async function sendUsedCardResponse(gameId, usedCard, req) {
 
   return req.response.success({
     gameId,
-    action_result: { type: 'use', card: usedCard },
+    usedCards: usedCard,
     turn: {
       number: updatedGame.currentTurn,
       whose: "user",
@@ -124,7 +124,7 @@ async function handleSpellCard(game, usedCard, target, req, res) {
 
   switch (usedCard.effect) {
     case 'protect_one': {
-      usedCard.target = target._id;
+      usedCard.target = target;
 
       await Game.bulkWrite([
         {
@@ -161,7 +161,7 @@ async function handleSpellCard(game, usedCard, target, req, res) {
     }
 
     case 'kill': {
-      usedCard.target = target._id;
+      usedCard.target = target;
 
       await Game.bulkWrite([
         {
@@ -207,20 +207,20 @@ async function handleSpellCard(game, usedCard, target, req, res) {
 }
 
 
-function markNewCards(table, usedCardIds = [], isAi = false) {
+function markNewCards(table, usedCardIds = []) {
   return table.map(card => {
     const cardData = card.toObject?.() || card;
     const cardIdStr = cardData._id.toString();
 
     return {
       ...cardData,
-      equipements: mapEquipements(cardData.equipements, usedCardIds, isAi),
+      equipements: mapEquipements(cardData.equipements, usedCardIds),
       new: usedCardIds.includes(cardIdStr)
     };
   });
 }
 
-function mapEquipements(equipements, usedCardIds, isAi = false) {
+function mapEquipements(equipements, usedCardIds) {
   return (equipements || []).map(eq => {
     const eqData = eq.toObject?.() || eq;
     const eqIdStr = eqData._id.toString();

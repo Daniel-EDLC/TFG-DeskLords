@@ -4,7 +4,7 @@ const playerSchema = new mongoose.Schema({
     uid: { type: String, required: true, unique: true }, // Firebase UID
     status: { type: String, enum: ['active', 'suspended', 'banned', 'deleted'], default: 'active' },
     name: { type: String, required: true },
-    surname: { type: String, required: true },
+    surname: { type: String, required: false },
     displayName: { type: String, required: true },
     register_date: { type: Date, default: Date.now, immutable: true, required: true },
     rol: { type: String, default: 'Player', required: true },

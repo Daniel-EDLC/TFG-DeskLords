@@ -90,8 +90,7 @@ async function startGame(req, res) {
             rivalDeck: map.deck,
             rivalHand: rivalStarterHand,
             rivalPendingDeck: rivalPendingDeck,
-            mapId: map._id,
-            manaPerTurn: 1,
+            mapId: map._id
         });
 
         const gameSaved = await newGame.save();
@@ -118,11 +117,49 @@ async function startGame(req, res) {
                 pending_deck: gameSaved.rivalPendingDeck.length,
                 health: gameSaved.rivalHp,
                 mana: gameSaved.rivalMana
-            }
+            },
+            action: 'welcome'
         });
     } catch (error) {
         req.response.error(`Error al iniciar el juego: ${error.message}`);
     }
 }
 
-module.exports = { startGame };
+async function surrender(req, res) {
+    try {
+        const playerId = req.body.playerId;
+        if (!playerId) return req.response.error('El ID del jugador es requerido');
+
+        const gameId = req.body.gameId;
+        const game = await Game.findById(gameId);
+
+        if (!game) return req.response.error('El juego no existe');
+
+        if (game.playerId !== playerId) return req.response.error('No tienes permiso para rendirte en este juego');
+
+        if (game.status !== 'in-progress') return req.response.error('El juego no está en progreso');
+
+        const gameSaved = await Game.updateOne(
+            { _id: game._id },
+            {
+                $set: {
+                    status: 'surrendered',
+                    endTime: new Date(),
+                    winner: "rival"
+                }
+            }
+        );
+
+        req.response.success({
+            message: 'Te has rendido correctamente',
+            gameId: gameSaved._id,
+            status: gameSaved.status,
+            endTime: gameSaved.endTime
+        });
+
+    } catch (error) {
+        req.response.error(`Error al rendirse: ${error.message}`);
+    }
+}
+
+module.exports = { startGame, surrender };

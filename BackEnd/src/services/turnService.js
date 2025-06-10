@@ -6,7 +6,14 @@ async function nextTurn({ game }) {
   if (!game) throw new Error('Juego no encontrado');
 
   const newTurn = game.currentTurn + 1;
-  const newActualMana = game.manaPerTurn + game.actualMana;
+
+  let newPlayerMana = game.playerMana;
+  let newRivalmana = game.rivalMana;
+
+  if (newTurn % 2 !== 0) {
+    newPlayerMana = game.playerMana + game.manaPerTurn;
+    newRivalmana = game.rivalMana + game.manaPerTurn;
+  }
 
   // Limpiar spells de los equipements de cada carta en ambas mesas y pasarlos al graveyard correspondiente
   let spellsToGraveyardPlayer = [];
@@ -30,20 +37,25 @@ async function nextTurn({ game }) {
   const updatedPlayerTable = cleanEquipements(game.playerTable, true);
   const updatedRivalTable = cleanEquipements(game.rivalTable, false);
 
-  // console.log('\n----------------------------------------------------------------------\nPlayerTable sin spells en equipements ==> ', updatedPlayerTable);
-  // console.log('\n----------------------------------------------------------------------\nRivalTable sin spells en equipements ==> ', updatedRivalTable);
-
   // 1. Limpiar temporaryAbilities de todas las cartas
+  const playerTableCleared = updatedPlayerTable.map(card => ({
+    ...card,
+    temporaryAbilities: []
+  }));
+  const rivalTableCleared = updatedRivalTable.map(card => ({
+    ...card,
+    temporaryAbilities: []
+  }));
+
   await Game.updateOne(
     { _id: game._id },
     {
       $set: {
         currentTurn: newTurn,
-        actualMana: newActualMana,
-        playerMana: newActualMana,
-        rivalMana: newActualMana,
-        'playerTable.$[].temporaryAbilities': [],
-        'rivalTable.$[].temporaryAbilities': [],
+        playerMana: newPlayerMana,
+        rivalMana: newRivalmana,
+        playerTable: playerTableCleared,
+        rivalTable: rivalTableCleared,
       },
     }
   );
@@ -102,10 +114,6 @@ async function drawCard({ game, isAI }) {
   const pendingDeckField = isAI ? 'rivalPendingDeck' : 'playerPendingDeck';
   const hpField = isAI ? 'rivalHp' : 'playerHp';
 
-  console.log('\n----------------------------------------------------------------------handField ==> \n', handField);
-  console.log('\n----------------------------------------------------------------------pendingDeckField ==> \n', pendingDeckField);
-  console.log('\n----------------------------------------------------------------------hpField ==> \n', hpField);
-
   // Comprobar si la mano ya tiene 5 cartas
   if (game[handField].length >= 5) {
     return; // No se puede robar más cartas
@@ -119,7 +127,6 @@ async function drawCard({ game, isAI }) {
   } else {
     const card = game[pendingDeckField][0];
 
-    console.log('\n----------------------------------------------------------------------Card to draw ==> \n', card);
     // Forzar el _id a ObjectId para el $pull
     const cardId = typeof card._id === 'string' ? mongoose.Types.ObjectId(card._id) : card._id;
     await Game.updateOne(
@@ -152,35 +159,45 @@ async function removeDeadCardsFromTables(gameId, playerTable, rivalTable) {
 async function checkForGameOver(game) {
   if (game.playerHp <= 0 || game.rivalHp <= 0) {
     const winner = game.playerHp > 0 ? 'player' : 'rival';
-    await Game.updateOne(
-      { _id: game._id },
-      { $set: { winner } }
-    );
+    await Game.updateOne({ _id: game._id }, { $set: { winner } });
 
-    // Experiencia y nivelado
     const player = await Player.findOne({ uid: game.playerId });
     if (player) {
       let expToAdd = winner === 'player' ? 200 : 100;
+      let coinsToAdd = winner === 'player' ? 50 : 20;
       let newProgress = (player.player_level_progress || 0) + expToAdd;
       let newLevel = player.player_level || 0;
-      // Sube de nivel si llega a 1000 o más
+
+      let leveledUp = false;
+
       if (newProgress >= 1000) {
         const levelsToAdd = Math.floor(newProgress / 1000);
         newLevel += levelsToAdd;
         newProgress = newProgress % 1000;
+        leveledUp = true;
       }
+
       await Player.updateOne(
         { uid: game.playerId },
         {
           $set: {
             player_level: newLevel,
             player_level_progress: newProgress
-          }
+          },
+          $inc: { coins: coinsToAdd }
         }
       );
+
+      // Solo actualiza el pase de batalla si subió de nivel
+      if (leveledUp) {
+        const result = await updateBattlePass(game.playerId);
+        if (result?.error) console.error(`Battle Pass error for player ${game.playerId}: ${result.error}`);
+      }
     }
+
     return true; // El juego ha terminado
   }
+
   return false; // El juego sigue activo
 }
 
