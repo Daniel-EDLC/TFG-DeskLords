@@ -34,6 +34,7 @@
 }
 
 .auth-card {
+  overflow: auto;
   margin-top: 6vh;
   flex: 0 0 70%;
   display: flex;
@@ -54,14 +55,20 @@
 }
 
 @media (max-width: 435px) {
+.auth-container {
+}
+
  .auth-tittle-tittle{
-  margin: 4vh;
+  margin: 2vh;
   width: 120%;
   object-fit: contain;
  }
  .auth-card{
-  margin-top: 7vh;
+  margin-top: 1vh;
  }
+ .auth-menu-tittle{
+  margin-top: 0vh;
+}
 
  
 }
