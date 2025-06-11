@@ -10,7 +10,6 @@ const app = express();
 // const validarTokenJWT = require('./middlewares/validarTokenJWT');
 const createResponseHelper = require('./middlewares/responseHelper');
 
-const abilityRoutes = require('./routes/abilityRoutes');
 const cardRoutes = require('./routes/cardRoutes');
 const deckRoutes = require('./routes/deckRoutes');
 const gameRoutes = require('./routes/gameRoutes');
@@ -21,10 +20,12 @@ const newsRoutes = require('./routes/newsRoutes');
 const commentsRoutes = require('./routes/commentsRoutes');
 const battlePassRoutes = require('./routes/battlePassRoutes');
 const avatarsRoutes = require('./routes/avatarsRoutes');
-const uploadRoutes = require('./routes/uploadRoutes');
+// const uploadRoutes = require('./routes/uploadRoutes');
 
-app.use(express.json());
+// Conectar a la base de datos
 app.use(connectDB);
+
+// Middleware para permitir CORS
 app.use(cors());
 
 // Middleware que agrega el helper a cada request
@@ -33,11 +34,16 @@ app.use((req, res, next) => {
     next();
 });
 
+// Importar las rutas de subida de archivos
+// app.use('/api', uploadRoutes);
+
+// Middleware para parsear el cuerpo de las peticiones como JSON
+app.use(express.json());
+
 // Middleware para validar el token de autenticación
 // app.use(validarTokenJWT);
 
 // Usa las rutas agrupadas bajo /api
-app.use('/api', abilityRoutes);
 app.use('/api', cardRoutes);
 app.use('/api', deckRoutes);
 app.use('/api', gameRoutes);
@@ -48,6 +54,5 @@ app.use('/api', newsRoutes);
 app.use('/api', commentsRoutes);
 app.use('/api', battlePassRoutes);
 app.use('/api', avatarsRoutes);
-app.use('/api', uploadRoutes);
 
 module.exports = app;

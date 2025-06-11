@@ -3,9 +3,8 @@ const router = express.Router();
 const multer = require('multer');
 const { uploadImage } = require('../controllers/uploadController');
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
 
-router.post('/upload', upload.single('file'), uploadImage);
+router.post('/upload', upload.single('fileImg'), uploadImage);
 
 module.exports = router;
