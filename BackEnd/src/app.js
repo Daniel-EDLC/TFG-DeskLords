@@ -9,7 +9,6 @@ const app = express();
 const validarTokenJWT = require('./middlewares/validarTokenJWT');
 const createResponseHelper = require('./middlewares/responseHelper');
 
-const abilityRoutes = require('./routes/abilityRoutes');
 const cardRoutes = require('./routes/cardRoutes');
 const deckRoutes = require('./routes/deckRoutes');
 const gameRoutes = require('./routes/gameRoutes');
@@ -35,7 +34,6 @@ app.use((req, res, next) => {
 // app.use(validarTokenJWT);
 
 // Usa las rutas agrupadas bajo /api
-app.use('/api', abilityRoutes);
 app.use('/api', cardRoutes);
 app.use('/api', deckRoutes);
 app.use('/api', gameRoutes);
