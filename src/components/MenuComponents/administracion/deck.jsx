@@ -266,6 +266,7 @@ function DecksList() {
               type="text"
               value={formData.image}
               onChange={e => setFormData({ ...formData, image: e.target.value })}
+              placeholder="https://ejemplo.com/imagen.png"
             />
 
             <label>Set:</label>

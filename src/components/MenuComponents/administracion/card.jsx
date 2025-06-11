@@ -359,47 +359,12 @@ function CardsList() {
                         </div>
 
                         <div>
-                            <label>Imagen frontal (opcional):</label>
+                            <label>URL de Imagen Frontal (opcional):</label>
                             <input
-                                type="file"
-                                accept="image/*"
-                                onChange={async (e) => {
-                                    const file = e.target.files[0];
-                                    if (!file) return;
-
-                                    const formDataImage = new FormData();
-                                    formDataImage.append('file', file);
-                                    formDataImage.append('type', 'card');
-
-                                    const user = await new Promise((resolve, reject) => {
-                                        const unsubscribe = onAuthStateChanged(auth, (user) => {
-                                            unsubscribe();
-                                            if (user) resolve(user);
-                                            else reject(new Error("Usuario no autenticado"));
-                                        });
-                                    });
-
-                                    const userToken = await user.getIdToken();
-
-                                    try {
-                                        const res = await fetch('https://api-meafpnv6bq-ew.a.run.app/api/upload', {
-                                            method: 'POST',
-                                            headers: {
-                                                Authorization: `Bearer ${userToken}`
-                                            },
-                                            body: formDataImage
-                                        });
-
-                                        if (res.ok) {
-                                            const data = await res.json();
-                                            setFormData(prev => ({ ...prev, front_image: data.url }));
-                                        } else {
-                                            console.error('Error al subir imagen:', await res.text());
-                                        }
-                                    } catch (err) {
-                                        console.error('Error al subir imagen:', err);
-                                    }
-                                }}
+                                type="text"
+                                value={formData.front_image}
+                                onChange={e => setFormData({ ...formData, front_image: e.target.value })}
+                                placeholder="https://ejemplo.com/imagen.png"
                             />
                             {formData.front_image && (
                                 <div style={{ marginTop: '10px' }}>

@@ -199,6 +199,7 @@ function MapsList() {
               type="text"
               value={formData.image}
               onChange={e => setFormData({ ...formData, image: e.target.value })}
+              placeholder="https://ejemplo.com/imagen.png"
             />
 
             <label>Elemento (opcional):</label>
