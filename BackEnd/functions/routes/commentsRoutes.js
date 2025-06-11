@@ -6,6 +6,6 @@ router.post('/createComment', createComment);
 router.put('/updateComment', updateComment);
 router.get('/getComments', getComments);
 router.post('/deleteComment', deleteComment);
-router.post('/getCommentsLimited', getCommentsLimited);
+router.get('/getCommentsLimited', getCommentsLimited);
 
 module.exports = router;
