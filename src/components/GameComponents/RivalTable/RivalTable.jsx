@@ -23,7 +23,8 @@ function RivalTable({
   draggingType,
   pendingCard,
   setPendingCard,
-  highlightedCardId
+  highlightedCardId,
+  battleResultAttackPlayer
 }) {
   const [hiddenCards, setHiddenCards] = useState([]);
   const [removedCards, setRemovedCards] = useState([]);
@@ -80,8 +81,11 @@ function RivalTable({
               ? "attack-position"
               : "";
 
-          const isInRivalBattle = battles.some(
+          const isInPlayerBattle = battles.some(
             (b) => b.atacanteId === carta._id
+          );
+          const isInRivalBattle = battleResultAttackPlayer.some(
+            (b) => b.attacker === carta._id || b.defender === carta._id
           );
           const isFadingOut = hiddenCards.includes(carta._id);
 
@@ -96,12 +100,13 @@ function RivalTable({
                 <Paper
                   className={`${cardClass} 
                   ${
-                    isInRivalBattle
+                    isInPlayerBattle
                       ? "rival-card-in-battle"
                       : hoveredCardId === carta._id
                       ? "hovered"
                       : ""
                   } 
+                  ${isInRivalBattle ? "player-card-in-battle" : ""}
                   ${longPressCardId === carta._id ? "rival-long-pressed" : ""} 
                   ${carta.new ? "rival-card-new" : ""}
                   ${
@@ -132,7 +137,7 @@ function RivalTable({
                         targetId: carta._id,
                       });
 
-                      setPendingCard(null); // ✅ LIMPIA la carta pendiente después de usarla
+                      setPendingCard(null);
                       return;
                     }
 
@@ -198,9 +203,16 @@ function RivalTable({
                     }
 
                     if (data.type === "equipement") {
-                      setPendingCardData(data);
-                      setPendingEquipTarget(carta._id);
-                      setConfirmDialogOpen(true);
+                      // setPendingCardData(data);
+                      // setPendingEquipTarget(carta._id);
+                      // setConfirmDialogOpen(true);
+                      onPlayCard({
+                        _id: data.id,
+                        type: data.type,
+                        cost: data.cost,
+                        targetId: carta._id,
+                      });
+
                       setPendingCard(null);
                       return;
                     }

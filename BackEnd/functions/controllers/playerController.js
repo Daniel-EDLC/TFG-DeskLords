@@ -1,6 +1,7 @@
 const Player = require('../models/Player');
 const Deck = require('../models/Deck');
 const News = require('../models/News');
+const Map = require('../models/Map');
 const Avatars = require('../models/Avatars');
 const { getMapsAvailable, getAvatarsAvailable, getDecksAvailable, getMostUsedDeck, getLostGames, getWinnedGames } = require('../utils/playerUtils');
 const { getBattlePassPlayer } = require('../utils/battlePassUtils');
@@ -24,24 +25,33 @@ async function createPlayer(req, res) {
             return req.response.error(`Error al crear el pase de batalla: ${battlePassCreated.error}`);
         }
 
+        const allDecks = await Deck.find();
+        if (!allDecks || allDecks.length === 0) return req.response.error("No se encontraron mazos disponibles");
+
+        const defaultDeck = await allDecks.find(deck => deck.name === 'Mazo del reino');
+        if (!defaultDeck) return req.response.error("No se encontró el mazo por defecto");
+
+        const lockedDecks = allDecks.filter(deck => deck.name !== 'Mazo del reino');
+        if (!lockedDecks || lockedDecks.length === 0) return req.response.error("No se encontraron mazos bloqueados");
+
+        const allMaps = await Map.find();
+        if (!allMaps || allMaps.length === 0) return req.response.error("No se encontraron mapas disponibles");
+
+        const defaultMap = await allMaps.find(map => map._id.toString() === '6844266481c1452e06b9d8dc');
+        if (!defaultMap) return req.response.error("No se encontró el mapa por defecto");
+
+        const lockedMaps = allMaps.filter(map => map._id.toString() !== '6844266481c1452e06b9d8dc');
+        if (!lockedMaps || lockedMaps.length === 0) return req.response.error("No se encontraron mapas bloqueados");
+
         const newPlayer = new Player({
             uid: req.body.uid,
             name: req.body.name,
             surname: req.body.surnames,
             displayName: req.body.displayName,
-            owned_decks: [
-                "68389e882a7841f9396d8e9b",
-            ],
-            locked_decks: [
-                "68389e292a7841f9396d8e7b",
-                "68389ef02a7841f9396d8ebb"
-            ],
-            maps_unlocked: [
-                "6838a2bc36599377ad700412",
-            ],
-            maps_locked: [
-                "6838a30436599377ad700434",
-            ],
+            owned_decks: [defaultDeck._id],
+            locked_decks: lockedDecks.map(deck => deck._id),
+            maps_unlocked: [defaultMap._id],
+            maps_locked: lockedMaps.map(map => map._id),
             selected_avatar: defaultAvatar._id,
             locked_avatars: lockedAvatarsFiltered.map(avatar => avatar._id),
         });
@@ -131,7 +141,7 @@ async function getPlayerInfo(req, res) {
             shop: shopItems || [],
             battlePass: battlePass || {},
             tutorial: { mode: tutorial, defaultDeckImage: defaultDeckImage },
-            favoriteDeck: mostUsedDeckId.name || null,
+            favoriteDeck: mostUsedDeckId ? mostUsedDeckId.name : null,
             wins: winnedGames || 0,
             loses: lostGames || 0,
         })

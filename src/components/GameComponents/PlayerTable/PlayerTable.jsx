@@ -30,11 +30,9 @@ function PlayerTable({
   pendingCard,
   setPendingCard,
   rivalAttackers,
-  highlightedCardId
+  highlightedCardId,
+  battleResultAttackPlayer
 }) {
-
-
-
   const [selectedAttackCards, setselectedAttackCards] = useState([]);
   const [pendingCardId, setPendingCardId] = useState(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
@@ -44,6 +42,7 @@ function PlayerTable({
   const [longPressCardId, setLongPressCardId] = useState(null);
   const [longPressTimeout, setLongPressTimeout] = useState(null);
   const aliveDef = cartas.some((carta) => carta.alive === true);
+
   const isMobile = useMediaQuery("(max-width:435px)");
 
   useEffect(() => {
@@ -68,7 +67,6 @@ function PlayerTable({
 
   const handleCardClick = (carta) => {
     if (turn.whose === "user" && turn.phase === "hand") {
-      // ✅ 1. Si tienes una carta pendiente para lanzar (por clic previo)
       if (
         pendingCard &&
         (pendingCard.type === "spell" || pendingCard.type === "equipement")
@@ -142,11 +140,11 @@ function PlayerTable({
 
   const confirmPhaseChange = () => {
     if (handleSwitchPhase) {
-      handleSwitchPhase(); // Cambio real de fase
+      handleSwitchPhase();
     }
     setShowConfirmDialog(false);
     if (pendingCardId !== null) {
-      toggleAttackCard(pendingCardId); // Ya que quería atacar
+      toggleAttackCard(pendingCardId); 
       setPendingCardId(null);
     }
   };
@@ -286,6 +284,10 @@ function PlayerTable({
           const isInPlayerBattle = battles.some(
             (b) => b.defensorId === carta._id
           );
+          const isInRivalBattle = battleResultAttackPlayer.some(
+            (b) => b.attacker === carta._id || b.defender === carta._id
+          );
+
           const isFadingOut = hiddenCards.includes(carta._id);
           return (
             <div
@@ -298,6 +300,7 @@ function PlayerTable({
                 className={`player-card-table 
                 ${isSelected ? "selected" : ""} 
                 ${isInPlayerBattle ? "player-card-in-battle" : ""}
+                ${isInRivalBattle ? "player-card-in-battle" : ""}
                 `}
               >
                 {/* ${selectedAttackCards.includes(carta._id) ? 'attack-animating' : ''} */}
@@ -320,7 +323,11 @@ function PlayerTable({
                         ? "player-drop-hover"
                         : ""
                     }
-                    ${carta._id === highlightedCardId?._id ? "player-highlighted" : ""}
+                    ${
+                      carta._id === highlightedCardId?._id
+                        ? "player-highlighted"
+                        : ""
+                    }
                     `}
                   onClick={() => handleCardClick(carta)}
                   onDragOver={(e) => e.preventDefault()}
@@ -454,7 +461,7 @@ function PlayerTable({
           <Button
             variant="contained"
             onClick={confirmPhaseChange}
-                        className="phase-button"
+            className="phase-button"
           >
             Cambiar y seleccionar atacante
           </Button>
