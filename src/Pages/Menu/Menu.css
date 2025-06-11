@@ -293,11 +293,11 @@ body {
   animation: fadeOut 1s ease 5.5s forwards;
   pointer-events: none;
 }
-
-/* .splash-wrapper {
+/* 
+ .splash-wrapper {
   filter: drop-shadow(0 0 4px rgba(255, 217, 0, 0.877));
   animation: blinkShadow 1s ease-in-out 1s infinite;
-} */
+}  */
 
 .splash-logo {
   width: 800px;

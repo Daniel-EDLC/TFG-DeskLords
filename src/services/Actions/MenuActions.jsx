@@ -1,6 +1,9 @@
 import { auth } from "../../../firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 
+
+import axios from 'axios';
+
 // version mock cargaInformacion
 
 // import Informacion from '../../../public/mockCalls/info.json';
@@ -229,3 +232,94 @@ export const setAvatarPrincipal = async (avatarId) => {
     throw error;
   }
 };
+
+
+export async function getComments(page = 1, author) {
+  console.log()
+  try {
+    const params = { page };
+    if (author) params.author = author;
+    const response = await axios.get("https://api-meafpnv6bq-ew.a.run.app/api/getCommentsLimited", {
+      params,
+    });
+
+    return response.data.data;
+  } catch (error) {
+    console.error("Error al obtener comentarios:", error);
+    return { comments: [], hasMore: false };
+  }
+}
+
+
+
+
+export async function AddComment(comment) {
+  try {
+   const user = await new Promise((resolve, reject) => {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        unsubscribe();
+        if (user) resolve(user);
+        else reject(new Error("Usuario no autenticado"));
+      });
+    });
+    const userToken = await user.getIdToken();
+
+
+    const response = await fetch("https://api-meafpnv6bq-ew.a.run.app/api/createComment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+         Authorization: `Bearer ${userToken}`,
+      },
+       body: JSON.stringify({
+        playerId: user.uid,
+        // fecha: new Date().toISOString(),
+        content: comment,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al enviar el mensaje");
+    }
+
+    const data = await response.json();
+    console.log("Respuesta del servidor:", data);
+    return data;
+  } catch (error) {
+    console.error("Error al enviar mensaje al servidor:", error);
+    return null;
+  }
+}
+
+
+// services/Actions/MenuActions.js
+export const switchName = async ( newName ) => {
+
+  const user = await new Promise((resolve, reject) => {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        unsubscribe();
+        if (user) resolve(user);
+        else reject(new Error("Usuario no autenticado"));
+      });
+    });
+    const userToken = await user.getIdToken();
+
+  const response = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/updatePlayer`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+         Authorization: `Bearer ${userToken}`,
+    },
+     body: JSON.stringify({
+        playerId: user.uid,
+        content: newName,
+      }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Error al actualizar el nombre");
+  }
+
+  return response.json();
+};
+
