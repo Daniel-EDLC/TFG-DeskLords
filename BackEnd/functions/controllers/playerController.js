@@ -28,19 +28,19 @@ async function createPlayer(req, res) {
         const allDecks = await Deck.find();
         if (!allDecks || allDecks.length === 0) return req.response.error("No se encontraron mazos disponibles");
 
-        const defaultDeck = await allDecks.find(deck => deck.name === 'Mazo del reino');
+        const defaultDeck = await allDecks.find(deck => deck._id.toString() === '68494b3ce206d6cf9f4ee3dd');
         if (!defaultDeck) return req.response.error("No se encontró el mazo por defecto");
 
-        const lockedDecks = allDecks.filter(deck => deck.name !== 'Mazo del reino');
+        const lockedDecks = allDecks.filter(deck => deck._id.toString() !== '68494b3ce206d6cf9f4ee3dd');
         if (!lockedDecks || lockedDecks.length === 0) return req.response.error("No se encontraron mazos bloqueados");
 
         const allMaps = await Map.find();
         if (!allMaps || allMaps.length === 0) return req.response.error("No se encontraron mapas disponibles");
 
-        const defaultMap = await allMaps.find(map => map._id.toString() === '6844266481c1452e06b9d8dc');
+        const defaultMap = await allMaps.find(map => map._id.toString() === '684954af46950a12150b7c62');
         if (!defaultMap) return req.response.error("No se encontró el mapa por defecto");
 
-        const lockedMaps = allMaps.filter(map => map._id.toString() !== '6844266481c1452e06b9d8dc');
+        const lockedMaps = allMaps.filter(map => map._id.toString() !== '684954af46950a12150b7c62');
         if (!lockedMaps || lockedMaps.length === 0) return req.response.error("No se encontraron mapas bloqueados");
 
         const newPlayer = new Player({
@@ -100,8 +100,8 @@ async function getPlayerInfo(req, res) {
         const newsFound = await News.find().sort({ fecha: -1 })
 
         const shopItems = {
-            decks: allDecks.filter(deck => !deck.available || deck.belongsTo === 'shop'),
-            avatars: allAvatars.filter(avatar => !avatar.available && avatar.belongsTo === 'shop'),
+            decks: allDecks.filter(deck => deck.belongsTo === 'shop'),
+            avatars: allAvatars.filter(avatar => avatar.belongsTo === 'shop'),
         }
 
         const battlePass = await getBattlePassPlayer(player.uid);

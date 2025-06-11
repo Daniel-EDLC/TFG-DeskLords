@@ -175,6 +175,7 @@ function AvatarManager() {
               type="url"
               value={formData.url}
               onChange={e => setFormData({ ...formData, url: e.target.value })}
+              placeholder="https://ejemplo.com/imagen.png"
               required
             />
 
