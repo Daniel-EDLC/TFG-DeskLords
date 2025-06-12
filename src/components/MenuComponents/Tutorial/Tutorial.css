@@ -24,26 +24,14 @@
   padding: 2rem;
   background: radial-gradient(white 0%, transparent 70%);
   border-radius: 1rem;
-  animation: glow 1.5s ease-in-out infinite alternate;
   z-index: 1000;
 }
 
-.deck-image-tutorial {
-  width: 200px;
+.tutorial-deck-image {
+  width: 100px;
   height: auto;
   border-radius: 10px;
   box-shadow: 0 0 25px white;
-}
-
-@keyframes glow {
-  from {
-    opacity: 0.7;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.05);
-  }
 }
 
 
@@ -155,15 +143,32 @@
 }
 
 .tutorial-button {
-  background-color: #ffffff;
-  color: #000000;
-  border: none;
-  padding: 1rem 2rem;
+  font-family: 'Cinzel', serif; /* Puedes cargarla desde Google Fonts */
   font-size: 1.1rem;
+  background: linear-gradient(to bottom, #bdb000b0, #1a0d05);
+  color: #f2e5c4;
+  border: 2px solid #afa4009c;
+  padding: 12px 28px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px #000, inset 0 0 8px #413c03;
+  text-transform: uppercase;
+  letter-spacing: 1px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin: 0 0.5rem;
+  transition: all 0.2s ease;
 }
+
+.tutorial-button:hover {
+  background: linear-gradient(to bottom, #948500, #2b1206);
+  color: #fff0d6;
+  border-color: #8a8703;
+  box-shadow: 0 0 20px #2c0d0d, inset 0 0 10px #b1a500;
+}
+
+.tutorial-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 0 4px #000 inset;
+}
+
 
 .tutorial-button:hover {
   background-color: #e0e0e0;
@@ -192,6 +197,14 @@
 
 
 @media (max-width: 435px) {
+
+.tutorial-deck-image {
+  width: 70px;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 0 25px white;
+}
+
 .tutorial-image-back{
      content: url('https://storage.googleapis.com/imagenes-desklords/Imagenes_Tutorial/fondoMovil.png');
     }
@@ -203,14 +216,23 @@
 
 
 .tutorial-button {
-  background-color: #53535385;
-  color: #000000;
-  border: none;
-  padding: 0.5rem 1rem;
+  font-family: 'Cinzel', serif; /* Puedes cargarla desde Google Fonts */
   font-size: 1.1rem;
+  background: linear-gradient(to bottom, #bdb000b0, #1a0d05);
+  color: #f2e5c4;
+  border: 2px solid #afa4009c;
+  padding: 12px 28px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px #000, inset 0 0 8px #413c03;
+  text-transform: uppercase;
+  letter-spacing: 1px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin: 0 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.tutorial-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 0 4px #000 inset;
 }
 
 

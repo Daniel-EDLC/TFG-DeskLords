@@ -35,7 +35,7 @@ function News({ noticias }) {
 
         <div className="noticia-card">
             <img
-              src={"/LOGO.png"}
+              src={noticia.image}
               alt={noticia.title}
               className="noticia-img"
             />

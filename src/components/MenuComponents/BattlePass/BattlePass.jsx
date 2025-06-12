@@ -75,10 +75,10 @@ function BattlePass({ battlePass }) {
                 <p className="modal-text">Monedas: {recompensaSeleccionada.coins}</p>
               )}
               {recompensaSeleccionada?.avatarId && (
-                <p className="modal-text">Avatar ID: {recompensaSeleccionada.avatarId}</p>
+                <p className="modal-text">Avatar: {recompensaSeleccionada.name}</p>
               )}
               {recompensaSeleccionada?.deckId && (
-                <p className="modal-text">Mazo desbloqueado: {recompensaSeleccionada.deckId}</p>
+                <p className="modal-text">Deck: {recompensaSeleccionada.name}</p>
               )}
               {!Object.keys(recompensaSeleccionada || {}).length && (
                 <p className="modal-text">Sin información de recompensa.</p>

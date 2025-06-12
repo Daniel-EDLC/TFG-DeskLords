@@ -291,9 +291,10 @@ function RivalTable({
                             <img
                               src={equipo.front_image}
                               alt={equipo._id}
-                              className={`rival-equipment-image ${
-                                equipo.new ? "rival-card-new" : ""
-                              }`}
+                              className={`rival-equipment-image 
+                                `
+                              }
+                              // ${ equipo.new ? "rival-card-new" : "" }
                             />
                             {(typeof equipo.atk === "number" ||
                               typeof equipo.hp === "number") && (

@@ -32,7 +32,7 @@ const Tutorial = ({ tutorialDeck, onFinish }) => {
           <img
             src={typeof tutorialDeck === 'string' ? tutorialDeck : tutorialDeck.image}
             alt="Deck desbloqueado"
-            className="deck-image fade-in"
+            className="tutorial-deck-image fade-in"
           />
         </div>
       )}
