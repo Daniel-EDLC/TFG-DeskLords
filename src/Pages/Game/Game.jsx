@@ -274,7 +274,7 @@ useEffect(() => {
   useEffect(() => {
     if (announcementMode) {
       setShowAnnouncement(true);
-
+      console.log("buscame2", gameData.forEnd)
       if (announcementMode === "vs") {
         const timeout = setTimeout(() => {
           setGameData((prev) => ({ ...prev, action: null }));
@@ -432,6 +432,7 @@ useEffect(() => {
 
       <TurnIndicator turn={gameData.turn} />
 
+       
       {showAnnouncement && (
         <Announcement
           data={gameData}
@@ -440,6 +441,7 @@ useEffect(() => {
           onFinish={() => {
             if (announcementMode === "vs") setShowAnnouncement(false);
           }}
+          {...(gameData.forEnd && { forEnd: gameData.forEnd })}
         />
       )}
 

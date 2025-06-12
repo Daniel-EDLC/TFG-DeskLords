@@ -18,14 +18,14 @@
 
 
 .switchToAttack{
-  border-radius: 8px !important;
+  border-radius: 10px !important;
   background-color: rgba(44, 44, 44, 0.966) !important;
   border: 2px solid rgba(255, 255, 255, 0.1) !important;
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.05) !important;
   color: rgb(211, 210, 210) !important;
 }
 .player-table-container:hover {
-  z-index: 50;
+  z-index: 1000;
 }
 
 .player-card-wrapper {
@@ -56,21 +56,21 @@
   transform: scale(2.3);
   /* border: 2px solid rgba(19, 128, 0, 0.8); */
   border-radius: 6px;
-  z-index: 1000;
+  z-index: 100000;
 }
 
 /* ATACANDO */
 .player-card-table.selected {
   /* transform: translateY(-15%); */
   border-radius: 6px;
-  z-index: 20;
+  z-index: 1000;
 }
 
 .player-card-table.selected:hover {
   transform: scale(2.3);
   border: 2px solid rgba(19, 128, 0, 0.8);
   border-radius: 6px;
-  z-index: 100;
+  z-index: 1000;
 }
 
 
@@ -239,7 +239,7 @@
 .player-card-new {
   position: relative;
   animation: player-card-enter-from-center 1.5s ease-out;
-  z-index: 100;
+  z-index: 100000;
 }
 
 
@@ -339,15 +339,18 @@
 
 @keyframes player-card-enter-from-center {
   0% {
-    transform: translate(-50%, -150%) scale(4);
+    transform: translate(0%, -25%) scale(3);
     opacity: 0;
+    z-index: 9999999;
   }
   70% {
     opacity: 1;
-    transform: translate(-50%, -150%) scale(4);
+    transform: translate(0%, -25%) scale(3);
+    z-index: 9999999;
   }
   100% {
     transform: translate(0, 0) scale(1);
+    z-index: 9999999;
   }
 }
 
@@ -498,7 +501,7 @@
   .player-card-new {
   position: relative;
   animation: player-card-enter-mobile 1.5s ease-out;
-  z-index: 1000000;
+  
 }
   .player-card-table:hover {
     transform: none;

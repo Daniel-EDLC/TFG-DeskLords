@@ -117,6 +117,7 @@
 }
 
 .final-image {
+  margin-top: 0%;
   width: 80vw;
   max-width: 500px;
   margin-bottom: 20px;
@@ -141,6 +142,99 @@
 
 
 
+
+.rewards-container {
+  margin-top: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  max-width: 500px;
+  margin-inline: auto;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
+  height: auto;
+  max-height: 60vh;
+  overflow: auto;
+}
+
+
+.rewards-container h3 {
+  color: #ffd700;
+  font-size: 1.6rem;
+  margin-bottom: 16px;
+  text-shadow: 0 0 5px #ffe98a;
+}
+.rewards-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 16px;
+}
+.reward-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 12px 16px;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  font-size: 1.1rem;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.08);
+  transition: transform 0.2s ease;
+}
+.reward-item:hover {
+  transform: scale(1.03);
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.reward-item.with-image {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.reward-thumbnail {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+
+.end-button {
+  margin-top: 1vh;
+  font-family: 'Cinzel', serif; /* Puedes cargarla desde Google Fonts */
+  font-size: 1.1rem;
+  background: linear-gradient(to bottom, #bdb000b0, #1a0d05);
+  color: #f2e5c4;
+  border: 2px solid #afa4009c;
+  padding: 12px 28px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px #000, inset 0 0 8px #413c03;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.end-button:hover {
+  background: linear-gradient(to bottom, #948500, #2b1206);
+  color: #fff0d6;
+  border-color: #8a8703;
+  box-shadow: 0 0 20px #2c0d0d, inset 0 0 10px #b1a500;
+}
+
+.end-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 0 4px #000 inset;
+}
 
 
 

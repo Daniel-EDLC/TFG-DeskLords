@@ -1,6 +1,6 @@
 .maps-container {
   display: flex;
-  flex-direction: column; /* ahora la imagen está dentro del wrapper */
+  flex-direction: column;
   width: 100%;
   height: auto;
 }
@@ -14,6 +14,8 @@
   width: 30vw;
   height: 60vh;
   padding: 20px;
+  
+  padding-top: 0px ;
   border-radius: 12px;
 }
 
@@ -26,6 +28,7 @@
 }
 
 .maps-wrapper h2 {
+  padding-top: 0%;
   text-align: center;
   margin-bottom: 10px;
   color: white;
@@ -101,23 +104,41 @@
 @media (max-width: 435px) {
 
 
-  .maps-wrapper {
-    display: flex;
-    align-items: center;
-    height: 25vh;
-    color: white;
-    width: calc(100% - 40px);
-    padding: 0 5px;
-    padding-bottom: 0px;
-    border: none;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
- 
-    background-color: rgba(255, 255, 255, 0.05);
+.maps-wrapper {
+  position: relative; /* Necesario para posicionar el overlay */
+  display: flex;
+  align-items: center;
+  height: 25vh;
+  color: white;
+  width: calc(100% - 40px);
+  padding: 0 5px;
+  padding-bottom: 0px;
+  border: none;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: var(--mapa-image-url);
+  background-color: rgba(255, 255, 255, 0.089);
   border: 2px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
-  }
+  overflow: hidden; /* Para que el ::before no sobresalga */
+}
+
+.maps-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.733); /* ← Ajusta el nivel de opacidad aquí */
+  z-index: 0;
+}
+
+.maps-wrapper > * {
+  position: relative;
+  z-index: 1;
+}
 
 
   .maps-wrapper h2 {
@@ -150,5 +171,6 @@
     border-radius: 8px;
     
   }
+
 }
 
