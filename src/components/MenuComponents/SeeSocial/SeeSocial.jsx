@@ -10,7 +10,7 @@ function ComentarioForm({ onNewComment }) {
     if (mensaje.trim().length === 0) return;
     const nuevoComentario = await AddComment(mensaje);
     setMensaje("");
-    if (nuevoComentario) onNewComment(nuevoComentario);
+    if (nuevoComentario) onNewComment(nuevoComentario.data.comment);
   };
 
   return (
@@ -38,26 +38,35 @@ function SeeSocial() {
   const isMobile = useMediaQuery("(max-width:435px)");
   const [modalOpen, setModalOpen] = useState(false);
 
-  const loadMore = async () => {
-    try {
-      const res = await getComments(page, searchAuthor);
+const loadMore = async () => {
+  try {
+    const res = await getComments(page, searchAuthor);
+    const comentarios = res.comments || [];
+    const hayMas = res.hasMore ?? false;
 
-      console.log("respuesta ", res);
-      const comentarios = res.comments || [];
-      const hayMas = res.hasMore ?? false;
-
-      if (comentarios.length === 0 || !hayMas) {
-        setHasMore(false);
-        return;
-      }
-
-      setComments((prev) => [...prev, ...comentarios]);
-      setPage((prev) => prev + 1);
-      setHasMore(hayMas);
-    } catch (err) {
-      console.error("❌ Error al cargar comentarios:", err);
+    if (comentarios.length > 0) {
+      setComments((prev) => {
+        const all = [...prev, ...comentarios];
+        const seen = new Set();
+        return all.filter((c) => {
+          const id = c._id || JSON.stringify(c);
+          if (seen.has(id)) return false;
+          seen.add(id);
+          return true;
+        });
+      });
     }
-  };
+
+    setPage((prev) => prev + 1);
+    setHasMore(hayMas);
+  } catch (err) {
+    console.error("❌ Error al cargar comentarios:", err);
+  }
+};
+
+
+
+
 
   useEffect(() => {
     loadMore();
@@ -92,6 +101,7 @@ function SeeSocial() {
   setHasMore(true);
   loadMore();
 }, [searchAuthor]);
+
 
 
   return (
@@ -140,12 +150,14 @@ onChange={(e) => setSearchAuthor(e.target.value)}
 
 
       <div className="comentarios-scroll">
-        {comments.map((comment, index) => (
-          <div
-            key={comment._id || index}
-            className="comentario-item"
-            ref={index === comments.length - 1 ? lastCommentRef : null}
-          >
+{comments.map((comment, index) => {
+  const isLast = index === comments.length - 1;
+  return (
+    <div
+      key={comment._id || index}
+      className="comentario-item"
+      ref={isLast ? lastCommentRef : null}
+    >
             <div className="comentario-header">
               <img
                 src={comment.playerAvatar || "/fallback-avatar.png"}
@@ -167,8 +179,9 @@ onChange={(e) => setSearchAuthor(e.target.value)}
             <div className="comentario-contenido">
               <p className="comentario-texto">{comment.content}</p>
             </div>
-          </div>
-        ))}
+          </div>  
+          );
+})}
         {!hasMore && <p className="fin-comentarios">No hay más comentarios</p>}
       </div>
     </div>
