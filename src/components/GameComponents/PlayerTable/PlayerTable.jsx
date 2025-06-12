@@ -452,7 +452,9 @@ function PlayerTable({
           );
         })}
       </Box>
-      <Dialog open={showConfirmDialog} onClose={cancelPhaseChange}>
+      <Dialog open={showConfirmDialog} onClose={cancelPhaseChange}  PaperProps={{
+    className: 'switchToAttack',
+  }}>
         <DialogTitle>
           Estás en fase de mano. ¿Quieres cambiar a fase de ataque?
         </DialogTitle>
