@@ -82,72 +82,76 @@ async function checkPlayerExists(req, res) {
 
 async function getPlayerInfo(req, res) {
     try {
-
-        const player = await Player.findOne({ uid: req.body.playerId });
-        if (!player) {
-            return req.response.error('Jugador no encontrado');
-        }
-
-        const allMaps = await getMapsAvailable(player);
-
-        const allDecks = await getDecksAvailable(player);
-
-        const allAvatars = await getAvatarsAvailable(player);
-
-        const avatarActive = await Avatars.findById(player.selected_avatar);
-        const avatarUrl = avatarActive.url
-
-        const newsFound = await News.find().sort({ fecha: -1 })
-
-        const shopItems = {
-            decks: allDecks.filter(deck => deck.belongsTo === 'shop'),
-            avatars: allAvatars.filter(avatar => avatar.belongsTo === 'shop'),
-        }
-
-        const battlePass = await getBattlePassPlayer(player.uid);
-
-        const playerXp = player.player_level_progress;
-
-        const mostUsedDeckId = await getMostUsedDeck(player);
-
-        const lostGames = await getLostGames(player);
-
-        const winnedGames = await getWinnedGames(player);
-
-        let tutorial = false;
-        if (playerXp == 0 && player.player_level == 0) {
-            tutorial = true;
-            await Player.updateOne(
-                { uid: player.uid },
-                { $inc: { player_level_progress: 1 } }
-            );
-        }
-
-        const defualtDeck = await Deck.findById(player.owned_decks[0]);
-
-        const defaultDeckImage = defualtDeck.image;
-
-        req.response.success({
-            playerAvatar: avatarUrl || "no lo encuentra",
-            avatars: allAvatars || [],
-            playerName: player.displayName || 'Jugador Anónimo',
-            playerLevel: player.player_level,
-            playerExperience: player.player_level_progress,
-            rol: player.rol,
-            coins: player.coins || 0,
-            decks: allDecks || [],
-            maps: allMaps || [],
-            news: newsFound || [],
-            shop: shopItems || [],
-            battlePass: battlePass || {},
-            tutorial: { mode: tutorial, defaultDeckImage: defaultDeckImage },
-            favoriteDeck: mostUsedDeckId ? mostUsedDeckId.name : null,
-            wins: winnedGames || 0,
-            loses: lostGames || 0,
-        })
-    } catch (error) {
-        req.response.error(`Error al obtener información del jugador: ${error.message}`);
+    const player = await Player.findOne({ uid: req.body.playerId });
+    if (!player) {
+        return req.response.error('Jugador no encontrado');
     }
+
+    // Lanzar todas las consultas en paralelo
+    const [
+        allMaps,
+        allDecks,
+        allAvatars,
+        avatarActive,
+        newsFound,
+        battlePass,
+        mostUsedDeckId,
+        lostGames,
+        winnedGames,
+        defualtDeck
+    ] = await Promise.all([
+        getMapsAvailable(player),
+        getDecksAvailable(player),
+        getAvatarsAvailable(player),
+        Avatars.findById(player.selected_avatar),
+        News.find().sort({ fecha: -1 }),
+        getBattlePassPlayer(player.uid),
+        getMostUsedDeck(player),
+        getLostGames(player),
+        getWinnedGames(player),
+        Deck.findById(player.owned_decks[0])
+    ]);
+
+    const avatarUrl = avatarActive?.url;
+    const playerXp = player.player_level_progress;
+
+    let tutorial = false;
+    if (playerXp == 0 && player.player_level == 0) {
+        tutorial = true;
+        await Player.updateOne(
+            { uid: player.uid },
+            { $inc: { player_level_progress: 1 } }
+        );
+    }
+
+    const defaultDeckImage = defualtDeck?.image;
+
+    const shopItems = {
+        decks: allDecks.filter(deck => deck.belongsTo === 'shop'),
+        avatars: allAvatars.filter(avatar => avatar.belongsTo === 'shop'),
+    };
+
+    req.response.success({
+        playerAvatar: avatarUrl || "no lo encuentra",
+        avatars: allAvatars || [],
+        playerName: player.displayName || 'Jugador Anónimo',
+        playerLevel: player.player_level,
+        playerExperience: player.player_level_progress,
+        rol: player.rol,
+        coins: player.coins || 0,
+        decks: allDecks || [],
+        maps: allMaps || [],
+        news: newsFound || [],
+        shop: shopItems || [],
+        battlePass: battlePass || {},
+        tutorial: { mode: tutorial, defaultDeckImage: defaultDeckImage },
+        favoriteDeck: mostUsedDeckId ? mostUsedDeckId.name : null,
+        wins: winnedGames || 0,
+        loses: lostGames || 0,
+    });
+} catch (error) {
+    req.response.error(`Error al obtener información del jugador: ${error.message}`);
+}
 }
 
 async function getPlayers(req, res) {
