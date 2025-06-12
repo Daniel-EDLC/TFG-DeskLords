@@ -9,31 +9,27 @@ function CommentsList() {
   const [formData, setFormData] = useState(getEmptyForm());
 
   function getEmptyForm() {
-    return {
-      author: '',
-      title: '',
-      content: ''
-    };
+    return { content: '' };
   }
 
   useEffect(() => {
     fetchComments();
   }, []);
 
-  async function getUserToken() {
-    const user = await new Promise((resolve, reject) => {
+  async function getUserTokenAndUser() {
+    return new Promise((resolve, reject) => {
       const unsubscribe = onAuthStateChanged(auth, (user) => {
         unsubscribe();
         if (user) resolve(user);
         else reject(new Error("Usuario no autenticado"));
       });
     });
-    return user.getIdToken();
   }
 
   async function fetchComments() {
     try {
-      const token = await getUserToken();
+      const user = await getUserTokenAndUser();
+      const token = await user.getIdToken();
       const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/getComments`, {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -48,7 +44,8 @@ function CommentsList() {
 
   async function deleteComment(id) {
     try {
-      const token = await getUserToken();
+      const user = await getUserTokenAndUser();
+      const token = await user.getIdToken();
       const res = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/deleteComment`, {
         method: 'POST',
         headers: {
@@ -70,14 +67,16 @@ function CommentsList() {
     const isEdit = !!editingComment;
 
     try {
-      const token = await getUserToken();
+      const user = await getUserTokenAndUser();
+      const token = await user.getIdToken();
+
       const url = isEdit
-        ? `https://api-meafpnv6bq-ew.a.run.app/api/updateComment` 
+        ? `https://api-meafpnv6bq-ew.a.run.app/api/updateComment`
         : `https://api-meafpnv6bq-ew.a.run.app/api/createComment`;
 
       const payload = isEdit
-        ? { idComment: editingComment._id, data: formData } 
-        : formData;
+        ? { idComment: editingComment._id, data: formData }
+        : { playerId: user.uid, content: formData.content };
 
       const res = await fetch(url, {
         method: isEdit ? 'PUT' : 'POST',
@@ -102,24 +101,23 @@ function CommentsList() {
   function openEdit(comment) {
     setEditingComment(comment);
     setIsCreating(false);
-    setFormData({
-      author: comment.author || '',
-      title: comment.title || '',
-      content: comment.content || ''
-    });
+    setFormData({ content: comment.content || '' });
   }
 
   return (
     <div>
       <h2>Lista de Comentarios</h2>
-      <button onClick={() => { setIsCreating(true); setFormData(getEmptyForm()); setEditingComment(null); }}>
+      <button onClick={() => {
+        setIsCreating(true);
+        setFormData(getEmptyForm());
+        setEditingComment(null);
+      }}>
         + Nuevo Comentario
       </button>
       <table border="1" cellPadding="8" cellSpacing="0">
         <thead>
           <tr>
             <th>Autor</th>
-            <th>Título</th>
             <th>Contenido</th>
             <th>Fecha</th>
             <th>Acciones</th>
@@ -129,7 +127,6 @@ function CommentsList() {
           {comments.map(comment => (
             <tr key={comment._id}>
               <td>{comment.author}</td>
-              <td>{comment.title}</td>
               <td>{comment.content}</td>
               <td>{new Date(comment.date).toLocaleDateString()}</td>
               <td>
@@ -145,24 +142,6 @@ function CommentsList() {
         <div className="modal-overlay">
           <form onSubmit={saveComment}>
             <h3>{editingComment ? 'Editar Comentario' : 'Nuevo Comentario'}</h3>
-
-            <label>Autor:</label>
-            <input
-              type="text"
-              value={formData.author}
-              pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
-              onChange={e => setFormData({ ...formData, author: e.target.value })}
-              required
-              title="Solo letras y espacios"
-            />
-
-            <label>Título:</label>
-            <input
-              type="text"
-              value={formData.title}
-              onChange={e => setFormData({ ...formData, title: e.target.value })}
-              required
-            />
 
             <label>Contenido:</label>
             <textarea
@@ -184,7 +163,10 @@ function CommentsList() {
 
             <br /><br />
             <button type="submit">Guardar</button>
-            <button type="button" onClick={() => { setEditingComment(null); setIsCreating(false); }}>
+            <button type="button" onClick={() => {
+              setEditingComment(null);
+              setIsCreating(false);
+            }}>
               Cancelar
             </button>
           </form>
