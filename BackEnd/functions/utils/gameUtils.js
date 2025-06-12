@@ -20,6 +20,13 @@ function generateWinResponse(game, assignments, gameRewards, battlePassRewards) 
                 pending_deck: game.rivalPendingDeck.length,
                 health: game.rivalHp,
                 mana: game.rivalMana
+            },
+            forEnd: {
+                gameId: game._id.toString(),
+                gameOver: true,
+                winner: game.winner,
+                rewards: gameRewards || [],
+                battlePassRewards: battlePassRewards || [],
             }
         },
         action2: {
@@ -64,12 +71,7 @@ function generateWinResponse(game, assignments, gameRewards, battlePassRewards) 
                 health: game.playerHp,
                 mana: game.playerMana
             }
-        },
-        gameId: game._id.toString(),
-        gameOver: true,
-        winner: game.winner,
-        rewards: gameRewards || [],
-        battlePassRewards: battlePassRewards || [],
+        }
     }
 }
 
