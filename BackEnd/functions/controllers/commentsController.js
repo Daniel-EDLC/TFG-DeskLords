@@ -41,9 +41,15 @@ async function getCommentsLimited(req, res) {
     const limit = 10;
     const skip = (page - 1) * limit;
 
+    // Filtro opcional por autor
+    const filter = {};
+    if (req.query.author) {
+        filter.author = req.query.author;
+    }
+
     try {
-        const total = await Comment.countDocuments({});
-        const comments = await Comment.find({})
+        const total = await Comment.countDocuments(filter);
+        const comments = await Comment.find(filter)
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);

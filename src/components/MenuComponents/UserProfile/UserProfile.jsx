@@ -1,11 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./UserProfile.css";
-import { setAvatarPrincipal } from "../../../services/Actions/MenuActions";
+import {
+  setAvatarPrincipal,
+  switchName,
+} from "../../../services/Actions/MenuActions";
 import { signOut } from "firebase/auth";
 import { useMediaQuery } from "@mui/material";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 
+import EditIcon from "@mui/icons-material/Edit"; // ya viene con MUI
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
+
 import { auth } from "../../../../firebaseConfig";
+import { onAuthStateChanged } from "firebase/auth";
+
 import { useNavigate } from "react-router-dom";
 
 const UserProfile = ({
@@ -13,8 +22,8 @@ const UserProfile = ({
   avatars = [],
   name,
   level,
+  battlePassLvl,
   experience,
-  email,
   rol,
   partidasGanadas,
   partidasPerdidas,
@@ -22,9 +31,32 @@ const UserProfile = ({
   userId,
   onAvatarChange,
 }) => {
+  const [userEmail, setUserEmail] = useState("");
+
+  useEffect(() => {
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+      setUserEmail(currentUser.email);
+    }
+  }, []);
+
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editedName, setEditedName] = useState(name);
+  const [hoveredName, setHoveredName] = useState(false);
+
+  const handleGuardarNombre = async () => {
+    try {
+      await switchName(editedName);
+      alert("Nombre actualizado correctamente");
+      setIsEditingName(false);
+    } catch (error) {
+      alert("Error al actualizar el nombre", error);
+    }
+  };
+
   const [modalAbierto, setModalAbierto] = useState(false);
 
-  const experienciaPorNivel = 100;
+  const experienciaPorNivel = 1000;
   const progreso = Math.min(
     ((experience % experienciaPorNivel) / experienciaPorNivel) * 100,
     100
@@ -37,8 +69,6 @@ const UserProfile = ({
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width:435px)");
 
-
-
   const handleSeleccionarAvatar = async (avatarId) => {
     try {
       await setAvatarPrincipal(userId, avatarId);
@@ -46,28 +76,63 @@ const UserProfile = ({
       setModalAbierto(false);
       if (onAvatarChange) onAvatarChange(); // recargar datos si lo deseas
     } catch (error) {
-      alert("Error al cambiar el avatar");
+      alert("Error al cambiar el avatar", error);
     }
   };
-  
- console.log("isMobile", isMobile);
+
+  console.log("isMobile", isMobile);
 
   return (
-      <div className="profile-wrapper">
-        {/* Caja 1: Información personal */}
-        <div className="profile-box">
-          <div className="profile-header">
-            <img
-              src={avatar}
-              alt="avatar"
-              className="profile-avatar"
-              onClick={() => setModalAbierto(true)}
-              style={{ cursor: "pointer" }}
+    <div className="profile-wrapper">
+      {/* Caja 1: Información personal */}
+      <div className="profile-box">
+        <div className="profile-header">
+          <img
+            src={avatar}
+            alt="avatar"
+            className="profile-avatar"
+            onClick={() => setModalAbierto(true)}
+            style={{ cursor: "pointer" }}
           />
           <div className="profile-info">
-            <h2 className="profile-name">{name}</h2>
+            <div
+              className="profile-username-wrapper"
+            >
+              {isEditingName ? (
+                <div className="profile-username-edit">
+                  <input
+                    value={editedName}
+                    onChange={(e) => setEditedName(e.target.value)}
+                    className="profile-username-input"
+                  />
+                  <div>
+                  <CheckIcon
+                    onClick={handleGuardarNombre}
+                    className="profile-username-icon confirm"
+                  />
+                  <CloseIcon
+                    onClick={() => {
+                      setIsEditingName(false);
+                      setEditedName(name);
+                    }}
+                    className="profile-username-icon cancel"
+                  />
+                  </div>
+                </div>
+              ) : (
+                <h2 className="profile-username">
+                  {editedName}
+                    <EditIcon
+                      className="profile-username-icon"
+                      onClick={() => setIsEditingName(true)}
+                    />
+                  
+                </h2>
+              )}
+            </div>
+
             <p className="profile-role">Rol: {rol}</p>
-            <p className="profile-email">{email}</p>
+            <p className="profile-email">{userEmail}</p>
           </div>
         </div>
         <div className="profile-favorite-deck">
@@ -79,7 +144,10 @@ const UserProfile = ({
       {/* Caja 2: Stats */}
       <div className="profile-box">
         <div className="profile-level">
-          <p>Nivel {level}</p>
+          <div className="profile-levels">
+            <p>Nivel de cuenta {level}</p>
+            <p>Nivel BP actual {battlePassLvl}</p>
+          </div>
           <div className="progress-bar">
             <div
               className="progress-fill"
@@ -107,14 +175,14 @@ const UserProfile = ({
         </div>
       </div>
 
-        {isMobile && (
-          <button
-            className="logout-btn-mobile"
-            onClick={() => signOut(auth) && navigate("/")}
-          >
-            salir
-          </button>
-        )}
+      {isMobile && (
+        <button
+          className="logout-btn-mobile"
+          onClick={() => signOut(auth) && navigate("/")}
+        >
+          salir
+        </button>
+      )}
 
       {/* Modal de selección de avatar */}
       {modalAbierto && (
@@ -145,7 +213,6 @@ const UserProfile = ({
             >
               Cerrar
             </button>
-
           </div>
         </div>
       )}

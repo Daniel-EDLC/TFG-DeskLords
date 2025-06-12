@@ -12,6 +12,8 @@ import CollectionsIcon from "@mui/icons-material/Collections";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import HomeIcon from "@mui/icons-material/Home";
 import ContactMailIcon from "@mui/icons-material/ContactMail";
+	import ForumIcon from '@mui/icons-material/Forum';
+  	import GroupIcon from '@mui/icons-material/Group';
 
 
 import ActualMap from "../../components/MenuComponents/ActualMap/ActualMap";
@@ -22,7 +24,7 @@ import News from "../../components/MenuComponents/News/News";
 import Shop from "../../components/MenuComponents/Shop/Shop";
 import Missions from "../../components/MenuComponents/Missions/Missions";
 import BattlePass from "../../components/MenuComponents/BattlePass/BattlePass";
-import ContactUs from "../../components/MenuComponents/ContactUs/ContactUs";
+import SeeSocial from "../../components/MenuComponents/SeeSocial/SeeSocial";
 import AdminDashboard from "../../components/MenuComponents/administracion/AdminDashboard";
 
 import {
@@ -58,6 +60,18 @@ function Menu() {
 
   const [tutorialCompletado, setTutorialCompletado] = useState(false);
 
+  useEffect(() => {
+    const cargar = async () => {
+      try {
+        const resultado = await cargaInformacion();
+        setData(resultado);
+      } catch (error) {
+        console.error("Error al cargar datos:", error);
+      }
+    };
+    cargar();
+  }, []);
+
 
   useEffect(() => {
     if (tutorialCompletado) {
@@ -78,17 +92,7 @@ function Menu() {
     }
   }, [tutorialCompletado, data]);
 
-  useEffect(() => {
-    const cargar = async () => {
-      try {
-        const resultado = await cargaInformacion();
-        setData(resultado);
-      } catch (error) {
-        console.error("Error al cargar datos:", error);
-      }
-    };
-    cargar();
-  }, []);
+
 
   useEffect(() => {
     if (!data) return;
@@ -140,7 +144,7 @@ const botones = [
   { id: "coleccion", icon: <CollectionsIcon />, texto: "Colección" },
   { id: "perfil", icon: <AccountCircleIcon />, texto: "Perfil" },
   { id: "batalla", icon: <SportsKabaddiIcon />, texto: "Batalla" },
-  { id: "contacto", icon: <ContactMailIcon />, texto: "Contacto" },
+  { id: "see-social", icon: <GroupIcon />, texto: "Social" },
 ];
 
 if (data.rol === "admin") {
@@ -211,6 +215,7 @@ if (data.rol === "admin") {
               nickName={data.nickName}
               name={data.playerName}
               level={data.playerLevel}
+              battlePassLvl={data.battlePass.actualLevel}
               experience={data.playerExperience}
               coins={data.coins}
               email={data.playerEmail || "No disponible"}
@@ -223,8 +228,8 @@ if (data.rol === "admin") {
         );
       case "gestionBBDD":
         return <AdminDashboard />;
-      case "contacto":
-        return <ContactUs />;
+      case "see-social":
+        return <SeeSocial />;
       case "batalla":
         return (
           <div className="maps-container">

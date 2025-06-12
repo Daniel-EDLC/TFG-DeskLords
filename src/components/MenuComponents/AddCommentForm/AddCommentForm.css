@@ -1,4 +1,4 @@
-.contacto-container {
+.see-social-container {
   max-width: 600px;
   margin: 3.5vh auto;
   padding: 2rem;
@@ -11,21 +11,21 @@
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
 }
 
-.contacto-container h4 {
+.see-social-container h4 {
   font-size: 1.8rem;
   margin-bottom: 1rem;
   color: #ffffff;
 }
 
-.contacto-info {
+.see-social-info {
   margin-bottom: 1rem;
 }
 
-.contacto-info strong {
+.see-social-info strong {
   color: #ccc;
 }
 
-.contacto-textarea {
+.see-social-textarea {
   width: 100%;
   padding: 1rem;
   border-radius: 8px;
@@ -38,7 +38,7 @@
   margin-top: 1rem;
 }
 
-.contacto-button {
+.see-social-button {
   width: 100%;
   margin-top: 1rem;
   background-color: #8a821a;
@@ -51,14 +51,14 @@
   transition: background-color 0.3s ease;
 }
 
-.contacto-button:hover {
+.see-social-button:hover {
   background-color: #c9c611;
   color: black;
 }
 
 
 @media (max-width: 435px) {
-  .contacto-container {
+  .see-social-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -69,24 +69,24 @@
     margin: 2rem;
   }
 
-  .contacto-container h4 {
+  .see-social-container h4 {
     font-size: 1rem;
     text-align: center;
   }
 
-  .contacto-info {
+  .see-social-info {
     font-size: 0.8rem;
     text-align: center;
   }
 
-  .contacto-textarea {
+  .see-social-textarea {
     margin-top: 0%;
     font-size: 0.8rem;
     width: 100%;
     padding: 0.8rem;
   }
 
-  .contacto-button {
+  .see-social-button {
     width: 100%;
     padding: 0.75rem;
     font-size: 0.8rem;

@@ -16,6 +16,14 @@
   ); */
 }
 
+
+.switchToAttack{
+  border-radius: 8px !important;
+  background-color: rgba(44, 44, 44, 0.966) !important;
+  border: 2px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05) !important;
+  color: rgb(211, 210, 210) !important;
+}
 .player-table-container:hover {
   z-index: 50;
 }
