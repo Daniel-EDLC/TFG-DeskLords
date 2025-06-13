@@ -1,5 +1,6 @@
 const Game = require('../models/Game');
 const Player = require('../models/Player');
+const Map = require('../models/Map');
 const mongoose = require('mongoose');
 const { updateBattlePass } = require('../controllers/battlePassController');
 
@@ -239,20 +240,20 @@ async function checkForGameOver(game) {
             $pull: { locked_decks: game.rivalDeck._id }
           }
         );
-        rewards.unlockedDeck = game.rivalDeck._id;
+        rewards.unlockedDeck = game.rivalDeck;
       }
 
-      // añadir el siguiente mapa de locked_maps al jugador
-      if (player.locked_maps && player.locked_maps.length > 0) {
-        const nextMapId = player.locked_maps[0];
+      // añadir el siguiente mapa de maps_locked al jugador
+      if (player.maps_locked && player.maps_locked.length > 0) {
+        const nextMapId = player.maps_locked[0];
         await Player.updateOne(
           { uid: game.playerId },
           {
-            $addToSet: { owned_maps: nextMapId },
-            $pull: { locked_maps: nextMapId }
+            $addToSet: { maps_unlocked: nextMapId },
+            $pull: { maps_locked: nextMapId }
           }
         );
-        rewards.unlockedMap = nextMapId;
+        rewards.unlockedMap = await Map.findById(nextMapId);
       }
     }
 

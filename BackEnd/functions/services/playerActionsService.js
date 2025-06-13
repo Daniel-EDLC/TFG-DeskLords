@@ -283,11 +283,13 @@ async function defend(req, res) {
           health: finishedGame.rivalHp,
           mana: finishedGame.rivalMana
         },
-        gameId: gameId,
-        gameOver: true,
-        winner: finishedGame.winner,
-        rewards: resultWinner.rewards || [],
-        battlePassRewards: resultWinner.battlePass || [],
+        forEnd: {
+          gameId: gameId,
+          gameOver: true,
+          winner: finishedGame.winner,
+          rewards: resultWinner.rewards || [],
+          battlePassRewards: resultWinner.battlePass || [],
+        }
       });
     }
 
