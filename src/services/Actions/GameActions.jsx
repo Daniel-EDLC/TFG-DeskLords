@@ -432,66 +432,71 @@ export async function endTurn(
     const action2 = data?.data?.action2;
     const action3 = data?.data?.action3;
 
-    if (battle && action1 && action2 && action3) {
+   if (action1) {
+  console.log("buscame1", action1);
+  setGameData((prev) => ({
+    ...prev,
+    turn: { ...prev.turn, ...action1.turn },
+    user: { ...prev.user, ...action1.user },
+    rival: { ...prev.rival, ...action1.rival },
+    battle_result: action1.battle_result || [],
+    ...(action1.forEnd !== undefined && { forEnd: action1.forEnd }),
+  }));
+
+  if (!action1.forEnd && action2 && action3) {
+    setTimeout(() => {
       setGameData((prev) => ({
         ...prev,
-        turn: { ...prev.turn, ...action1.turn },
-        user: { ...prev.user, ...action1.user },
-        rival: { ...prev.rival, ...action1.rival },
-        battle_result: action1.battle_result || [],
+        usedCards: Array.isArray(action2.usedCards)
+          ? [...action2.usedCards]
+          : { ...action2.usedCards },
+        turn: { ...prev.turn, ...action2.turn },
+        user: { ...prev.user, ...action2.user },
+        rival: { ...prev.rival, ...action2.rival },
       }));
+    }, 5000);
 
-      setTimeout(() => {
-        setGameData((prev) => ({
+    setTimeout(() => {
+      setGameData((prev) => {
+        const newGameData = {
           ...prev,
-          usedCards: Array.isArray(action2.usedCards)
-            ? [...action2.usedCards]
-            : { ...action2.usedCards },
-          turn: { ...prev.turn, ...action2.turn },
-          user: { ...prev.user, ...action2.user },
-          rival: { ...prev.rival, ...action2.rival },
-        }));
-      }, 5000);
+          turn: { ...prev.turn, ...action3.turn },
+          user: { ...prev.user, ...action3.user },
+          rival: { ...prev.rival, ...action3.rival },
+        };
 
-      setTimeout(() => {
-        setGameData((prev) => {
-          const newGameData = {
-            ...prev,
-            turn: { ...prev.turn, ...action3.turn },
-            user: { ...prev.user, ...action3.user },
-            rival: { ...prev.rival, ...action3.rival },
-          };
+        const userTable = newGameData.user.table;
+        const rivalTable = newGameData.rival.table;
 
-          const userTable = newGameData.user.table;
-          const rivalTable = newGameData.rival.table;
+        const hayAtacantes = rivalTable?.some(
+          (carta) => carta.position === "attack"
+        );
 
-          const hayAtacantes = rivalTable?.some(
-            (carta) => carta.position === "attack"
-          );
+        let autoDefend = false;
+        let mensaje = "";
 
-          let autoDefend = false;
-          let mensaje = "";
+        if ((!userTable || userTable.length === 0) && hayAtacantes) {
+          mensaje = "Daño automático, no hay criaturas en mesa";
+          autoDefend = true;
+        } else if (!hayAtacantes) {
+          mensaje = "no se han declarado atacantes";
+          autoDefend = true;
+        }
 
-          if ((!userTable || userTable.length === 0) && hayAtacantes) {
-            mensaje = "Daño automático, no hay criaturas en mesa";
-            autoDefend = true;
-          } else if (!hayAtacantes) {
-            mensaje = "no se han declarado atacantes";
-            autoDefend = true;
-          }
+        if (autoDefend && !defenseCalled) {
+          defenseCalled = true;
+          setTimeout(() => {
+            setFloatingMessage(mensaje);
+            defense(setGameData, newGameData);
+          }, 2000);
+        }
 
-          if (autoDefend && !defenseCalled) {
-            defenseCalled = true;
-            setTimeout(() => {
-              setFloatingMessage(mensaje);
-              defense(setGameData, newGameData);
-            }, 2000);
-          }
-
-          return newGameData;
-        });
-      }, 10000);
-    } else if (action2 && action3) {
+        return newGameData;
+      });
+    }, 10000);
+  }
+}
+ else if (action2 && action3) {
       setGameData((prev) => ({
         ...prev,
         usedCards: Array.isArray(action2.usedCards)
@@ -674,6 +679,7 @@ export async function defense(setGameData, gameData) {
         ...prev.rival,
         ...data.data.rival,
       },
+      ...(data.data.forEnd !== undefined && { forEnd: data.data.forEnd }),
     }));
   } catch (error) {
     console.error("Error real al enviar defensa:", error);

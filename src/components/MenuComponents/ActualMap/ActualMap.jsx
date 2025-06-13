@@ -27,7 +27,7 @@ const ActualMap = ({ mapa, onPlay, decks, selectedDeckId, onSelectDeck }) => {
           : {}
       }
     >
-      <label className="tittle">VS: {mapa.name}</label>
+      <label className="tittle">Selecciona tu deck</label>
       <div className={`mapa-content ${isMobile ? "vertical" : ""}`}>
         {!isMobile && selectedDeck?.image && (
           <img
@@ -38,10 +38,10 @@ const ActualMap = ({ mapa, onPlay, decks, selectedDeckId, onSelectDeck }) => {
         )}
 
         <div className="mapa-info">
-          <p>
-            {mapa.descripcion ||
-              "Descripción del mapa próximamente disponible."}
-          </p>
+          {/* <p>
+            {selectedDeck.description ||
+              "Descripción del deck próximamente disponible."}
+          </p> */}
 
           <div className="deck-select">
             <div className="deck-selector">
