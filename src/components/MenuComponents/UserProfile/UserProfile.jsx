@@ -168,10 +168,12 @@ const UserProfile = ({
           >
             <span>{victoryPercent}%</span>
           </div>
+          
           <div className="circular-legend">
             <p>Ganadas: {partidasGanadas}</p>
             <p>Perdidas: {partidasPerdidas}</p>
           </div>
+          
         </div>
       </div>
 

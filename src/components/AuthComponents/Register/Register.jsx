@@ -18,20 +18,24 @@ export default function Register({ onSwitch, googleData }) {
 
   //Funcion para validar los campos
   const validarCampos = () => {
-  // Validar que todos los campos estén rellenos
   if (!username || !email || !password || !confirmPassword) {
     setError('Todos los campos son obligatorios');
     return false;
   }
 
-  // Solo validar nombre y apellidos si NO es usuario de Google
+  // Validar nombre de usuario
+  const patronUsername = /^[a-zA-Z0-9_]{1,12}$/;
+  if (!patronUsername.test(username)) {
+    setError('El nombre de usuario solo puede contener letras, números y guión bajo, y máximo 12 caracteres');
+    return false;
+  }
+  //Si no se registra por google, estos campos no se rellenan solos
   if (!isGoogleUser) {
     if (!name || !surnames) {
       setError('El nombre y apellidos son obligatorios');
       return false;
     }
 
-    // Validar que el nombre y apellidos no tengan números ni caracteres especiales
     const patronNombre = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s'-]{2,}$/;
     if (!patronNombre.test(name)) {
       setError('El nombre no debe contener números ni caracteres especiales');
@@ -45,14 +49,14 @@ export default function Register({ onSwitch, googleData }) {
     }
   }
 
-  // Validar el formato del correo
-  const patronEmail = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+  // Validar formato de email (genérico)
+  const patronEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!patronEmail.test(email)) {
-    setError('El correo debe ser una dirección válida de @gmail.com');
+    setError('El correo debe ser una dirección válida');
     return false;
   }
 
-  // Validar que las contraseñas coincidan
+  // Validar contraseñas
   if (password !== confirmPassword) {
     setError('Las contraseñas no coinciden');
     return false;
@@ -60,6 +64,7 @@ export default function Register({ onSwitch, googleData }) {
 
   return true;
 };
+
 
 
   //Registrarse normal

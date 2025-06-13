@@ -4,6 +4,9 @@ html, body {
   background-size: cover;
   background-position: center;
   background-attachment: fixed; /* opcional: para que no se mueva al hacer scroll */
+  
+  /* height: 100%;
+  overflow: auto; */
 }
 
 .loading-container {
