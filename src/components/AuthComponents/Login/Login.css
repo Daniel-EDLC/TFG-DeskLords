@@ -72,3 +72,14 @@
 .auth-switch button:hover {
   color: white;
 }
+
+
+@media (max-width: 435px) {
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: left;
+}
+}

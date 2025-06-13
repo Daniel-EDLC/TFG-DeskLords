@@ -75,3 +75,13 @@
 input:disabled {
   cursor: not-allowed;
 }
+
+@media (max-width: 435px) {
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: left;
+}
+}
