@@ -229,14 +229,12 @@ export const setAvatarPrincipal = async (avatarId, setData) => {
       throw new Error("No se pudo actualizar el avatar.");
     }
 
-    const newAvatarUrl = await response.json();
-
+    const newAvatar = await response.json();
     setData((prev) => ({
       ...prev,
-      playerAvatar: newAvatarUrl,
+      playerAvatar: newAvatar.data.playerAvatar,
     }));
 
-    return newAvatarUrl;
   } catch (error) {
     console.error("Error al actualizar avatar:", error);
     throw error;

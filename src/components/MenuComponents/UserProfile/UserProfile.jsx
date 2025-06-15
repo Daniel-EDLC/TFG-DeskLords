@@ -50,12 +50,15 @@ const UserProfile = ({
     }
   };
 
-  const handleSeleccionarAvatar = (avatarId) => {
-    if (onChangeAvatar) {
-      onChangeAvatar(avatarId);
-    }
-    setModalAbierto(false);
-  };
+const handleSeleccionarAvatar = async (avatarId) => {
+  if (onChangeAvatar) {
+    await onChangeAvatar(avatarId);
+  }
+  setModalAbierto(false); 
+};
+
+
+
 
   const [modalAbierto, setModalAbierto] = useState(false);
 
@@ -71,8 +74,6 @@ const UserProfile = ({
   const avatarsDisponibles = avatars.filter((a) => a.available);
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width:435px)");
-
-  console.log("isMobile", isMobile);
 
   return (
     <div className="profile-wrapper">

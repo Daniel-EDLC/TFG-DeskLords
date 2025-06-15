@@ -21,19 +21,9 @@ function Announcement({ data, mode, onFinish, forEnd }) {
     return (
       <div className={`announcement-overlay ${stage}`}>
         <div className="vs-container">
-          <div className="player-info">
-            <img
-              src={
-                data.user.playerAvatar ||
-                "https://img.freepik.com/fotos-premium/angel-cara-angel-alas_901383-148607.jpg"
-              }
-              alt={data.user.playerDisplayName}
-              className="avatar"
-            />
-            <span className="name">{data.user.playerDisplayName || "Player"}</span>
-          </div>
-          <div className="vs-text">VS</div>
-          <div className="player-info">
+
+
+ <div className="player-info rival">
             <img
               src={
                 data.rival.rivalAvatar ||
@@ -44,6 +34,22 @@ function Announcement({ data, mode, onFinish, forEnd }) {
             />
             <span className="name">{data.rival.rivalDisplayName || "Rival"}</span>
           </div>
+
+<div className="vs-img"><img src="Announcement/vs.png" alt=""  className="vs-img"/></div>
+
+          <div className="player-info user">
+            <img
+              src={
+                data.user.playerAvatar ||
+                "https://img.freepik.com/fotos-premium/angel-cara-angel-alas_901383-148607.jpg"
+              }
+              alt={data.user.playerDisplayName}
+              className="avatar"
+            />
+            <span className="name">{data.user.playerDisplayName || "Player"}</span>
+          </div>
+          
+         
         </div>
       </div>
     );

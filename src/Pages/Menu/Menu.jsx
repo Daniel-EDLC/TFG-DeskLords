@@ -60,6 +60,8 @@ function Menu() {
   const [selectedDeckId, setSelectedDeckId] = useState("");
   const [modalAbierto, setModalAbierto] = useState(false);
 
+  
+
   // const [isHovered, setIsHovered] = useState(false);
 
   const [tutorialCompletado, setTutorialCompletado] = useState(false);
@@ -123,10 +125,8 @@ function Menu() {
 const handleNameChange = async (newName) => {
   try {
     await switchName(newName, setData);
-    alert("Nombre actualizado correctamente");
   } catch (error) {
-    alert("Error al actualizar el nombre");
-    console.error(error);
+    console.error("Error al cambiar el nombre desde Menu:", error);
   }
 };
 
@@ -134,8 +134,7 @@ const handleNameChange = async (newName) => {
 
 const handleAvatarChange = async (avatarId) => {
   try {
-    await setAvatarPrincipal(avatarId, setData); 
-    alert("Avatar actualizado correctamente");
+    await setAvatarPrincipal(avatarId, setData);
   } catch (error) {
     console.error("Error al cambiar el avatar desde Menu:", error);
   }
@@ -232,6 +231,7 @@ if (data.rol === "admin") {
       case "perfil":
         return (
           <div className="perfil-container">
+            
             <UserProfile
               className="user-profile"
               avatar={data.playerAvatar}
