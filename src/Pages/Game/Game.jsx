@@ -185,6 +185,7 @@ useEffect(() => {
       };
     }
   }, [floatingMessage]);
+  
 
   const handleRivalCardClick = (card) => {
     if (card.position !== "attack") {
@@ -345,13 +346,17 @@ useEffect(() => {
     );
   }
   return (
-    <div className={`app-container`}>
+    <div
+  className="app-container"
+  style={{ "--background-url": `url(${gameData.backgroundImage})` }}
+>
+
       {/* ${highlightBg ? "highlight-bg" : ""} */}
       <RivalProfile
         className="rival-profile"
-        name={gameData.rival.name || "Rival"}
+        name={gameData.rival.rivalDisplayName || "Rival"}
         imageUrl={
-          gameData.rival.avatar ||
+          gameData.rival.rivalAvatar ||
           "https://m.media-amazon.com/images/I/51hPfLUZE0L._AC_UL1002_.jpg"
         }
         life={gameData.rival.health}
@@ -419,9 +424,9 @@ useEffect(() => {
 
       <PlayerProfile
         className="player-profile"
-        name={gameData.user.name || "Player"}
+        name={gameData.user.playerDisplayName || "Player"}
         imageUrl={
-          gameData.user.avatar ||
+          gameData.user.playerAvatar ||
           "https://img.freepik.com/fotos-premium/angel-cara-angel-alas_901383-148607.jpg"
         }
         life={gameData.user.health}

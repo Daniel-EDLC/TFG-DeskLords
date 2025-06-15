@@ -199,15 +199,18 @@ export const buyProduct = async (producto) => {
   }
 };
 
-export const setAvatarPrincipal = async (avatarId) => {
+
+
+export const setAvatarPrincipal = async (avatarId, setData) => {
   try {
-   const user = await new Promise((resolve, reject) => {
+    const user = await new Promise((resolve, reject) => {
       const unsubscribe = onAuthStateChanged(auth, (user) => {
         unsubscribe();
         if (user) resolve(user);
         else reject(new Error("Usuario no autenticado"));
       });
     });
+
     const userToken = await user.getIdToken();
 
     const response = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/changeAvatar`, {
@@ -216,7 +219,7 @@ export const setAvatarPrincipal = async (avatarId) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${userToken}`,
       },
-       body: JSON.stringify({
+      body: JSON.stringify({
         playerId: user.uid,
         avatarId: avatarId,
       }),
@@ -226,12 +229,54 @@ export const setAvatarPrincipal = async (avatarId) => {
       throw new Error("No se pudo actualizar el avatar.");
     }
 
-    return await response.json();
+    const newAvatarUrl = await response.json();
+
+    setData((prev) => ({
+      ...prev,
+      playerAvatar: newAvatarUrl,
+    }));
+
+    return newAvatarUrl;
   } catch (error) {
     console.error("Error al actualizar avatar:", error);
     throw error;
   }
 };
+
+
+
+export const switchName = async (newName, setData) => {
+  const user = await new Promise((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      unsubscribe();
+      if (user) resolve(user);
+      else reject(new Error("Usuario no autenticado"));
+    });
+  });
+  const userToken = await user.getIdToken();
+
+  const response = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/updatePlayer`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${userToken}`,
+    },
+    body: JSON.stringify({
+      idPlayer: user.uid,
+      data: {displayName: newName},
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Error al actualizar el nombre");
+  }
+
+  setData((prev) => ({
+    ...prev,
+    playerName: newName,
+  }));
+};
+
 
 
 export async function getComments(page = 1, author) {
@@ -292,34 +337,6 @@ export async function AddComment(comment) {
 }
 
 
-// services/Actions/MenuActions.js
-export const switchName = async ( newName ) => {
 
-  const user = await new Promise((resolve, reject) => {
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
-        unsubscribe();
-        if (user) resolve(user);
-        else reject(new Error("Usuario no autenticado"));
-      });
-    });
-    const userToken = await user.getIdToken();
 
-  const response = await fetch(`https://api-meafpnv6bq-ew.a.run.app/api/updatePlayer`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-         Authorization: `Bearer ${userToken}`,
-    },
-     body: JSON.stringify({
-        playerId: user.uid,
-        content: newName,
-      }),
-  });
-
-  if (!response.ok) {
-    throw new Error("Error al actualizar el nombre");
-  }
-
-  return response.json();
-};
 

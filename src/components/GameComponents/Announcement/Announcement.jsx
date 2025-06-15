@@ -24,25 +24,25 @@ function Announcement({ data, mode, onFinish, forEnd }) {
           <div className="player-info">
             <img
               src={
-                data.user.avatar ||
+                data.user.playerAvatar ||
                 "https://img.freepik.com/fotos-premium/angel-cara-angel-alas_901383-148607.jpg"
               }
-              alt={data.user.name}
+              alt={data.user.playerDisplayName}
               className="avatar"
             />
-            <span className="name">{data.user.name || "Player"}</span>
+            <span className="name">{data.user.playerDisplayName || "Player"}</span>
           </div>
           <div className="vs-text">VS</div>
           <div className="player-info">
             <img
               src={
-                data.rival.avatar ||
+                data.rival.rivalAvatar ||
                 "https://m.media-amazon.com/images/I/51hPfLUZE0L._AC_UL1002_.jpg"
               }
-              alt={data.rival.name}
+              alt={data.rival.rivalDisplayName}
               className="avatar"
             />
-            <span className="name">{data.rival.name || "Rival"}</span>
+            <span className="name">{data.rival.rivalDisplayName || "Rival"}</span>
           </div>
         </div>
       </div>
