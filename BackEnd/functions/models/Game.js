@@ -7,8 +7,12 @@ const gameSchema = new mongoose.Schema({
     startTime: {type: Date, required: true, default: Date.now, immutable: true},
     endTime: {type: Date, required: false},
     playerId: {type: String, required: true},
+    playerAvatar: {type: String, required: true},
+    playerDisplayName: {type: String, required: true},
     playerHp: {type: Number, required: true, default: 100},
-    rivalHp: {type: Number, required: true, default: 100},
+    rivalAvatar: {type: String, required: true},
+    rivalDisplayName: {type: String, required: true},
+    rivalHp: {type: Number, required: true, default: 1},
     currentTurn: {type: Number, required: true, default: 1},
     winner: {type: String, required: false, default: null},
     playerDeck: {type: deckSchema, required: false},
@@ -24,9 +28,8 @@ const gameSchema = new mongoose.Schema({
     rivalPendingDeck: {type: [cardSchema], required: false},
     rivalMana: {type: Number, required: true, default: 1},
     mapId: {type: String, required: true},
+    mapBackgroundImage: {type: String, required: false},
     manaPerTurn: {type: Number, required: true, default: 2}
-    // turnTimeLimit: {type: Number, required: true}, PODEMOS LLEGAR A AÑADIRLO
-    // gameTimeLimit: {type: Number, required: true}, PODEMOS LLEGAR A AÑADIRLO
 })
 
 const Game = mongoose.model('Game', gameSchema);

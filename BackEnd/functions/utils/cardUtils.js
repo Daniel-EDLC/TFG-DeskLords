@@ -12,6 +12,8 @@ async function sendUsedCardResponse(gameId, usedCard, req) {
       phase: "hand"
     },
     user: {
+      playerAvatar: updatedGame.playerAvatar,
+      playerDisplayName: updatedGame.playerDisplayName,
       hand: updatedGame.playerHand,
       pending_deck: updatedGame.playerPendingDeck.length,
       table: updatedGame.playerTable,
@@ -19,6 +21,8 @@ async function sendUsedCardResponse(gameId, usedCard, req) {
       mana: updatedGame.playerMana
     },
     rival: {
+      rivalAvatar: updatedGame.rivalAvatar,
+      rivalDisplayName: updatedGame.rivalDisplayName,
       hand: updatedGame.rivalHand.length,
       table: updatedGame.rivalTable,
       pending_deck: updatedGame.rivalPendingDeck.length,

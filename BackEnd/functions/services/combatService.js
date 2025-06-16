@@ -14,7 +14,6 @@ function chooseDefenders(attackingCards, rivalTable) {
       }
       return true;
     });
-    console.log(`\n\n\n\n\nAtacante: ${attacker._id}, defensores válidos: ${validDefenders.map(d => d._id)}\n\n\n\n`);
 
     if (validDefenders.length === 0) {
       assignments.push({ attacker, defender: "rival" });
@@ -59,7 +58,9 @@ async function resolverCombate({ gameId, assignments, isAI }) {
     const defenderTableArr = isAI ? playerTable : rivalTable;
 
     const attackerId = assignment.attacker._id ? assignment.attacker._id.toString() : assignment.attacker.toString();
-    const defenderId = assignment.defender && assignment.defender._id ? assignment.defender._id.toString() : assignment.defender?.toString();
+    const defenderId = assignment.defender && assignment.defender._id
+                       ? assignment.defender._id.toString()
+                       : assignment.defender?.toString();
 
     const isDirectAttack = assignment.defender === "player" || assignment.defender === "rival";
 

@@ -21,9 +21,6 @@ async function useCard(req, res) {
       return req.response.error(`Error al eliminar cartas muertas: ${error.message}`);
     }
 
-    // const updatedGame = await Game.findById(gameId);
-    // if (updatedGame.playerTable.length === 5) return req.response.error('No se pueden jugar más cartas en la mesa del jugador');
-
     const usedCard = game.playerHand.find(card => card._id.toString() === cardId);
     const targetedCard = [...game.playerTable, ...game.rivalTable]
       .find(card => card._id.toString() === target?.id);
@@ -103,10 +100,14 @@ async function attack(req, res) {
         defender: a.defender === "player" ? "player" : a.defender._id,
       })),
       user: {
+        playerAvatar: updatedGameResponse1.playerAvatar,
+        playerDisplayName: updatedGameResponse1.playerDisplayName,
         table: updatedGameResponse1.playerTable,
         health: updatedGameResponse1.playerHp,
       },
       rival: {
+        rivalAvatar: updatedGameResponse1.rivalAvatar,
+        rivalDisplayName: updatedGameResponse1.rivalDisplayName,
         hand: updatedGameResponse1.rivalHand.length,
         table: updatedGameResponse1.rivalTable,
         pending_deck: updatedGameResponse1.rivalPendingDeck.length,
@@ -150,6 +151,8 @@ async function attack(req, res) {
         phase: "hand"
       },
       user: {
+        playerAvatar: updatedGameResponse2.playerAvatar,
+        playerDisplayName: updatedGameResponse2.playerDisplayName,
         hand: updatedGameResponse2.playerHand,
         table: updatedGameResponse2.playerTable,
         pending_deck: updatedGameResponse2.playerPendingDeck.length,
@@ -157,6 +160,8 @@ async function attack(req, res) {
         mana: updatedGameResponse2.playerMana
       },
       rival: {
+        rivalAvatar: updatedGameResponse2.rivalAvatar,
+        rivalDisplayName: updatedGameResponse2.rivalDisplayName,
         hand: updatedGameResponse2.rivalHand.length,
         table: updatedGameResponse2.rivalTable,
         pending_deck: updatedGameResponse2.rivalPendingDeck.length,
@@ -196,6 +201,8 @@ async function attack(req, res) {
           phase: "attack"
         },
         rival: {
+          rivalAvatar: updatedGameResponse3.rivalAvatar,
+          rivalDisplayName: updatedGameResponse3.rivalDisplayName,
           hand: updatedGameResponse3.rivalHand.length,
           table: updatedGameResponse3.rivalTable,
           pending_deck: updatedGameResponse3.rivalPendingDeck.length,
@@ -203,6 +210,8 @@ async function attack(req, res) {
           mana: updatedGameResponse3.rivalMana
         },
         user: {
+          playerAvatar: updatedGameResponse3.playerAvatar,
+          playerDisplayName: updatedGameResponse3.playerDisplayName,
           hand: updatedGameResponse3.playerHand,
           table: updatedGameResponse3.playerTable,
           pending_deck: updatedGameResponse3.playerPendingDeck.length,
@@ -270,6 +279,8 @@ async function defend(req, res) {
           phase: "hand"
         },
         user: {
+          playerAvatar: finishedGame.playerAvatar,
+          playerDisplayName: finishedGame.playerDisplayName,
           hand: finishedGame.playerHand,
           table: finishedGame.playerTable,
           pending_deck: finishedGame.playerPendingDeck.length,
@@ -277,6 +288,8 @@ async function defend(req, res) {
           mana: finishedGame.playerMana
         },
         rival: {
+          rivalAvatar: finishedGame.rivalAvatar,
+          rivalDisplayName: finishedGame.rivalDisplayName,
           hand: finishedGame.rivalHand.length,
           table: finishedGame.rivalTable,
           pending_deck: finishedGame.rivalPendingDeck.length,
@@ -329,6 +342,8 @@ async function defend(req, res) {
         phase: "hand"
       },
       user: {
+        playerAvatar: updatedGameAfterChangingPositions.playerAvatar,
+        playerDisplayName: updatedGameAfterChangingPositions.playerDisplayName,
         hand: updatedGameAfterChangingPositions.playerHand,
         table: updatedGameAfterChangingPositions.playerTable,
         pending_deck: updatedGameAfterChangingPositions.playerPendingDeck.length,
@@ -336,6 +351,8 @@ async function defend(req, res) {
         mana: updatedGameAfterChangingPositions.playerMana
       },
       rival: {
+        rivalAvatar: updatedGameAfterChangingPositions.rivalAvatar,
+        rivalDisplayName: updatedGameAfterChangingPositions.rivalDisplayName,
         hand: updatedGameAfterChangingPositions.rivalHand.length,
         table: updatedGameAfterChangingPositions.rivalTable,
         pending_deck: updatedGameAfterChangingPositions.rivalPendingDeck.length,

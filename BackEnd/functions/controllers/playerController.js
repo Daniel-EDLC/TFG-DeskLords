@@ -168,7 +168,8 @@ async function updatePlayer(req, res) {
         const playerId = req.body.idPlayer;
         const updatedData = req.body.data;
 
-        const updatedPlayer = await Player.findByIdAndUpdate(playerId, updatedData, { new: true });
+        const updatedPlayer = await Player.findOneAndUpdate({ uid: playerId }, updatedData, { new: true });
+        
         if (!updatedPlayer) {
             return req.response.error('Jugador no encontrado');
         }
@@ -213,11 +214,7 @@ async function updatePlayerAvatar(req, res) {
             }
         );
 
-        if (!updatedPlayer) {
-            return req.response.error('Jugador no encontrado');
-        }
-
-        req.response.success({ imagen: avatar.url });
+        req.response.success({ playerAvatar: avatar.url });
     } catch (error) {
         req.response.error(`Error al actualizar el avatar del jugador: ${error.message}`);
     }

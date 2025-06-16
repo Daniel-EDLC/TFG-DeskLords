@@ -2,6 +2,7 @@ const Game = require('../models/Game');
 const Player = require('../models/Player');
 const Deck = require('../models/Deck');
 const Map = require('../models/Map');
+const Avatar = require('../models/Avatars');
 
 function shuffleCards(array, size) {
     const shuffled = [...array];
@@ -36,14 +37,14 @@ async function startGame(req, res) {
         let playerDeckShuffled = [];
 
         try {
-            playerDeckShuffled = shuffleCards(playerDeck.cards, 15);
+            playerDeckShuffled = shuffleCards(playerDeck.cards, 20);
         } catch (error) {
             return req.response.error(`Error al barajar el mazo del jugador: ${error.message}`);
         }
 
         let rivalDeckShuffled = [];
         try {
-            rivalDeckShuffled = shuffleCards(map.deck.cards, 15);
+            rivalDeckShuffled = shuffleCards(map.deck.cards, 20);
         } catch (error) {
             return req.response.error(`Error al barajar el mazo del rival: ${error.message}`);
         }
@@ -64,8 +65,6 @@ async function startGame(req, res) {
         // El resto de cartas para el pending deck
         const playerPendingDeck = playerDeckShuffled.filter(card => !playerStarterHand.includes(card));
 
-
-
         // Seleccionar la mano inicial del rival igual que la del jugador
         let rivalStarterHand = [];
         let rivalCreatures = rivalDeckShuffled.filter(card => card.type === 'creature');
@@ -80,17 +79,24 @@ async function startGame(req, res) {
         // El resto de cartas para el pending deck del rival
         const rivalPendingDeck = rivalDeckShuffled.filter(card => !rivalStarterHand.includes(card));
 
+        const playerAvatar = await Avatar.findById(player.selected_avatar);
+
         const newGame = new Game({
             status: 'in-progress',
             startTime: new Date(),
             playerId: player.uid,
+            playerDisplayName: player.displayName,
+            playerAvatar: playerAvatar ? playerAvatar.url : 'default_avatar',
             playerDeck: playerDeck,
             playerHand: playerStarterHand,
             playerPendingDeck: playerPendingDeck,
+            rivalAvatar: map.rivalAvatar,
+            rivalDisplayName: map.rivalDisplayName,
             rivalDeck: map.deck,
             rivalHand: rivalStarterHand,
             rivalPendingDeck: rivalPendingDeck,
-            mapId: map._id
+            mapId: map._id,
+            mapBackgroundImage: map.backgroundImage || 'default_background',
         });
 
         const gameSaved = await newGame.save();
@@ -99,12 +105,15 @@ async function startGame(req, res) {
             gameId: gameSaved._id.toString(),
             status: gameSaved.status,
             start_at: gameSaved.startTime,
+            backgroundImage: gameSaved.mapBackgroundImage,
             turn: {
                 number: gameSaved.currentTurn,
                 whose: "user",
                 phase: "hand"
             },
             user: {
+                playerAvatar: gameSaved.playerAvatar,
+                playerDisplayName: gameSaved.playerDisplayName,
                 hand: gameSaved.playerHand,
                 table: [],
                 pending_deck: gameSaved.playerPendingDeck.length,
@@ -112,6 +121,8 @@ async function startGame(req, res) {
                 mana: gameSaved.playerMana
             },
             rival: {
+                rivalAvatar: gameSaved.rivalAvatar,
+                rivalDisplayName: gameSaved.rivalDisplayName,
                 hand: gameSaved.rivalHand.length,
                 table: [],
                 pending_deck: gameSaved.rivalPendingDeck.length,

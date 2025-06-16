@@ -17,7 +17,6 @@ async function nextTurn({ game }) {
     newRivalmana = game.rivalMana + game.manaPerTurn;
   }
 
-  // Limpiar spells de los equipements de cada carta en ambas mesas y pasarlos al graveyard correspondiente
   let spellsToGraveyardPlayer = [];
   let spellsToGraveyardRival = [];
 
@@ -76,8 +75,6 @@ async function nextTurn({ game }) {
       }
     }
   );
-  // console.log('\n----------------------------------------------------------------------\nSpells del jugador al graveyard ==> ', spellsToGraveyardPlayer);
-  // console.log('\n----------------------------------------------------------------------\nSpells del rival al graveyard ==> ', spellsToGraveyardRival);
 
   const updatedGame = await Game.findById(game._id);
 
