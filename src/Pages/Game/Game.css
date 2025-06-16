@@ -1,3 +1,4 @@
+
 body {
   /* background-image: 
   linear-gradient(rgba(0, 0, 0, 0.687), rgba(255, 255, 255, 0.67)), 
@@ -12,6 +13,30 @@ body {
   width: 100%;
   height: 100%;
 }
+
+.app-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background-image: var(--background-url);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.app-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.753); /* opacidad ajustable */
+  z-index: 0;
+  pointer-events: none; /* permite clics a través de la capa */
+}
+
+
 
 .app-container {
   background-color: transparent;

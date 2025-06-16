@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useRef } from "react";
 import { useMediaQuery, Box, IconButton, Dialog } from "@mui/material";
 import SportsKabaddiIcon from "@mui/icons-material/SportsKabaddi";
 import { signOut } from "firebase/auth";
@@ -30,6 +30,8 @@ import AdminDashboard from "../../components/MenuComponents/administracion/Admin
 import {
   cargarPartida,
   cargaInformacion,
+  setAvatarPrincipal,
+  switchName
 } from "../../services/Actions/MenuActions";
 import { useNavigate } from "react-router-dom";
 
@@ -46,6 +48,8 @@ function Menu() {
   //   return () => unsubscribe();
   // }, [navigate]);
 
+  const splashShown = useRef(false);
+
   const [showSplash, setShowSplash] = useState(true);
   const isMobile = useMediaQuery("(max-width:435px)");
   const navigate = useNavigate();
@@ -55,6 +59,8 @@ function Menu() {
   const [selectedMap, setSelectedMap] = useState(null);
   const [selectedDeckId, setSelectedDeckId] = useState("");
   const [modalAbierto, setModalAbierto] = useState(false);
+
+  
 
   // const [isHovered, setIsHovered] = useState(false);
 
@@ -74,16 +80,10 @@ function Menu() {
 
 
   useEffect(() => {
-    if (tutorialCompletado) {
-      setShowSplash(true);
-      const timeout = setTimeout(() => {
-        setShowSplash(false);
-      }, 7000);
-      return () => clearTimeout(timeout);
-    }
+    if (splashShown.current) return;
 
-    // Solo si no hay tutorial activo
-    if (data && !data.tutorial?.mode) {
+    if (tutorialCompletado || (data && !data.tutorial?.mode)) {
+      splashShown.current = true; 
       setShowSplash(true);
       const timeout = setTimeout(() => {
         setShowSplash(false);
@@ -122,6 +122,25 @@ function Menu() {
     }
   };
 
+const handleNameChange = async (newName) => {
+  try {
+    await switchName(newName, setData);
+  } catch (error) {
+    console.error("Error al cambiar el nombre desde Menu:", error);
+  }
+};
+
+
+
+const handleAvatarChange = async (avatarId) => {
+  try {
+    await setAvatarPrincipal(avatarId, setData);
+  } catch (error) {
+    console.error("Error al cambiar el avatar desde Menu:", error);
+  }
+};
+
+
   if (!data) {
     return null;
   }
@@ -139,6 +158,10 @@ function Menu() {
     );
   }
 
+
+
+
+  
 const botones = [
   { id: "inicio", icon: <HomeIcon />, texto: "Inicio" },
   { id: "coleccion", icon: <CollectionsIcon />, texto: "Colección" },
@@ -186,7 +209,7 @@ if (data.rol === "admin") {
                           className="static-img"
                         />
                         <img
-                          src="https://cdna.artstation.com/p/assets/images/images/017/853/124/original/urban-bradesko-fx-02.gif?1557583057"
+                          src="Battle/gifBattle.gif"
                           alt="gif"
                           className="gif-img"
                         />
@@ -208,6 +231,7 @@ if (data.rol === "admin") {
       case "perfil":
         return (
           <div className="perfil-container">
+            
             <UserProfile
               className="user-profile"
               avatar={data.playerAvatar}
@@ -223,6 +247,8 @@ if (data.rol === "admin") {
               partidasGanadas={data.wins}
               partidasPerdidas={data.loses}
               favoriteDeck={data.favoriteDeck || "No disponible"}
+              onChangeAvatar={handleAvatarChange}
+              onChangeName={handleNameChange}
             />
           </div>
         );

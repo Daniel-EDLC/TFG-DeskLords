@@ -123,7 +123,7 @@
 .rival-equipment-wrapper:hover {
   scale: 2.3;
   transition: 0.5s;
-  z-index: 1000;
+  z-index: 10000;
 }
 
 .rival-card-table:hover .rival-equipment-preview {
@@ -330,7 +330,7 @@ border: 2px solid rgba(255, 0, 0, 0.8);
   bottom: 20%;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 0.25rem;
+  font-size: 0.47rem;
   font-weight: bold;
   color: rgb(68, 216, 0);
   background-color: rgba(0, 0, 0, 0.507);

@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./UserProfile.css";
-import {
-  setAvatarPrincipal,
-  switchName,
-} from "../../../services/Actions/MenuActions";
+import {} from "../../../services/Actions/MenuActions";
 import { signOut } from "firebase/auth";
 import { useMediaQuery } from "@mui/material";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
@@ -13,7 +10,6 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 
 import { auth } from "../../../../firebaseConfig";
-import { onAuthStateChanged } from "firebase/auth";
 
 import { useNavigate } from "react-router-dom";
 
@@ -28,8 +24,8 @@ const UserProfile = ({
   partidasGanadas,
   partidasPerdidas,
   favoriteDeck,
-  userId,
-  onAvatarChange,
+  onChangeAvatar,
+  onChangeName,
 }) => {
   const [userEmail, setUserEmail] = useState("");
 
@@ -42,17 +38,27 @@ const UserProfile = ({
 
   const [isEditingName, setIsEditingName] = useState(false);
   const [editedName, setEditedName] = useState(name);
-  const [hoveredName, setHoveredName] = useState(false);
 
   const handleGuardarNombre = async () => {
     try {
-      await switchName(editedName);
-      alert("Nombre actualizado correctamente");
+      if (onChangeName) {
+        await onChangeName(editedName);
+      }
       setIsEditingName(false);
     } catch (error) {
       alert("Error al actualizar el nombre", error);
     }
   };
+
+const handleSeleccionarAvatar = async (avatarId) => {
+  if (onChangeAvatar) {
+    await onChangeAvatar(avatarId);
+  }
+  setModalAbierto(false); 
+};
+
+
+
 
   const [modalAbierto, setModalAbierto] = useState(false);
 
@@ -69,19 +75,6 @@ const UserProfile = ({
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width:435px)");
 
-  const handleSeleccionarAvatar = async (avatarId) => {
-    try {
-      await setAvatarPrincipal(userId, avatarId);
-      alert("Avatar cambiado correctamente");
-      setModalAbierto(false);
-      if (onAvatarChange) onAvatarChange(); // recargar datos si lo deseas
-    } catch (error) {
-      alert("Error al cambiar el avatar", error);
-    }
-  };
-
-  console.log("isMobile", isMobile);
-
   return (
     <div className="profile-wrapper">
       {/* Caja 1: Información personal */}
@@ -95,9 +88,7 @@ const UserProfile = ({
             style={{ cursor: "pointer" }}
           />
           <div className="profile-info">
-            <div
-              className="profile-username-wrapper"
-            >
+            <div className="profile-username-wrapper">
               {isEditingName ? (
                 <div className="profile-username-edit">
                   <input
@@ -106,27 +97,29 @@ const UserProfile = ({
                     className="profile-username-input"
                   />
                   <div>
-                  <CheckIcon
-                    onClick={handleGuardarNombre}
-                    className="profile-username-icon confirm"
-                  />
-                  <CloseIcon
-                    onClick={() => {
-                      setIsEditingName(false);
-                      setEditedName(name);
-                    }}
-                    className="profile-username-icon cancel"
-                  />
+                    <CheckIcon
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleGuardarNombre();
+                      }}
+                      className="profile-username-icon confirm"
+                    />
+                    <CloseIcon
+                      onClick={() => {
+                        setIsEditingName(false);
+                        setEditedName(name);
+                      }}
+                      className="profile-username-icon cancel"
+                    />
                   </div>
                 </div>
               ) : (
                 <h2 className="profile-username">
                   {editedName}
-                    <EditIcon
-                      className="profile-username-icon"
-                      onClick={() => setIsEditingName(true)}
-                    />
-                  
+                  <EditIcon
+                    className="profile-username-icon"
+                    onClick={() => setIsEditingName(true)}
+                  />
                 </h2>
               )}
             </div>
@@ -168,12 +161,11 @@ const UserProfile = ({
           >
             <span>{victoryPercent}%</span>
           </div>
-          
+
           <div className="circular-legend">
             <p>Ganadas: {partidasGanadas}</p>
             <p>Perdidas: {partidasPerdidas}</p>
           </div>
-          
         </div>
       </div>
 
@@ -203,13 +195,17 @@ const UserProfile = ({
                       src={a.url}
                       alt="avatar"
                       className="avatar-option"
-                      onClick={() => handleSeleccionarAvatar(a._id)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleSeleccionarAvatar(a._id);
+                      }}
                     />
                   )
               )}
             </div>
 
             <button
+              type="button"
               className="avatar-close-btn"
               onClick={() => setModalAbierto(false)}
             >
