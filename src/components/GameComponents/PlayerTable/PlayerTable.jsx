@@ -31,7 +31,7 @@ function PlayerTable({
   setPendingCard,
   rivalAttackers,
   highlightedCardId,
-  battleResultAttackPlayer
+  battleResultAttackPlayer,
 }) {
   const [selectedAttackCards, setselectedAttackCards] = useState([]);
   const [pendingCardId, setPendingCardId] = useState(null);
@@ -144,7 +144,7 @@ function PlayerTable({
     }
     setShowConfirmDialog(false);
     if (pendingCardId !== null) {
-      toggleAttackCard(pendingCardId); 
+      toggleAttackCard(pendingCardId);
       setPendingCardId(null);
     }
   };
@@ -299,8 +299,7 @@ function PlayerTable({
               <div
                 className={`player-card-table 
                 ${isSelected ? "selected" : ""} 
-                ${isInPlayerBattle ? "player-card-in-battle" : ""}
-                ${isInRivalBattle ? "player-card-in-battle" : ""}
+
                 `}
               >
                 {/* ${selectedAttackCards.includes(carta._id) ? 'attack-animating' : ''} */}
@@ -308,26 +307,14 @@ function PlayerTable({
                   elevation={10}
                   className={`player-card-inner 
                     ${hoveredCardId === carta._id ? "hovered" : ""} 
-                    ${
-                      longPressCardId === carta._id ? "player-long-pressed" : ""
-                    } 
+                    ${longPressCardId === carta._id ? "player-long-pressed" : ""} 
                     ${carta.new ? "player-card-new" : ""} 
+                    ${isInPlayerBattle ? "player-card-in-battle" : ""}
+                    ${isInRivalBattle ? "player-card-in-battle" : ""}
                     ${isSelected ? "selected" : ""}
-                    ${
-                      draggingType === "spell" || draggingType === "equipement"
-                        ? "player-drop-hover"
-                        : ""
-                    }
-                    ${
-                      ["spell", "equipement"].includes(pendingCard?.type)
-                        ? "player-drop-hover"
-                        : ""
-                    }
-                    ${
-                      carta._id === highlightedCardId?._id
-                        ? "player-highlighted"
-                        : ""
-                    }
+                    ${draggingType === "spell" || draggingType === "equipement" ? "player-drop-hover" : ""}
+                    ${["spell", "equipement"].includes(pendingCard?.type) ? "player-drop-hover" : "" }
+                    ${carta._id === highlightedCardId?._id ? "player-highlighted" : "" }
                     `}
                   onClick={() => handleCardClick(carta)}
                   onDragOver={(e) => e.preventDefault()}
@@ -452,9 +439,13 @@ function PlayerTable({
           );
         })}
       </Box>
-      <Dialog open={showConfirmDialog} onClose={cancelPhaseChange}  PaperProps={{
-    className: 'switchToAttack',
-  }}>
+      <Dialog
+        open={showConfirmDialog}
+        onClose={cancelPhaseChange}
+        PaperProps={{
+          className: "switchToAttack",
+        }}
+      >
         <DialogTitle>
           Estás en fase de mano. ¿Quieres cambiar a fase de ataque?
         </DialogTitle>

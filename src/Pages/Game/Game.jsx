@@ -31,12 +31,7 @@ function Game() {
 
   console.log("iniciando partida", gameData);
 
-  if (gameData.usedCards) {
-    console.log(
-      "IMG--------------------------------------:",
-      gameData.usedCards.front_image
-    );
-  }
+ 
 
   const announcementMode = useMemo(() => {
     if (!gameData) return null;

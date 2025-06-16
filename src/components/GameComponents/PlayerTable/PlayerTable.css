@@ -184,7 +184,7 @@
 
 .player-equipment-wrapper:hover {
   scale: 2.3;
-  z-index: 1000;
+  z-index: 10000;
   transition: 0.5s;
 }
 
@@ -239,7 +239,7 @@
 .player-card-new {
   position: relative;
   animation: player-card-enter-from-center 1.5s ease-out;
-  z-index: 100000;
+  z-index: 1000;
 }
 
 
