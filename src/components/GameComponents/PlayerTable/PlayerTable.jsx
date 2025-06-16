@@ -298,8 +298,8 @@ function PlayerTable({
             >
               <div
                 className={`player-card-table 
-                ${isSelected ? "selected" : ""} 
 
+                ${isSelected ? "selected" : ""} 
                 `}
               >
                 {/* ${selectedAttackCards.includes(carta._id) ? 'attack-animating' : ''} */}
@@ -371,7 +371,10 @@ function PlayerTable({
                   <img
                     src={carta.front_image}
                     alt={`Carta ${index + 1}`}
-                    className="player-card-image"
+                    className= {`player-card-image
+                      
+                ${isSelected ? "selected" : ""} 
+                      `}
                   />
 
                   {typeof carta.atk === "number" &&

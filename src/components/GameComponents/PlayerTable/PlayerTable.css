@@ -30,6 +30,7 @@
 
 .player-card-wrapper {
   position: relative;
+  height: 100%;
 }
 
 
@@ -66,8 +67,8 @@
   z-index: 1000;
 }
 
-.player-card-table.selected:hover {
-  transform: scale(2.3);
+.player-card-image.selected:hover {
+  transform: scale(1.05);
   border: 2px solid rgba(19, 128, 0, 0.8);
   border-radius: 6px;
   z-index: 1000;
